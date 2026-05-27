@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Lyra — Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,300;1,9..40,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles/site.css" />
+</head>
+<body class="design-library">
+
+<!-- ─── Sticky Nav ─────────────────────────────────────────────────── -->
+<nav class="site-nav">
+  <a href="/" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8.5 2L4 7l4.5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Back to App
+  </a>
+  <span class="nav-brand"><img src="/images/drlyra-icon.svg" alt="" aria-hidden="true" />Dr. Lyra</span>
+  <div class="nav-spacer"></div>
+</nav>
+
+<!-- ─── Page Wrap ──────────────────────────────────────────────────── -->
+<div class="page-wrap">
+
+  <!-- Hero -->
+  <div class="page-hero">
+    <div class="page-hero-eyebrow">Dr. Lyra · Design System</div>
+    <h1 class="page-hero-title">Foundations of<br>the Lyra Visual Language</h1>
+    <p class="page-hero-desc">Every colour, typeface, component, and pattern that makes up the Dr. Lyra experience — documented for consistency, crafted for delight.</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: LOGO -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="ds-section" id="logo">
+    <div class="section-label">01 · Identity</div>
+    <h2 class="section-title">Logo &amp; Lockups</h2>
+
+    <div class="logo-grid">
+
+      <!-- Card 1: Primary -->
+      <div class="logo-card" style="background:#0a0a0f;">
+        <span class="preview-card-label">Primary</span>
+        <div class="logo-card-inner">
+          <div class="logo-lockup">
+            <img src="/images/drlyra-icon.svg" height="44" alt="Dr. Lyra icon" />
+            <span class="logo-wordmark-gradient">Dr. Lyra</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Light -->
+      <div class="logo-card" style="background:#ffffff;">
+        <span class="preview-card-label" style="color:rgba(0,0,0,0.35);">Light</span>
+        <div class="logo-card-inner">
+          <div class="logo-lockup">
+            <img src="/images/drlyra-icon.svg" height="44" alt="Dr. Lyra icon" />
+            <span class="logo-wordmark-dark">Dr. Lyra</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Mark Only -->
+      <div class="logo-card" style="background:#0a0a0f;">
+        <span class="preview-card-label">Mark Only</span>
+        <div class="logo-card-inner" style="justify-content:center;">
+          <img src="/images/drlyra-icon.svg" height="64" alt="Dr. Lyra mark" />
+        </div>
+      </div>
+
+      <!-- Card 4: On Purple -->
+      <div class="logo-card" style="background:linear-gradient(135deg,#8565EE 0%,#0a0a0f 100%);">
+        <span class="preview-card-label" style="color:rgba(255,255,255,0.5);">On Purple</span>
+        <div class="logo-card-inner">
+          <div class="logo-lockup">
+            <img src="/images/drlyra-icon.svg" height="44" alt="Dr. Lyra icon" />
+            <span class="logo-wordmark-white">Dr. Lyra</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="logo-rules">
+      <strong>Construction rules</strong> &mdash;
+      Minimum size: 24px height &middot;
+      Clear space: equal to the icon's width on all sides &middot;
+      Don&rsquo;t distort, recolor independently, or add effects to the mark
+    </div>
+
+    <div class="logo-assets">
+      <span>Logo assets &rarr;</span>
+      <code>/images/drlyra-icon.svg</code>
+      <span>&middot;</span>
+      <code>/images/drlyra-logo.svg</code>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: COLORS -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="ds-section" id="colors">
+    <div class="section-label">02 · Palette</div>
+    <h2 class="section-title">Colors</h2>
+
+    <!-- Group 1: Brand -->
+    <div class="color-group">
+      <div class="color-group-title">Brand</div>
+      <div class="swatch-row">
+        <div class="swatch">
+          <div class="swatch-box" style="background:#8565EE;" data-copy="#8565EE" title="Click to copy"></div>
+          <div class="swatch-name">Brand Purple</div>
+          <div class="swatch-value">
+            <span>#8565EE</span>
+            <button class="copy-btn" data-copy="#8565EE">Copy</button>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-box" style="background:#00B25F;" data-copy="#00B25F" title="Click to copy"></div>
+          <div class="swatch-name">Brand Green</div>
+          <div class="swatch-value">
+            <span>#00B25F</span>
+            <button class="copy-btn" data-copy="#00B25F">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group 2: UI Accents -->
+    <div class="color-group">
+      <div class="color-group-title">UI Accents</div>
+      <div class="swatch-row">
+        <div class="swatch">
+          <div class="swatch-box" style="background:#1DB954;" data-copy="#1DB954" title="Click to copy"></div>
+          <div class="swatch-name">Accent Green</div>
+          <div class="swatch-value">
+            <span>#1DB954</span>
+            <button class="copy-btn" data-copy="#1DB954">Copy</button>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-box" style="background:#8B5CF6;" data-copy="#8B5CF6" title="Click to copy"></div>
+          <div class="swatch-name">Accent Purple</div>
+          <div class="swatch-value">
+            <span>#8B5CF6</span>
+            <button class="copy-btn" data-copy="#8B5CF6">Copy</button>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-box" style="background:#a78bfa;" data-copy="#a78bfa" title="Click to copy"></div>
+          <div class="swatch-name">Violet</div>
+          <div class="swatch-value">
+            <span>#a78bfa</span>
+            <button class="copy-btn" data-copy="#a78bfa">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group 3: Backgrounds -->
+    <div class="color-group">
+      <div class="color-group-title">Backgrounds</div>
+      <div class="swatch-row">
+        <div class="swatch">
+          <div class="swatch-box" style="background:#0a0a0f; outline:1px solid rgba(255,255,255,0.15); outline-offset:-1px;" data-copy="#0a0a0f" title="Click to copy"></div>
+          <div class="swatch-name">App Background</div>
+          <div class="swatch-value">
+            <span>#0a0a0f</span>
+            <button class="copy-btn" data-copy="#0a0a0f">Copy</button>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-box" style="background:#111118;" data-copy="#111118" title="Click to copy"></div>
+          <div class="swatch-name">Surface 01</div>
+          <div class="swatch-value">
+            <span>#111118</span>
+            <button class="copy-btn" data-copy="#111118">Copy</button>
+          </div>
+        </div>
+        <div class="swatch">
+          <div class="swatch-box" style="background:rgba(255,255,255,0.038); border:1px solid rgba(255,255,255,0.12);" data-copy="rgba(255,255,255,0.038)" title="Click to copy"></div>
+          <div class="swatch-name">Card Surface</div>
+          <div class="swatch-value">
+            <span style="font-size:10px;">5% white</span>
+            <button class="copy-btn" data-copy="rgba(255,255,255,0.038)">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group 4: Text -->
+    <div class="color-group">
+      <div class="color-group-title">Text</div>
+      <div class="text-swatch-row">
+        <div class="text-swatch">
+          <div class="text-swatch-sample" style="color:#f4f1ff;">The Luminous Nomad</div>
+          <div class="text-swatch-meta">
+            <div>
+              <div class="swatch-name" style="font-size:12px;">Heading</div>
+              <div class="swatch-value">
+                <span>#f4f1ff</span>
+                <button class="copy-btn" data-copy="#f4f1ff">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-swatch">
+          <div class="text-swatch-sample" style="color:rgba(255,255,255,0.70);">Decoded from your listening patterns.</div>
+          <div class="text-swatch-meta">
+            <div>
+              <div class="swatch-name" style="font-size:12px;">Body</div>
+              <div class="swatch-value">
+                <span>rgba(255,255,255,0.70)</span>
+                <button class="copy-btn" data-copy="rgba(255,255,255,0.70)">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-swatch">
+          <div class="text-swatch-sample" style="color:rgba(255,255,255,0.35);">Section label · Metadata</div>
+          <div class="text-swatch-meta">
+            <div>
+              <div class="swatch-name" style="font-size:12px;">Muted</div>
+              <div class="swatch-value">
+                <span>rgba(255,255,255,0.35)</span>
+                <button class="copy-btn" data-copy="rgba(255,255,255,0.35)">Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Group 5: Gradients -->
+    <div class="color-group">
+      <div class="color-group-title">Gradients</div>
+      <div class="gradient-bars">
+        <div class="gradient-bar">
+          <div class="gradient-strip" style="background:linear-gradient(135deg,#8565EE,#00B25F);"></div>
+          <div class="gradient-bar-info">
+            <div class="gradient-bar-name">Brand Gradient</div>
+            <div class="gradient-bar-desc">Brand · Used in logo &amp; mark</div>
+            <button class="copy-btn" style="margin-top:6px;" data-copy="linear-gradient(135deg, #8565EE, #00B25F)">Copy CSS</button>
+          </div>
+        </div>
+        <div class="gradient-bar">
+          <div class="gradient-strip" style="background:linear-gradient(135deg,#1DB954,#8B5CF6);"></div>
+          <div class="gradient-bar-info">
+            <div class="gradient-bar-name">UI Gradient</div>
+            <div class="gradient-bar-desc">UI · Used in buttons &amp; accents</div>
+            <button class="copy-btn" style="margin-top:6px;" data-copy="linear-gradient(135deg, #1DB954, #8B5CF6)">Copy CSS</button>
+          </div>
+        </div>
+        <div class="gradient-bar">
+          <div class="gradient-strip" style="background:linear-gradient(135deg,#ffffff 0%,#e0d8ff 40%,#8B5CF6 100%);"></div>
+          <div class="gradient-bar-info">
+            <div class="gradient-bar-name">Heading Gradient</div>
+            <div class="gradient-bar-desc">Headings · Used in hero titles</div>
+            <button class="copy-btn" style="margin-top:6px;" data-copy="linear-gradient(135deg, #ffffff 0%, #e0d8ff 40%, #8B5CF6 100%)">Copy CSS</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: TYPOGRAPHY -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="ds-section" id="typography">
+    <div class="section-label">03 · Typefaces</div>
+    <h2 class="section-title">Typography</h2>
+
+    <!-- DM Sans -->
+    <div class="type-family">
+      <div class="type-family-header">
+        <span class="type-family-name">DM Sans</span>
+        <span class="type-family-desc">Display, headings, UI elements</span>
+      </div>
+
+      <div class="type-specimen">
+        <div class="type-specimen-meta">800 Extrabold · 40px</div>
+        <div style="font-family:'DM Sans',sans-serif;font-weight:800;font-size:40px;letter-spacing:-0.03em;color:var(--heading-color);line-height:1.1;">The Luminous Nomad</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="type-specimen-meta">700 Bold · 28px</div>
+        <div style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:28px;letter-spacing:-0.02em;color:var(--heading-color);line-height:1.2;">Your Psychological Profile</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="type-specimen-meta">600 Semibold · 18px · Uppercase · Tracked</div>
+        <div style="font-family:'DM Sans',sans-serif;font-weight:600;font-size:18px;letter-spacing:0.1em;text-transform:uppercase;color:var(--body-color);line-height:1.3;">01 · Emotional Landscape</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="type-specimen-meta">400 Regular · 16px</div>
+        <div style="font-family:'DM Sans',sans-serif;font-weight:400;font-size:16px;color:var(--body-color);line-height:1.65;">Decoded from your listening patterns.</div>
+      </div>
+    </div>
+
+    <!-- Inter -->
+    <div class="type-family">
+      <div class="type-family-header">
+        <span class="type-family-name" style="font-family:'Inter',sans-serif;font-weight:700;">Inter</span>
+        <span class="type-family-desc">Body copy, long-form text</span>
+      </div>
+
+      <div class="type-specimen">
+        <div class="type-specimen-meta">400 Regular · 16px</div>
+        <div style="font-family:'Inter',sans-serif;font-weight:400;font-size:16px;color:var(--body-color);line-height:1.7;">You are not someone who listens to music.<br>You inhabit it.</div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="type-specimen-meta">300 Light · 18px (lede)</div>
+        <div style="font-family:'Inter',sans-serif;font-weight:300;font-size:18px;color:var(--body-color);line-height:1.75;">You are not someone who listens to music.<br>You inhabit it.</div>
+      </div>
+    </div>
+
+    <!-- Type Scale Table -->
+    <table class="type-scale-table">
+      <thead>
+        <tr>
+          <th>Token</th>
+          <th>Size</th>
+          <th>Font</th>
+          <th>Weight</th>
+          <th>Usage</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>hero</td>
+          <td>clamp(2.8rem, 8vw, 6rem)</td>
+          <td>DM Sans</td>
+          <td>800</td>
+          <td style="color:var(--muted);">Archetype name</td>
+        </tr>
+        <tr>
+          <td>display</td>
+          <td>clamp(1.8rem, 4vw, 2.6rem)</td>
+          <td>DM Sans</td>
+          <td>800</td>
+          <td style="color:var(--muted);">Report headings</td>
+        </tr>
+        <tr>
+          <td>h1</td>
+          <td>clamp(1.5rem, 3.5vw, 2rem)</td>
+          <td>DM Sans</td>
+          <td>800</td>
+          <td style="color:var(--muted);">Section titles</td>
+        </tr>
+        <tr>
+          <td>h2</td>
+          <td>1.1rem</td>
+          <td>DM Sans</td>
+          <td>700</td>
+          <td style="color:var(--muted);">Callout text</td>
+        </tr>
+        <tr>
+          <td>lede</td>
+          <td>19px</td>
+          <td>Inter</td>
+          <td>300</td>
+          <td style="color:var(--muted);">First paragraphs</td>
+        </tr>
+        <tr>
+          <td>body</td>
+          <td>15.5px</td>
+          <td>Inter</td>
+          <td>400</td>
+          <td style="color:var(--muted);">Body copy</td>
+        </tr>
+        <tr>
+          <td>label</td>
+          <td>11px / 2.5px tracked / uppercase</td>
+          <td>DM Sans</td>
+          <td>700</td>
+          <td style="color:var(--muted);">Section labels</td>
+        </tr>
+        <tr>
+          <td>caption</td>
+          <td>12px</td>
+          <td>DM Sans</td>
+          <td>600</td>
+          <td style="color:var(--muted);">Badges, chips</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: COMPONENTS -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="ds-section" id="components">
+    <div class="section-label">04 · Components</div>
+    <h2 class="section-title">Component Library</h2>
+
+    <!-- Buttons -->
+    <div class="component-group">
+      <div class="component-group-title">Buttons</div>
+      <div class="preview-card">
+        <div class="component-row">
+          <button class="btn-primary">Generate My Profile →</button>
+          <button class="btn-outline">See an Example</button>
+          <button class="btn-ghost">← Back</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pills & Tags -->
+    <div class="component-group">
+      <div class="component-group-title">Pills &amp; Tags</div>
+      <div class="preview-card">
+        <div class="component-row">
+          <span class="pill-active">Core Personality</span>
+          <span class="pill-inactive">Emotional Landscape</span>
+          <span class="pill-inactive">Shadow Self</span>
+          <div class="stat-chip">
+            <div class="stat-chip-icon">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 19V6l12-3v13M9 19c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm12-3c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z"/>
+              </svg>
+            </div>
+            9 Sections Analysed
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Card -->
+    <div class="component-group">
+      <div class="component-group-title">Report Section Card</div>
+      <div class="report-card">
+        <div class="report-card-header">
+          <div class="report-card-icon">🎭</div>
+          <div class="report-card-meta">
+            <div class="report-card-eyebrow">01 · Core Personality Archetype</div>
+            <div class="report-card-title">The Luminous Nomad</div>
+          </div>
+        </div>
+        <div class="report-card-body">
+          <div class="report-card-callout">"A restless seeker who uses sound as both compass and shelter."</div>
+          <p class="report-card-text">You don't listen to music passively — you migrate through it. Your library reveals someone who processes the world through aesthetic intensity, drawn equally to the precision of electronic minimalism and the raw emotional weight of confessional songwriting.</p>
+          <p class="report-card-text" style="margin-top:10px;">This isn't contradiction. It's the hallmark of a mind that refuses to be reduced to a single frequency.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Callout Block -->
+    <div class="component-group">
+      <div class="component-group-title">Callout Block</div>
+      <div class="preview-card">
+        <div class="callout-block">"You are not someone who listens to music. You inhabit it — and it, in turn, inhabits you."</div>
+      </div>
+    </div>
+
+    <!-- Quote Block -->
+    <div class="component-group">
+      <div class="component-group-title">Signature Quote</div>
+      <div class="preview-card" style="display:flex;justify-content:center;">
+        <div class="quote-block">
+          <span class="quote-mark">&ldquo;</span>
+          <p class="quote-text">You carry entire universes inside you — and your playlists are the only map that leads there.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</div><!-- /.page-wrap -->
+
+<!-- Toast -->
+<div class="toast" id="toast">Copied to clipboard!</div>
+
+<script>
+  // ─── Scroll reveal ──────────────────────────────────────────────
+  const sections = document.querySelectorAll('.ds-section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  // ─── Copy to clipboard ─────────────────────────────────────────
+  const toast = document.getElementById('toast');
+  let toastTimer = null;
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1500);
+  }
+
+  function copyValue(value, btn) {
+    navigator.clipboard.writeText(value).then(() => {
+      showToast('Copied!');
+      if (btn) {
+        const prev = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = prev;
+          btn.classList.remove('copied');
+        }, 1500);
+      }
+    }).catch(() => {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = value;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Copied!');
+    });
+  }
+
+  // Swatch boxes
+  document.querySelectorAll('.swatch-box[data-copy]').forEach(box => {
+    box.addEventListener('click', () => copyValue(box.dataset.copy, null));
+  });
+
+  // Copy buttons
+  document.querySelectorAll('.copy-btn[data-copy]').forEach(btn => {
+    btn.addEventListener('click', () => copyValue(btn.dataset.copy, btn));
+  });
+</script>
+</body>
+</html>

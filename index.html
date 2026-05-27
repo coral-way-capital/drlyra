@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spotify Psychological Profile Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="/styles/site.css" />
+</head>
+<body class="app">
+<a href="/" class="back-link">← Back to Dr. Lyra</a>
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="logo-mark">
+      <img src="/images/drlyra-icon.svg" alt="Dr. Lyra" />
+      <span>Dr. Lyra</span>
+    </div>
+    <h1>Your Spotify<br/>Psychological Profile</h1>
+    <p class="subtitle">Upload your Spotify stats screenshots. Dr. Lyra will decode your music taste into a deep psychological portrait.</p>
+  </header>
+
+  <!-- Upload -->
+  <div class="upload-section" id="upload-section">
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="file-input" accept="image/*" multiple />
+      <div class="upload-icon">📸</div>
+      <div class="drop-title">Drop your Spotify screenshots here</div>
+      <div class="drop-sub">
+        Drag & drop or click to browse<br/>
+        <strong>Up to 10 images</strong> — Spotify Wrapped, stats pages, listening reports
+      </div>
+    </div>
+    <div class="thumbnails" id="thumbnails"></div>
+  </div>
+
+  <button class="btn-generate" id="btn-generate" disabled>
+    ✦ Generate My Profile
+  </button>
+
+  <div class="error-box" id="error-box"></div>
+
+  <!-- Loading -->
+  <div id="loading">
+    <div class="orb-wrapper">
+      <div class="orb"></div>
+      <div class="orb-ring"></div>
+    </div>
+    <div class="loading-text" id="loading-text">
+      <span class="typed-prefix">Consulting </span><span class="typed-name" id="typed-name"></span><span class="type-cursor" id="type-cursor"></span>
+    </div>
+    <div class="loading-sub">Reading between the frequencies</div>
+  </div>
+
+  <!-- Report -->
+  <div id="report">
+    <div class="report-header">
+      <h2>Your Psychological Profile</h2>
+      <p>As interpreted by Dr. Lyra, Musicologist & Behavioral Analyst</p>
+    </div>
+    <div class="report-actions">
+      <button class="btn-action btn-download" id="btn-download">⬇ Download PDF</button>
+      <button class="btn-action btn-copy" id="btn-copy">⎘ Copy to Clipboard</button>
+      <button class="btn-action btn-share" id="btn-share">◈ Share Story</button>
+      <button class="btn-action btn-new" id="btn-new">↺ New Profile</button>
+    </div>
+    <div id="sections-container"></div>
+  </div>
+
+</div>
+
+<!-- Off-screen story render target -->
+<div id="story-canvas-host">
+  <div class="story-bg"></div>
+  <div class="story-inner">
+    <div class="story-brand">Dr. Lyra · Spotify Psychological Profile</div>
+    <div class="story-archetype-emoji" id="st-arch-emoji" style="font-size:52px;margin-bottom:14px;"></div>
+    <div class="story-archetype-label">Core Personality Archetype</div>
+    <div class="story-archetype-name" id="st-arch-name"></div>
+    <div class="story-archetype-body" id="st-arch-body"></div>
+    <div class="story-divider"></div>
+    <div class="story-quote-emoji">🏷️</div>
+    <span class="story-open-quote">"</span>
+    <div class="story-quote-text" id="st-quote"></div>
+    <div class="story-footer">drlyra.app</div>
+  </div>
+</div>
+
+<script>
+  const ICONS = {
+    '🎭': `<svg viewBox="0 0 24 24" fill="none" stroke="url(#ig)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ig" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 20c0-3.3-2.7-6-6-6"/></svg>`,
+    '🧠': `<svg viewBox="0 0 24 24" fill="none" stroke="url(#ig2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ig2" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+    '🌙': `<svg viewBox="0 0 24 24" fill="none" stroke="url(#ig3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ig3" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`,
+    '💡': `<svg viewBox="0 0 24 24" fill="none" stroke="url(#ig4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ig4" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+    '🔥': `<svg viewBox="0 0 24 24" fill="none" stroke="url(#ig5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ig5" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><path d="M13 2c0 0-5 5.5-5 10a5 5 0 0 0 10 0c0-2.5-1.5-4.5-2-5 0 2-1 3.5-3 4 0-3-2-6 0-9z"/></svg>`,
+    '🌊': `<svg viewBox="0 0 24 24" fill="none" stroke="url(#ig6)" stroke-width="2" stroke-linecap="round"><defs><linearGradient id="ig6" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><path d="M2 10c1.5-2 3-2 4.5 0S9 12 10.5 10 13 8 14.5 10s3 2 4.5 0M2 16c1.5-2 3-2 4.5 0S9 18 10.5 16s2.5-2 4 0 3 2 4.5 0"/></svg>`,
+    '🎯': `<svg viewBox="0 0 24 24" fill="none" stroke="url(#ig7)" stroke-width="2" stroke-linecap="round"><defs><linearGradient id="ig7" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>`,
+    '✨': `<svg viewBox="0 0 24 24" fill="none" stroke="url(#ig8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ig8" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>`,
+    '🏷️': `<svg viewBox="0 0 24 24" fill="none" stroke="url(#ig9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="ig9" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#a78bfa"/></linearGradient></defs><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2H4c-1.25 0-2 .75-2 2v11c0 1 1 2 2 2s1 .008 1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2h-4c-1.25 0-2 .75-2 2v11c0 1 1 2 2 2s1 .008 1 1.031V20c0 1 0 1 1 1z"/></svg>`,
+  };
+
+  const SECTIONS = [
+    { key: '🎭', title: 'YOUR CORE PERSONALITY ARCHETYPE', cls: '' },
+    { key: '🧠', title: 'YOUR EMOTIONAL LANDSCAPE', cls: '' },
+    { key: '🌙', title: 'YOUR SHADOW SELF', cls: '' },
+    { key: '💡', title: 'YOUR COGNITIVE STYLE', cls: '' },
+    { key: '🔥', title: 'YOUR DESIRE PROFILE', cls: '' },
+    { key: '🌊', title: 'YOUR YEAR IN EMOTIONAL WAVES', cls: '' },
+    { key: '🎯', title: 'YOUR BLIND SPOTS AND GROWTH EDGE', cls: '' },
+    { key: '✨', title: 'YOUR MUSICAL SOULMATE PROFILE', cls: '' },
+    { key: '🏷️', title: 'YOUR SIGNATURE QUOTE', cls: 'card-quote' },
+  ];
+
+  let files = [];
+
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+  const thumbnails = document.getElementById('thumbnails');
+  const btnGenerate = document.getElementById('btn-generate');
+  const loading = document.getElementById('loading');
+  const report = document.getElementById('report');
+  const sectionsContainer = document.getElementById('sections-container');
+  const errorBox = document.getElementById('error-box');
+  const uploadSection = document.getElementById('upload-section');
+
+  // Drag & drop
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    addFiles([...e.dataTransfer.files]);
+  });
+  fileInput.addEventListener('change', () => addFiles([...fileInput.files]));
+
+  function addFiles(newFiles) {
+    const imageFiles = newFiles.filter(f => f.type.startsWith('image/'));
+    const remaining = 10 - files.length;
+    imageFiles.slice(0, remaining).forEach(f => files.push(f));
+    renderThumbnails();
+    btnGenerate.disabled = files.length === 0;
+    fileInput.value = '';
+  }
+
+  function renderThumbnails() {
+    thumbnails.innerHTML = '';
+    files.forEach((f, i) => {
+      const url = URL.createObjectURL(f);
+      const div = document.createElement('div');
+      div.className = 'thumb';
+      div.innerHTML = `<img src="${url}" alt="upload ${i+1}" /><button class="thumb-remove" data-i="${i}">✕</button>`;
+      thumbnails.appendChild(div);
+    });
+    thumbnails.querySelectorAll('.thumb-remove').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        files.splice(+btn.dataset.i, 1);
+        renderThumbnails();
+        btnGenerate.disabled = files.length === 0;
+      });
+    });
+  }
+
+  // Typewriter for loading
+  function startTypewriter() {
+    const el = document.getElementById('typed-name');
+    const cursor = document.getElementById('type-cursor');
+    const phrases = ['Dr. Lyra...', 'your frequencies...', 'the patterns...', 'your soul...'];
+    let phraseIdx = 0;
+    let charIdx = 0;
+    let deleting = false;
+    let timer = null;
+
+    el.textContent = '';
+    cursor.style.display = 'inline-block';
+
+    function tick() {
+      const phrase = phrases[phraseIdx];
+      if (!deleting) {
+        charIdx++;
+        el.textContent = phrase.slice(0, charIdx);
+        if (charIdx === phrase.length) {
+          // Pause at end, then delete — except first phrase which stays longer
+          timer = setTimeout(() => { deleting = true; tick(); }, phraseIdx === 0 ? 1800 : 1200);
+          return;
+        }
+        timer = setTimeout(tick, 75 + Math.random() * 40);
+      } else {
+        charIdx--;
+        el.textContent = phrase.slice(0, charIdx);
+        if (charIdx === 0) {
+          deleting = false;
+          phraseIdx = (phraseIdx + 1) % phrases.length;
+          timer = setTimeout(tick, 300);
+          return;
+        }
+        timer = setTimeout(tick, 38);
+      }
+    }
+
+    tick();
+    return () => { clearTimeout(timer); cursor.style.display = 'none'; };
+  }
+
+  let stopTypewriter = null;
+
+  // Generate
+  btnGenerate.addEventListener('click', async () => {
+    if (!files.length) return;
+    showError('');
+    uploadSection.style.display = 'none';
+    btnGenerate.style.display = 'none';
+    loading.style.display = 'flex';
+    stopTypewriter = startTypewriter();
+    report.style.display = 'none';
+    sectionsContainer.innerHTML = '';
+
+    const formData = new FormData();
+    files.forEach(f => formData.append('images', f));
+
+    try {
+      const response = await fetch('/analyze', { method: 'POST', body: formData });
+      if (!response.ok) {
+        const err = await response.json().catch(() => null);
+        throw new Error(err?.error || `Server error (${response.status}). Check that the server is running and your API key has credits.`);
+      }
+
+      loading.style.display = 'none';
+      if (stopTypewriter) { stopTypewriter(); stopTypewriter = null; }
+      report.style.display = 'block';
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let fullText = '';
+      let currentSectionIndex = -1;
+      let currentCard = null;
+      let currentContent = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const raw = line.slice(6).trim();
+          if (raw === '[DONE]') break;
+          let parsed;
+          try { parsed = JSON.parse(raw); } catch { continue; }
+          if (parsed.error) { showError(parsed.error); return; }
+          if (!parsed.text) continue;
+
+          fullText += parsed.text;
+
+          // Detect section headers in the accumulated text
+          SECTIONS.forEach((sec, idx) => {
+            const marker = sec.key + ' ' + sec.title;
+            if (fullText.includes(marker) && currentSectionIndex < idx) {
+              currentSectionIndex = idx;
+              currentCard = createSectionCard(sec);
+              currentContent = currentCard.querySelector('.section-content');
+              sectionsContainer.appendChild(currentCard);
+              currentCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          });
+
+          if (currentContent) {
+            // Strip everything up to and including the section title from the streamed text for display
+            let displayText = fullText;
+            for (let i = 0; i <= currentSectionIndex; i++) {
+              const marker = SECTIONS[i].key + ' ' + SECTIONS[i].title;
+              const idx2 = displayText.indexOf(marker);
+              if (i === currentSectionIndex && idx2 !== -1) {
+                displayText = displayText.slice(idx2 + marker.length).trimStart();
+              }
+            }
+            // Clip at next section
+            for (let i = currentSectionIndex + 1; i < SECTIONS.length; i++) {
+              const nextMarker = SECTIONS[i].key + ' ' + SECTIONS[i].title;
+              const nextIdx = displayText.indexOf(nextMarker);
+              if (nextIdx !== -1) {
+                displayText = displayText.slice(0, nextIdx);
+                break;
+              }
+            }
+            currentContent.innerHTML = escapeHtml(displayText.trimStart()) + '<span class="cursor"></span>';
+          }
+        }
+      }
+
+      // Final render — save and redirect to beautiful report page
+      document.querySelectorAll('.cursor').forEach(c => c.remove());
+      sessionStorage.setItem('drlyra_report', fullText);
+      window.location.href = '/report';
+
+    } catch (err) {
+      loading.style.display = 'none';
+      if (stopTypewriter) { stopTypewriter(); stopTypewriter = null; }
+      uploadSection.style.display = 'block';
+      btnGenerate.style.display = 'block';
+      showError('Something went wrong: ' + err.message);
+    }
+  });
+
+  function createSectionCard(sec) {
+    const card = document.createElement('div');
+    card.className = 'section-card ' + sec.cls;
+    card.dataset.key = sec.key;
+    card.innerHTML = `
+      <div class="section-icon">${ICONS[sec.key] || ''}</div>
+      <div class="section-title">${sec.title}</div>
+      <div class="section-content"></div>
+    `;
+    return card;
+  }
+
+  function renderAllSections(fullText) {
+    sectionsContainer.innerHTML = '';
+    SECTIONS.forEach((sec, idx) => {
+      const marker = sec.key + ' ' + sec.title;
+      const start = fullText.indexOf(marker);
+      if (start === -1) return;
+      let content = fullText.slice(start + marker.length).trimStart();
+      // Cut at next section
+      for (let i = idx + 1; i < SECTIONS.length; i++) {
+        const nextMarker = SECTIONS[i].key + ' ' + SECTIONS[i].title;
+        const nextIdx = content.indexOf(nextMarker);
+        if (nextIdx !== -1) { content = content.slice(0, nextIdx); break; }
+      }
+      const card = createSectionCard(sec);
+      card.querySelector('.section-content').textContent = content.trim();
+      card.style.animationDelay = (idx * 0.06) + 's';
+      sectionsContainer.appendChild(card);
+    });
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.style.display = msg ? 'block' : 'none';
+  }
+
+  // Copy to clipboard
+  document.getElementById('btn-copy').addEventListener('click', () => {
+    const cards = sectionsContainer.querySelectorAll('.section-card');
+    let text = 'MY SPOTIFY PSYCHOLOGICAL PROFILE\nBy Dr. Lyra\n\n';
+    cards.forEach(card => {
+      const title = card.querySelector('.section-title').textContent;
+      const emoji = card.querySelector('.section-emoji').textContent;
+      const content = card.querySelector('.section-content').textContent;
+      text += `${emoji} ${title}\n\n${content}\n\n---\n\n`;
+    });
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('btn-copy');
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.innerHTML = '⎘ Copy to Clipboard'; }, 2000);
+    });
+  });
+
+  // Download PDF
+  document.getElementById('btn-download').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-download');
+    btn.textContent = '⏳ Generating...';
+    btn.disabled = true;
+
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const margin = 48;
+      const usable = pageW - margin * 2;
+      let y = margin;
+
+      // Dark background
+      doc.setFillColor(10, 10, 15);
+      doc.rect(0, 0, pageW, pageH, 'F');
+
+      // Title
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(24);
+      doc.setTextColor(29, 185, 84);
+      doc.text('Spotify Psychological Profile', pageW / 2, y + 20, { align: 'center' });
+      y += 50;
+
+      doc.setFontSize(11);
+      doc.setTextColor(136, 136, 153);
+      doc.setFont('helvetica', 'normal');
+      doc.text('by Dr. Lyra — Musicologist & Behavioral Analyst', pageW / 2, y, { align: 'center' });
+      y += 36;
+
+      // Divider
+      doc.setDrawColor(139, 92, 246);
+      doc.setLineWidth(0.5);
+      doc.line(margin, y, pageW - margin, y);
+      y += 24;
+
+      const cards = sectionsContainer.querySelectorAll('.section-card');
+      cards.forEach(card => {
+        const emoji = card.querySelector('.section-emoji').textContent;
+        const title = card.querySelector('.section-title').textContent;
+        const content = card.querySelector('.section-content').textContent.trim();
+
+        // Section heading
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.setTextColor(200, 200, 230);
+        const heading = `${emoji}  ${title}`;
+        const headingLines = doc.splitTextToSize(heading, usable);
+        const headingH = headingLines.length * 18;
+
+        if (y + headingH + 40 > pageH - margin) {
+          doc.addPage();
+          doc.setFillColor(10, 10, 15);
+          doc.rect(0, 0, pageW, pageH, 'F');
+          y = margin;
+        }
+        doc.text(headingLines, margin, y);
+        y += headingH + 10;
+
+        // Body
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10.5);
+        doc.setTextColor(180, 180, 200);
+        const bodyLines = doc.splitTextToSize(content, usable);
+        bodyLines.forEach(line => {
+          if (y + 16 > pageH - margin) {
+            doc.addPage();
+            doc.setFillColor(10, 10, 15);
+            doc.rect(0, 0, pageW, pageH, 'F');
+            y = margin;
+          }
+          doc.text(line, margin, y);
+          y += 16;
+        });
+        y += 24;
+
+        // Subtle divider
+        doc.setDrawColor(50, 50, 70);
+        doc.setLineWidth(0.3);
+        doc.line(margin, y - 12, pageW - margin, y - 12);
+      });
+
+      doc.save('Dr-Lyra-Spotify-Profile.pdf');
+    } catch (e) {
+      alert('PDF generation failed: ' + e.message);
+    }
+
+    btn.innerHTML = '⬇ Download PDF';
+    btn.disabled = false;
+  });
+
+  // Share story
+  document.getElementById('btn-share').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-share');
+    btn.textContent = '⏳ Rendering...';
+    btn.disabled = true;
+
+    try {
+      // Grab section 1 (archetype) and section 9 (quote) content
+      const cards = [...sectionsContainer.querySelectorAll('.section-card')];
+      const archetypeCard = cards.find(c => c.dataset.key === '🎭');
+      const quoteCard     = cards.find(c => c.dataset.key === '🏷️');
+
+      if (!archetypeCard || !quoteCard) {
+        alert('Generate your profile first!');
+        return;
+      }
+
+      const archetypeText = archetypeCard.querySelector('.section-content').textContent.trim();
+      const quoteText     = quoteCard.querySelector('.section-content').textContent.trim();
+
+      // Extract archetype name from first line / sentence
+      const firstLine = archetypeText.split(/[\n.]/)[0].trim();
+      const archName  = firstLine.length < 60 ? firstLine : firstLine.slice(0, 57) + '…';
+      const archBody  = archetypeText.slice(firstLine.length).trim();
+
+      // Populate off-screen host
+      document.getElementById('st-arch-emoji').innerHTML = ICONS['🎭'].replace('url(#ig)', '#1DB954').replace('url(#ig)', '#a78bfa') + '';
+      document.getElementById('st-arch-emoji').style.cssText = 'width:56px;height:56px;margin-bottom:16px;';
+
+      document.getElementById('st-arch-name').textContent  = archName;
+      document.getElementById('st-arch-body').textContent  = archBody;
+      document.getElementById('st-quote').textContent      = quoteText;
+
+      // Wait a tick for fonts/layout
+      await new Promise(r => setTimeout(r, 120));
+
+      const host = document.getElementById('story-canvas-host');
+      const canvas = await html2canvas(host, {
+        width: 540, height: 960,
+        scale: 2,
+        backgroundColor: '#0a0a0f',
+        useCORS: true,
+        logging: false,
+      });
+
+      // Download as PNG
+      const link = document.createElement('a');
+      link.download = 'Dr-Lyra-Story.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+
+    } catch (e) {
+      alert('Could not generate story image: ' + e.message);
+    }
+
+    btn.innerHTML = '◈ Share Story';
+    btn.disabled = false;
+  });
+
+  // New profile
+  document.getElementById('btn-new').addEventListener('click', () => {
+    files = [];
+    renderThumbnails();
+    btnGenerate.disabled = true;
+    sectionsContainer.innerHTML = '';
+    report.style.display = 'none';
+    uploadSection.style.display = 'block';
+    btnGenerate.style.display = 'block';
+    showError('');
+  });
+</script>
+</body>
+</html>

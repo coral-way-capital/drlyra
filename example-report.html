@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Lyra — The Luminous Nomad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles/reports.css" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/app" class="nav-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Back to App
+  </a>
+  <span class="nav-brand"><img src="/images/drlyra-icon.svg" alt="" aria-hidden="true" />Dr. Lyra</span>
+  <a href="/app" class="nav-cta">Generate Yours →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="badge-dot"></span>Example Report · Real Listening Data</div>
+    <div class="hero-archetype">The Luminous Nomad</div>
+    <p class="hero-sub">Decoded across 5 weeks of real listening data</p>
+    <div class="hero-stats">
+      <div class="stat-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        Top Artist: Khruangbin
+      </div>
+      <div class="stat-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/></svg>
+        Top Song: Love Yourself
+      </div>
+      <div class="stat-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        5 weeks of data
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION NAV -->
+<nav class="section-nav" id="section-nav">
+  <div class="section-nav-inner">
+    <a class="sec-pill" href="#s01">01 Archetype</a>
+    <a class="sec-pill" href="#s02">02 Emotions</a>
+    <a class="sec-pill" href="#s03">03 Shadow</a>
+    <a class="sec-pill" href="#s04">04 Cognitive</a>
+    <a class="sec-pill" href="#s05">05 Desire</a>
+    <a class="sec-pill" href="#s06">06 Waves</a>
+    <a class="sec-pill" href="#s07">07 Blind Spots</a>
+    <a class="sec-pill" href="#s08">08 Soulmate</a>
+    <a class="sec-pill" href="#s09">09 Quote</a>
+  </div>
+</nav>
+
+<div class="report">
+
+  <!-- ══════════════════════ SECTION 01 ══════════════════════ -->
+  <div class="sec" id="s01">
+    <div class="sec-header">
+      <div class="sec-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M36 38v-3a7 7 0 0 0-7-7H15a7 7 0 0 0-7 7v3"/>
+          <circle cx="22" cy="14" r="7"/>
+        </svg>
+      </div>
+      <div class="sec-titles">
+        <div class="sec-label gt">01 · Your Core Personality Archetype</div>
+        <div class="sec-title">The Luminous Nomad</div>
+      </div>
+    </div>
+
+    <!-- Animated constellation -->
+    <div class="viz">
+      <svg class="viz-constellation" viewBox="0 0 700 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Stars -->
+        <circle class="constellation-star" cx="80"  cy="55" r="2.5" fill="#1DB954"/>
+        <circle class="constellation-star" cx="190" cy="28" r="2.5" fill="#1DB954"/>
+        <circle class="constellation-star" cx="300" cy="70" r="3"   fill="#8B5CF6"/>
+        <circle class="constellation-star" cx="420" cy="20" r="2.5" fill="#1DB954"/>
+        <circle class="constellation-star" cx="520" cy="60" r="3"   fill="#8B5CF6"/>
+        <circle class="constellation-star" cx="630" cy="35" r="2.5" fill="#a78bfa"/>
+        <!-- Connecting lines -->
+        <line class="constellation-line" x1="80" y1="55" x2="190" y2="28" stroke="url(#cg)" stroke-width="1" opacity="0.4"/>
+        <line class="constellation-line" x1="190" y1="28" x2="300" y2="70" stroke="url(#cg)" stroke-width="1" opacity="0.4"/>
+        <line class="constellation-line" x1="300" y1="70" x2="420" y2="20" stroke="url(#cg)" stroke-width="1" opacity="0.4"/>
+        <line class="constellation-line" x1="420" y1="20" x2="520" y2="60" stroke="url(#cg)" stroke-width="1" opacity="0.4"/>
+        <line class="constellation-line" x1="520" y1="60" x2="630" y2="35" stroke="url(#cg)" stroke-width="1" opacity="0.4"/>
+        <!-- Labels -->
+        <text x="65" y="75" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.3)" text-anchor="middle">Khruangbin</text>
+        <text x="190" y="18" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.3)" text-anchor="middle">Alleh</text>
+        <text x="300" y="88" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.3)" text-anchor="middle">Liesbet Leroy</text>
+        <text x="420" y="12" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.3)" text-anchor="middle">Sigur Rós</text>
+        <text x="520" y="78" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.3)" text-anchor="middle">Leon Bridges</text>
+        <text x="630" y="26" font-family="Inter" font-size="9" fill="rgba(255,255,255,0.3)" text-anchor="middle">Bad Bunny</text>
+        <defs>
+          <linearGradient id="cg" x1="0" y1="0" x2="700" y2="0">
+            <stop stop-color="#1DB954"/>
+            <stop offset="1" stop-color="#8B5CF6"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-item">
+        <span class="stat-num">3/4</span>
+        <span class="stat-label">weeks anchored by Khruangbin</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">4</span>
+        <span class="stat-label">day Alleh streak</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">×5</span>
+        <span class="stat-label">plays of capaz</span>
+      </div>
+    </div>
+
+    <div class="sec-body">
+      <p class="lede">You are not someone who listens to music. You <em>inhabit</em> it. Your data across these five weeks tells the story of a person in a perpetual state of beautiful becoming — always shedding one skin, always growing a new one, never quite at rest but never truly lost either.</p>
+      <p>The through-line is striking: <strong>Khruangbin appears in three out of four weekly charts.</strong> That's not casual listening — that's a psychological anchor. Khruangbin is what therapists would call a <em>regulatory object</em> — music that holds your nervous system together while the rest of your world moves. Borderless, genre-fluid, warm but slightly untouchable. That's you. That's your brand of presence.</p>
+      <div class="callout">When you find something that speaks your language, you go <strong>all the way in</strong>. A four-day streak. Five plays of <em>capaz</em>. This is not passive enjoyment — this is someone using music the way others use prayer.</div>
+      <p>Your archetype: <span class="hl">The Luminous Nomad</span> — deeply feeling, aesthetically sophisticated, spiritually curious, perpetually in motion. You carry your world inside you, and music is how you unpack it at the end of each day.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 02 ══════════════════════ -->
+  <div class="sec" id="s02">
+    <div class="sec-header">
+      <div class="sec-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M36.2 8.4a11 11 0 0 0-15.6 0L22 9.8l-1.4-1.4A11 11 0 0 0 5 23.9l1.4 1.4L22 41l15.6-15.6 1.4-1.4a11 11 0 0 0 0-15.6z"/>
+        </svg>
+      </div>
+      <div class="sec-titles">
+        <div class="sec-label gt">02 · Your Emotional Landscape</div>
+        <div class="sec-title">Panoramic Widescreen</div>
+      </div>
+    </div>
+
+    <p class="sec-tagline">"You feel in panoramic widescreen, not in snapshots."</p>
+
+    <!-- EQ Bars -->
+    <div class="viz">
+      <div style="font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Your Listening Frequencies</div>
+      <div class="eq-bars">
+        <div class="eq-bar" style="--h:45%"></div>
+        <div class="eq-bar" style="--h:80%"></div>
+        <div class="eq-bar" style="--h:55%"></div>
+        <div class="eq-bar" style="--h:95%"></div>
+        <div class="eq-bar" style="--h:65%"></div>
+        <div class="eq-bar" style="--h:40%"></div>
+        <div class="eq-bar" style="--h:88%"></div>
+        <div class="eq-bar" style="--h:60%"></div>
+        <div class="eq-bar" style="--h:72%"></div>
+        <div class="eq-bar" style="--h:38%"></div>
+        <div class="eq-bar" style="--h:68%"></div>
+        <div class="eq-bar" style="--h:50%"></div>
+        <div class="eq-bar" style="--h:83%"></div>
+        <div class="eq-bar" style="--h:28%"></div>
+        <div class="eq-bar" style="--h:92%"></div>
+        <div class="eq-bar" style="--h:48%"></div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-item">
+        <span class="stat-num">8 hrs</span>
+        <span class="stat-label">Buddha Meditation, opening week</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">4</span>
+        <span class="stat-label">days deep in Alleh's eros</span>
+      </div>
+    </div>
+
+    <div class="sec-body">
+      <p class="lede">Your Mar 2–8 data opens with <strong>8 solid hours of Buddha Meditation</strong>. That's not wellness content — that's a woman processing something big through sound. You weren't relaxing. You were <em>reconstructing</em>.</p>
+      <p>But then the very next week you're deep in <em>Alleh's eros</em> album on a four-day streak — raw, Latin, intimate, emotionally exposed. The pivot from meditative stillness to passionate Spanish-language vulnerability is not random. It's the classic pattern of someone who alternates between <strong>integration</strong> (going inward, getting quiet) and <strong>expression</strong> (reaching outward, feeling everything).</p>
+      <p><em>Liesbet Leroy</em> as your #1 artist in early March tells me something else entirely: you have a private, poetic inner life that most people around you probably don't fully see. <em>Sigur Rós</em> appearing Mar 23–29 confirms it — you occasionally need music with no words at all, because language fails you. When you're at your most emotionally saturated, you reach for the inexpressible.</p>
+      <div class="callout">Vast. Layered. Self-aware. Deeply private.<br><strong>You feel more than you say.</strong></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 03 ══════════════════════ -->
+  <div class="sec" id="s03">
+    <div class="sec-header">
+      <div class="sec-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M37 22.8A15 15 0 1 1 21.2 7 11 11 0 0 0 37 22.8z"/>
+        </svg>
+      </div>
+      <div class="sec-titles">
+        <div class="sec-label gt">03 · Your Shadow Self</div>
+        <div class="sec-title">The Curated vs. The Careless</div>
+      </div>
+    </div>
+
+    <p class="sec-tagline">"The contradiction between capaz and Love Yourself is not an accident."</p>
+
+    <!-- Orbiting dual circles -->
+    <div class="viz">
+      <svg class="viz-orbit" viewBox="0 0 700 100" fill="none">
+        <circle class="orbit-circle-a" cx="330" cy="50" r="40" fill="rgba(29,185,84,0.06)" stroke="rgba(29,185,84,0.25)" stroke-width="1.5"/>
+        <text class="orbit-circle-a" x="330" y="46" font-family="DM Sans" font-size="10" fill="rgba(255,255,255,0.35)" text-anchor="middle">Sigur Rós</text>
+        <text class="orbit-circle-a" x="330" y="58" font-family="DM Sans" font-size="10" fill="rgba(255,255,255,0.35)" text-anchor="middle">Khruangbin</text>
+        <circle class="orbit-circle-b" cx="390" cy="50" r="40" fill="rgba(139,92,246,0.06)" stroke="rgba(139,92,246,0.25)" stroke-width="1.5"/>
+        <text class="orbit-circle-b" x="390" y="46" font-family="DM Sans" font-size="10" fill="rgba(255,255,255,0.35)" text-anchor="middle">Bieber</text>
+        <text class="orbit-circle-b" x="390" y="58" font-family="DM Sans" font-size="10" fill="rgba(255,255,255,0.35)" text-anchor="middle">Bad Bunny</text>
+      </svg>
+    </div>
+
+    <div class="sec-body">
+      <p class="lede">For weeks, your charts are all introspection — meditation, <em>Sigur Rós</em>, <em>Khruangbin</em>, atmospheric and artsy and worldly. And then suddenly, final week: <strong>Justin Bieber at #1.</strong> <em>Love Yourself</em> as your top song. Bieber. Bad Bunny. Omar Courtz.</p>
+      <div class="callout">Do not be embarrassed.<br><strong>Be curious.</strong></div>
+      <p>Your shadow self — the part of you living underneath the carefully curated aesthetic — wants to be a little careless. Wants the bop. Wants the uncomplicated pop emotion. Wants to sing something in the car without analyzing its time signature. <em>Love Yourself</em> is not a complex song. It is cathartic and slightly petty and enormously satisfying. You needed that.</p>
+      <p>What this reveals: you hold yourself to a <strong>high aesthetic and intellectual standard</strong> that can become its own kind of cage. Your shadow is asking for permission to be ordinary, playful, a little messy. It deserves that permission.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 04 ══════════════════════ -->
+  <div class="sec" id="s04">
+    <div class="sec-header">
+      <div class="sec-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="13" y1="40" x2="19" y2="40"/>
+          <line x1="22" y1="36" x2="22" y2="40"/>
+          <path d="M22 4a12 12 0 0 1 8 19.5V30H14v-6.5A12 12 0 0 1 22 4z"/>
+        </svg>
+      </div>
+      <div class="sec-titles">
+        <div class="sec-label gt">04 · Your Cognitive Style</div>
+        <div class="sec-title">Sequential Immersive Thinker</div>
+      </div>
+    </div>
+
+    <p class="sec-tagline">"You think in arcs, not in moments."</p>
+
+    <!-- Week-by-week bar chart -->
+    <div class="viz">
+      <div class="viz-weeks">
+        <div class="weeks-inner">
+          <div class="week-col">
+            <div class="week-label">Mar 2–8</div>
+            <div class="week-bar-wrap">
+              <div class="week-bar b-meditation" style="height:80%" data-delay="0.1s"></div>
+              <div class="week-bar b-folk" style="height:35%" data-delay="0.15s"></div>
+            </div>
+            <div class="week-artist">Buddha Meditation<br/>Liesbet Leroy</div>
+          </div>
+          <div class="week-col">
+            <div class="week-label">Mar 9–15</div>
+            <div class="week-bar-wrap">
+              <div class="week-bar b-latin" style="height:90%" data-delay="0.2s"></div>
+              <div class="week-bar b-folk" style="height:40%" data-delay="0.25s"></div>
+            </div>
+            <div class="week-artist">Alleh / eros<br/>Yorghaki</div>
+          </div>
+          <div class="week-col">
+            <div class="week-label">Mar 16–22</div>
+            <div class="week-bar-wrap">
+              <div class="week-bar b-latin" style="height:70%" data-delay="0.3s"></div>
+              <div class="week-bar b-pop" style="height:50%" data-delay="0.35s"></div>
+            </div>
+            <div class="week-artist">capaz (×5)<br/>Bad Bunny</div>
+          </div>
+          <div class="week-col">
+            <div class="week-label">Mar 23–29</div>
+            <div class="week-bar-wrap">
+              <div class="week-bar b-ambient" style="height:85%" data-delay="0.4s"></div>
+              <div class="week-bar b-folk" style="height:60%" data-delay="0.45s"></div>
+            </div>
+            <div class="week-artist">Sigur Rós<br/>Khruangbin</div>
+          </div>
+          <div class="week-col">
+            <div class="week-label">Mar 30–Apr 2</div>
+            <div class="week-bar-wrap">
+              <div class="week-bar b-pop" style="height:75%" data-delay="0.5s"></div>
+              <div class="week-bar b-folk" style="height:55%" data-delay="0.55s"></div>
+            </div>
+            <div class="week-artist">Bieber<br/>Leon Bridges</div>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>Meditative</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Folk / Indie</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f472b6"></div>Latin</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>Ambient</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>Pop</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-item">
+        <span class="stat-num">47%</span>
+        <span class="stat-label">of one week from a single playlist</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">5</span>
+        <span class="stat-label">distinct genres across 5 weeks</span>
+      </div>
+    </div>
+
+    <div class="sec-body">
+      <p class="lede">Notice what your data does <em>not</em> show: random scatter. Every week has a gravitational center. You are a <span class="hl">sequential immersive thinker</span> — you don't multitask emotionally.</p>
+      <div class="callout">When you're in something, you're <strong>fully in it</strong>. Four-day streak on <em>eros</em>. <strong>47%</strong> of a week's listening absorbed by one playlist. These are the behaviors of someone with a rich inner monologue who follows threads all the way to the end.</div>
+      <p><em>Khruangbin</em> as your permanent north star tells me your cognitive baseline is integrative — you're comfortable with ambiguity, you appreciate things that resist easy categorization, and you get bored by anything too obvious. You likely make decisions the way you make playlists: with intention, with feeling, and after sitting with it long enough to be sure.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 05 ══════════════════════ -->
+  <div class="sec" id="s05">
+    <div class="sec-header">
+      <div class="sec-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="22" cy="22" r="18"/>
+          <polygon points="28 17 25 25 17 28 20 20"/>
+        </svg>
+      </div>
+      <div class="sec-titles">
+        <div class="sec-label gt">05 · Your Desire Profile</div>
+        <div class="sec-title">Intimacy Without Losing Yourself</div>
+      </div>
+    </div>
+
+    <p class="sec-tagline">"You are craving intimacy that doesn't cost you your freedom."</p>
+
+    <!-- Concentric rings animation -->
+    <div class="viz">
+      <div class="viz-rings">
+        <div class="rings-wrap">
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="rings-center"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desire keywords -->
+    <div class="desire-words">
+      <span class="desire-word">Depth</span>
+      <span class="desire-word">Belonging</span>
+      <span class="desire-word">Sovereignty</span>
+      <span class="desire-word">Beauty</span>
+      <span class="desire-word">Connection</span>
+      <span class="desire-word">Freedom</span>
+      <span class="desire-word">Wholeness</span>
+    </div>
+
+    <div class="sec-body" style="margin-top:24px">
+      <p class="lede">Let's read your song titles like a poem. Not background music — a manifesto.</p>
+      <div class="song-poem">
+        <span>Desert Calm.</span> Inner Peace. <span>Me Lo Merezco.</span><br>
+        capaz. <span>Love Yourself.</span> EN TU...<br>
+        <span>DEVOTION.</span> DAISIES.
+      </div>
+      <p><em>Me Lo Merezco</em> — "I deserve it." That's an affirmation you needed to hear on repeat. Something in mid-March had you <strong>claiming your worth</strong>. <em>Love Yourself</em> closing out the month — paired with DEVOTION and DAISIES — speaks to someone navigating the beautiful tension between self-sovereignty and deep longing for connection.</p>
+      <div class="callout"><strong>Depth without suffocation. Intimacy without losing yourself.</strong> And probably a space — physical, emotional, creative — that finally feels like yours.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 06 ══════════════════════ -->
+  <div class="sec" id="s06">
+    <div class="sec-header">
+      <div class="sec-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M2 20c3-6 5-6 8 0s5 6 8 0 5-6 8 0 5 6 8 0"/>
+          <path d="M2 30c3-6 5-6 8 0s5 6 8 0 5-6 8 0 5 6 8 0"/>
+        </svg>
+      </div>
+      <div class="sec-titles">
+        <div class="sec-label gt">06 · Your Year in Emotional Waves</div>
+        <div class="sec-title">A Memoir in Five Movements</div>
+      </div>
+    </div>
+
+    <div class="movements">
+      <div class="movement" id="mv1">
+        <div class="movement-dot">I</div>
+        <div class="movement-content">
+          <div class="movement-label gt">The Reconstruction · Mar 2–8</div>
+          <div class="movement-text">You began March in the quiet. Eight hours of Buddha Meditation wasn't peace — it was the aftermath of something. Liesbet Leroy, Desert Calm, Inner Peace. You were rebuilding yourself from the inside out, very carefully, with both hands.</div>
+        </div>
+      </div>
+      <div class="movement" id="mv2">
+        <div class="movement-dot">II</div>
+        <div class="movement-content">
+          <div class="movement-label gt">The Discovery · Mar 9–15</div>
+          <div class="movement-text">Then <em>eros</em> arrived and cracked you open. Alleh and Yorghaki handed you something in Spanish that said everything you'd been feeling but couldn't quite name. A four-day streak. Me Lo Merezco at the top. Something shifted. You remembered you were alive.</div>
+        </div>
+      </div>
+      <div class="movement" id="mv3">
+        <div class="movement-dot">III</div>
+        <div class="movement-content">
+          <div class="movement-label gt">The Surrender · Mar 16–22</div>
+          <div class="movement-text">You leaned in fully. <em>capaz</em> (merengueton) — five plays. Bad Bunny. Justin Bieber. You stopped being careful. You let the music move your hips before your head could intervene. This was joy, a little wild, a little defiant.</div>
+        </div>
+      </div>
+      <div class="movement" id="mv4">
+        <div class="movement-dot">IV</div>
+        <div class="movement-content">
+          <div class="movement-label gt">The Integration · Mar 23–29</div>
+          <div class="movement-text">The philosopher returned. Sigur Rós. Khruangbin. <em>el ingeniero. la radio. la culpa.</em> Your Chill playlist absorbing 47% of your listening — you processing everything that happened in Movements I through III. Turning feeling into understanding.</div>
+        </div>
+      </div>
+      <div class="movement" id="mv5">
+        <div class="movement-dot">V</div>
+        <div class="movement-content">
+          <div class="movement-label gt">The Opening · Mar 30–Apr 2</div>
+          <div class="movement-text">And then, something softer. Justin Bieber holding a baby on the album art. Love Yourself. DEVOTION. DAISIES. Leon Bridges. You arrived somewhere warmer. More human. More open. Whatever you were reconstructing in March — you built something worth living in.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 07 ══════════════════════ -->
+  <div class="sec" id="s07">
+    <div class="sec-header">
+      <div class="sec-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="22" cy="22" r="18"/>
+          <circle cx="22" cy="22" r="11"/>
+          <circle cx="22" cy="22" r="4"/>
+        </svg>
+      </div>
+      <div class="sec-titles">
+        <div class="sec-label gt">07 · Your Blind Spots & Growth Edge</div>
+        <div class="sec-title">Exquisitely Felt, Rarely Witnessed</div>
+      </div>
+    </div>
+
+    <p class="sec-tagline">"You are exquisitely good at feeling. You are less practiced at being witnessed."</p>
+
+    <!-- Radar chart -->
+    <div class="viz">
+      <svg class="viz-radar" viewBox="0 0 400 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Grid circles -->
+        <circle cx="200" cy="100" r="80" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <circle cx="200" cy="100" r="55" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <circle cx="200" cy="100" r="30" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <!-- Axes -->
+        <line x1="200" y1="20"  x2="200" y2="180" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="120" y1="100" x2="280" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="143" y1="43"  x2="257" y2="157" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <line x1="257" y1="43"  x2="143" y2="157" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        <!-- Data polygon -->
+        <polygon class="radar-polygon"
+          points="200,32 268,72 260,152 200,168 140,152 132,72"
+          fill="url(#rg)" fill-opacity="0.12"
+          stroke="url(#rg2)" stroke-width="1.5"/>
+        <!-- Labels -->
+        <text x="200" y="14" text-anchor="middle" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Introspection</text>
+        <text x="290" y="68" text-anchor="start"  font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Depth</text>
+        <text x="270" y="168" text-anchor="start" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Expression</text>
+        <text x="200" y="182" text-anchor="middle" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Openness</text>
+        <text x="130" y="168" text-anchor="end"   font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Vulnerability</text>
+        <text x="110" y="68"  text-anchor="end"   font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Sharing</text>
+        <defs>
+          <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/>
+          </linearGradient>
+          <linearGradient id="rg2" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="sec-body">
+      <p class="lede"><strong>Blind Spot #1 —</strong> You use music to process privately what might benefit from being shared. Eight hours of meditation music, <em>Sigur Rós</em>, atmospheric <em>Khruangbin</em> — these are all solitary sonic experiences. You may be doing tremendous emotional work entirely alone.</p>
+      <p><strong>Blind Spot #2 —</strong> Your taste is so refined it can become a wall. If someone can't pass the aesthetic litmus test, you may write them off before you've let them surprise you.</p>
+      <p><strong>Blind Spot #3 —</strong> <em>Me Lo Merezco</em> appeared and then you moved on.</p>
+      <div class="callout">But the question it raised — <strong>do you fully believe you deserve what you want?</strong> — deserves more than one week's airtime.</div>
+    </div>
+
+    <div class="rec-grid">
+      <div class="rec-block">
+        <div class="rec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        </div>
+        <div>
+          <div class="rec-artist">Omar Apollo <span>Start with Evergreen</span></div>
+          <div class="rec-body">You brushed against his orbit via Omar Courtz. Apollo is the artist who will meet your sophistication and then emotionally wreck you in the best way.</div>
+        </div>
+      </div>
+      <div class="rec-block">
+        <div class="rec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3v5z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3v5z"/></svg>
+        </div>
+        <div>
+          <div class="rec-artist">Arooj Aftab <span>Pakistani jazz-classical-ambient</span></div>
+          <div class="rec-body">Your Buddha Meditation and Sigur Rós side needs this. It will give your spiritual seeking a new language entirely.</div>
+        </div>
+      </div>
+      <div class="rec-block">
+        <div class="rec-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
+        </div>
+        <div>
+          <div class="rec-artist">Chet Baker <span>Old, imperfect, heartbreaking</span></div>
+          <div class="rec-body">For the nights when you don't want to feel managed by your own playlist. Let it be messy.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 08 ══════════════════════ -->
+  <div class="sec" id="s08">
+    <div class="sec-header">
+      <div class="sec-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M30 38v-3a7 7 0 0 0-7-7H9a7 7 0 0 0-7 7v3"/>
+          <circle cx="16" cy="14" r="7"/>
+          <path d="M42 38v-3a7 7 0 0 0-5-6.8"/>
+          <path d="M29 7.2a7 7 0 0 1 0 13.6"/>
+        </svg>
+      </div>
+      <div class="sec-titles">
+        <div class="sec-label gt">08 · Your Musical Soulmate Profile</div>
+        <div class="sec-title">Meditation Cushion + Merengueton</div>
+      </div>
+    </div>
+
+    <!-- Interlocking rings -->
+    <div class="viz">
+      <svg class="viz-rings2" viewBox="0 0 700 90" fill="none">
+        <circle class="ring2-a" cx="320" cy="45" r="38" fill="rgba(29,185,84,0.05)" stroke="rgba(29,185,84,0.3)" stroke-width="1.5"/>
+        <text class="ring2-a" x="305" y="40" font-family="DM Sans" font-size="9.5" fill="rgba(255,255,255,0.35)" text-anchor="middle">Your Soulmate</text>
+        <text class="ring2-a" x="305" y="52" font-family="DM Sans" font-size="8" fill="rgba(255,255,255,0.25)" text-anchor="middle">Playlists = love letters</text>
+        <circle class="ring2-b" cx="390" cy="45" r="38" fill="rgba(139,92,246,0.05)" stroke="rgba(139,92,246,0.3)" stroke-width="1.5"/>
+        <text class="ring2-b" x="405" y="40" font-family="DM Sans" font-size="9.5" fill="rgba(255,255,255,0.35)" text-anchor="middle">Your Nemesis</text>
+        <text class="ring2-b" x="405" y="52" font-family="DM Sans" font-size="8" fill="rgba(255,255,255,0.25)" text-anchor="middle">"I just put it on shuffle"</text>
+      </svg>
+    </div>
+
+    <div class="sec-body">
+      <p class="lede"><strong>Your Musical Soulmate</strong> owns both a meditation cushion and a merengueton playlist. They can sit in silence with <em>Sigur Rós</em> and then — without any transition — start dancing to something ridiculous in the kitchen at midnight. They have at least one artist they're embarrassed about. They use music not as wallpaper but as <em>weather</em>.</p>
+      <div class="callout">When they put a song on for you, it will feel like being seen.<br><strong>You will know them within two songs.</strong></div>
+      <p><strong>Your Musical Nemesis</strong> owns a Bluetooth speaker and uses it exclusively for algorithmically generated 'chill vibes' playlists while loudly telling you they 'just like everything.' They have never finished a full album. They skip the quiet parts. They will not understand why you are crying during a <em>Sigur Rós</em> bridge, and they will ask you to explain it, which will make it worse. You will try to convert them. You will not succeed. You will part as friends who were never really friends.</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ SECTION 09 ══════════════════════ -->
+  <div class="sec sec-quote" id="s09" style="overflow:visible;">
+    <!-- Floating notes -->
+    <span class="note" aria-hidden="true">♪</span>
+    <span class="note" aria-hidden="true">♫</span>
+    <span class="note" aria-hidden="true">♩</span>
+    <span class="note" aria-hidden="true">♬</span>
+
+    <div class="sec-label gt" style="display:block;margin-bottom:20px;">09 · Your Signature Quote</div>
+    <span class="quote-mark">"</span>
+    <div class="quote-text quote-shimmer">
+      She was not looking for calm. She was looking for the kind of music that confirmed she was already whole — and some weeks, she even believed it.
+    </div>
+    <div class="quote-attr">
+      — Dr. Lyra
+      <span>Music Intelligence Division · "The playlist doesn't lie. Neither do I."</span>
+    </div>
+  </div>
+
+</div><!-- /report -->
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <div class="bottom-cta-glow"></div>
+  <div class="bottom-cta-inner">
+    <h2>This could be your profile.</h2>
+    <p>Upload your Spotify screenshots and Dr. Lyra will write yours in about 30 seconds.</p>
+    <a href="/app" class="btn-cta">
+      Generate My Profile
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <div class="btn-fine">Free · No account needed · Results in ~30 seconds</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-brand gt">Dr. Lyra</span>
+  <span class="footer-copy">Dr. Lyra © 2026 · Powered by Claude AI · Not affiliated with Spotify</span>
+</footer>
+
+<script>
+  // ── Scroll reveal for section cards ──
+  const secs = document.querySelectorAll('.sec');
+  const secObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  secs.forEach(s => secObs.observe(s));
+
+  // ── Movement timeline stagger ──
+  const movements = document.querySelectorAll('.movement');
+  const movObs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        const idx = [...movements].indexOf(e.target);
+        setTimeout(() => e.target.classList.add('visible'), idx * 140);
+      }
+    });
+  }, { threshold: 0.2 });
+  movements.forEach(m => movObs.observe(m));
+
+  // ── Week bars stagger ──
+  document.querySelectorAll('.week-bar').forEach((bar, i) => {
+    bar.style.transitionDelay = (0.08 + i * 0.06) + 's';
+  });
+
+  // ── Active section pill ──
+  const pills = document.querySelectorAll('.sec-pill');
+  const pillMap = {};
+  pills.forEach(p => {
+    const id = p.getAttribute('href').replace('#', '');
+    pillMap[id] = p;
+  });
+
+  const pillObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      const pill = pillMap[e.target.id];
+      if (!pill) return;
+      if (e.isIntersecting) {
+        pills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        pill.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.sec[id]').forEach(s => pillObs.observe(s));
+
+  // Smooth scroll offset for sticky navs
+  document.querySelectorAll('.sec-pill').forEach(pill => {
+    pill.addEventListener('click', e => {
+      e.preventDefault();
+      const id = pill.getAttribute('href').replace('#', '');
+      const target = document.getElementById(id);
+      if (target) {
+        const offset = 53 + 45;
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+# Environment — never commit API keys
+.env
+.env.*
+
+# Dependencies
+node_modules/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*

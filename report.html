@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Lyra — Your Psychological Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="stylesheet" href="/styles/reports.css" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/app" class="nav-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    New Profile
+  </a>
+  <span class="nav-brand gt">Dr. Lyra</span>
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-outline" id="btn-share">Share Story</button>
+    <button class="nav-btn nav-btn-primary" id="btn-download">Download PDF</button>
+  </div>
+</nav>
+
+<!-- SECTION NAV (populated by JS) -->
+<nav class="section-nav" id="section-nav">
+  <div class="section-nav-inner" id="section-nav-inner"></div>
+</nav>
+
+<!-- HERO (populated by JS) -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-inner" id="hero-inner">
+    <div class="empty-state">
+      <h2>No report found</h2>
+      <p>Generate your profile first, then come back here to see the beautiful version.</p>
+      <a href="/app" style="display:inline-flex;align-items:center;gap:8px;padding:14px 30px;background:linear-gradient(135deg,var(--green),var(--purple));color:#fff;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;border-radius:100px;text-decoration:none;">
+        Generate My Profile →
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT COVER (only visible when printing/saving PDF) -->
+<div class="print-cover" id="print-cover">
+  <div class="print-cover-label">Your Psychological Profile · Dr. Lyra</div>
+  <div class="print-cover-title" id="print-cover-title">—</div>
+  <div class="print-cover-rule"></div>
+  <div class="print-cover-sub">Decoded by Dr. Lyra · Music Intelligence Division</div>
+  <div class="print-cover-footer">drlyra.app · Powered by Claude AI</div>
+</div>
+
+<!-- REPORT SECTIONS (populated by JS) -->
+<div class="report" id="report-body"></div>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <div class="bottom-cta-glow"></div>
+  <div class="bottom-cta-inner">
+    <h2>Share your reading.</h2>
+    <p>Download your PDF to keep it or generate a story image to share.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button onclick="document.getElementById('btn-download').click()" class="btn-cta" style="font-size:15px;padding:14px 28px;">
+        Download PDF
+      </button>
+      <button onclick="document.getElementById('btn-share').click()" class="btn-cta" style="font-size:15px;padding:14px 28px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);">
+        Share Story
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-brand gt">Dr. Lyra</span>
+  <span class="footer-copy">Dr. Lyra © 2026 · Powered by Claude AI · Not affiliated with Spotify</span>
+</footer>
+
+<!-- STORY CANVAS (off-screen) -->
+<div id="story-canvas-host" aria-hidden="true">
+  <div class="sc-bg"></div>
+  <div class="sc-glow-top"></div>
+  <div class="sc-glow-bot"></div>
+  <div class="sc-inner">
+    <div class="sc-header">
+      <div class="sc-brand-row">
+        <img src="/images/drlyra-icon.svg" class="sc-logo" alt="Dr. Lyra" />
+        <span class="sc-brand-name">Dr. Lyra</span>
+      </div>
+    </div>
+    <div class="sc-main">
+      <div class="sc-label">Your Psychological Archetype</div>
+      <div class="sc-archetype-name" id="sc-arch-name">—</div>
+      <div class="sc-rule"></div>
+      <span class="sc-quote-mark">"</span>
+      <div class="sc-quote-text" id="sc-quote-text"></div>
+    </div>
+    <div class="sc-footer-row">
+      <span class="sc-url">drlyra.app</span>
+      <span class="sc-tag">Spotify × Psychology</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─────────────────────────────────────────
+  //  SECTION DEFINITIONS
+  // ─────────────────────────────────────────
+  const SECTIONS = [
+    { key:'🎭', marker:'YOUR CORE PERSONALITY ARCHETYPE', label:'01 · Your Core Personality Archetype', short:'01 Archetype', id:'s01' },
+    { key:'🧠', marker:'YOUR EMOTIONAL LANDSCAPE',        label:'02 · Your Emotional Landscape',        short:'02 Emotions',  id:'s02' },
+    { key:'🌙', marker:'YOUR SHADOW SELF',                label:'03 · Your Shadow Self',                short:'03 Shadow',    id:'s03' },
+    { key:'💡', marker:'YOUR COGNITIVE STYLE',            label:'04 · Your Cognitive Style',            short:'04 Cognitive', id:'s04' },
+    { key:'🔥', marker:'YOUR DESIRE PROFILE',             label:'05 · Your Desire Profile',             short:'05 Desire',    id:'s05' },
+    { key:'🌊', marker:'YOUR YEAR IN EMOTIONAL WAVES',    label:'06 · Your Year in Emotional Waves',    short:'06 Waves',     id:'s06' },
+    { key:'🎯', marker:'YOUR BLIND SPOTS AND GROWTH EDGE',label:'07 · Blind Spots & Growth Edge',       short:'07 Blind Spots',id:'s07'},
+    { key:'✨', marker:'YOUR MUSICAL SOULMATE PROFILE',   label:'08 · Your Musical Soulmate Profile',   short:'08 Soulmate',  id:'s08' },
+    { key:'🏷️',marker:'YOUR SIGNATURE QUOTE',            label:'09 · Your Signature Quote',            short:'09 Quote',     id:'s09' },
+  ];
+
+  const ICONS = [
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M36 38v-3a7 7 0 0 0-7-7H15a7 7 0 0 0-7 7v3"/><circle cx="22" cy="14" r="7"/></svg>`,
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M37 22.8A15 15 0 1 1 21.2 7 11 11 0 0 0 37 22.8z"/></svg>`,
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="21" x2="15" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="22" cy="22" r="18"/><polygon points="28 17 25 25 17 28 20 20"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 20c3-6 5-6 8 0s5 6 8 0 5-6 8 0 5 6 8 0"/><path d="M2 30c3-6 5-6 8 0s5 6 8 0 5-6 8 0 5 6 8 0"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="22" cy="22" r="18"/><circle cx="22" cy="22" r="11"/><circle cx="22" cy="22" r="4"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M30 38v-3a7 7 0 0 0-7-7H9a7 7 0 0 0-7 7v3"/><circle cx="16" cy="14" r="7"/><path d="M42 38v-3a7 7 0 0 0-5-6.8"/><path d="M29 7.2a7 7 0 0 1 0 13.6"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2H4c-1.25 0-2 .75-2 2v11c0 1 1 2 2 2s1 .008 1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2h-4c-1.25 0-2 .75-2 2v11c0 1 1 2 2 2s1 .008 1 1.031V20c0 1 0 1 1 1z"/></svg>`,
+  ];
+
+  // Generic viz HTML per section
+  const VIZZES = [
+    // S1: constellation
+    `<div class="viz"><svg class="viz-constellation" viewBox="0 0 700 80" fill="none">
+      <circle class="constellation-star" cx="80" cy="40" r="2.5" fill="#1DB954"/>
+      <circle class="constellation-star" cx="200" cy="18" r="2.5" fill="#1DB954"/>
+      <circle class="constellation-star" cx="330" cy="55" r="3" fill="#8B5CF6"/>
+      <circle class="constellation-star" cx="450" cy="12" r="2.5" fill="#1DB954"/>
+      <circle class="constellation-star" cx="560" cy="48" r="3" fill="#8B5CF6"/>
+      <circle class="constellation-star" cx="640" cy="28" r="2.5" fill="#a78bfa"/>
+      <line class="constellation-line" x1="80" y1="40" x2="200" y2="18" stroke="url(#cg1)" stroke-width="1" opacity="0.4"/>
+      <line class="constellation-line" x1="200" y1="18" x2="330" y2="55" stroke="url(#cg1)" stroke-width="1" opacity="0.4"/>
+      <line class="constellation-line" x1="330" y1="55" x2="450" y2="12" stroke="url(#cg1)" stroke-width="1" opacity="0.4"/>
+      <line class="constellation-line" x1="450" y1="12" x2="560" y2="48" stroke="url(#cg1)" stroke-width="1" opacity="0.4"/>
+      <line class="constellation-line" x1="560" y1="48" x2="640" y2="28" stroke="url(#cg1)" stroke-width="1" opacity="0.4"/>
+      <defs><linearGradient id="cg1" x1="0" y1="0" x2="700" y2="0"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+    </svg></div>`,
+    // S2: EQ bars
+    `<div class="viz"><div style="font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Emotional Frequency</div>
+    <div class="eq-bars">
+      <div class="eq-bar" style="--h:45%"></div><div class="eq-bar" style="--h:80%"></div>
+      <div class="eq-bar" style="--h:55%"></div><div class="eq-bar" style="--h:95%"></div>
+      <div class="eq-bar" style="--h:65%"></div><div class="eq-bar" style="--h:40%"></div>
+      <div class="eq-bar" style="--h:88%"></div><div class="eq-bar" style="--h:60%"></div>
+      <div class="eq-bar" style="--h:72%"></div><div class="eq-bar" style="--h:38%"></div>
+      <div class="eq-bar" style="--h:68%"></div><div class="eq-bar" style="--h:50%"></div>
+      <div class="eq-bar" style="--h:83%"></div><div class="eq-bar" style="--h:28%"></div>
+      <div class="eq-bar" style="--h:92%"></div><div class="eq-bar" style="--h:48%"></div>
+    </div></div>`,
+    // S3: orbiting circles
+    `<div class="viz"><svg class="viz-orbit" viewBox="0 0 700 90" fill="none">
+      <circle class="orbit-circle-a" cx="320" cy="45" r="38" fill="rgba(29,185,84,0.06)" stroke="rgba(29,185,84,0.25)" stroke-width="1.5"/>
+      <text class="orbit-circle-a" x="320" y="49" font-family="DM Sans" font-size="10" fill="rgba(255,255,255,0.3)" text-anchor="middle">The Curated</text>
+      <circle class="orbit-circle-b" cx="380" cy="45" r="38" fill="rgba(139,92,246,0.06)" stroke="rgba(139,92,246,0.25)" stroke-width="1.5"/>
+      <text class="orbit-circle-b" x="380" y="49" font-family="DM Sans" font-size="10" fill="rgba(255,255,255,0.3)" text-anchor="middle">The Shadow</text>
+    </svg></div>`,
+    // S4: simple EQ bars (different heights)
+    `<div class="viz"><div style="font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Listening Pattern</div>
+    <div class="eq-bars">
+      <div class="eq-bar" style="--h:90%"></div><div class="eq-bar" style="--h:35%"></div>
+      <div class="eq-bar" style="--h:85%"></div><div class="eq-bar" style="--h:40%"></div>
+      <div class="eq-bar" style="--h:75%"></div><div class="eq-bar" style="--h:50%"></div>
+      <div class="eq-bar" style="--h:65%"></div><div class="eq-bar" style="--h:55%"></div>
+      <div class="eq-bar" style="--h:80%"></div><div class="eq-bar" style="--h:30%"></div>
+      <div class="eq-bar" style="--h:70%"></div><div class="eq-bar" style="--h:60%"></div>
+    </div></div>`,
+    // S5: concentric rings
+    `<div class="viz"><div class="viz-rings"><div class="rings-wrap">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+      <div class="ring"></div><div class="ring"></div><div class="rings-center"></div>
+    </div></div></div>`,
+    // S6: timeline (populated below via JS with movement parsing)
+    `__MOVEMENTS__`,
+    // S7: radar chart
+    `<div class="viz"><svg class="viz-radar" viewBox="0 0 400 200" fill="none">
+      <circle cx="200" cy="100" r="80" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <circle cx="200" cy="100" r="55" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <circle cx="200" cy="100" r="30" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <line x1="200" y1="20" x2="200" y2="180" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <line x1="120" y1="100" x2="280" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <line x1="143" y1="43" x2="257" y2="157" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <line x1="257" y1="43" x2="143" y2="157" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <polygon class="radar-polygon" points="200,32 268,72 260,152 200,168 140,152 132,72"
+        fill="url(#rg)" fill-opacity="0.12" stroke="url(#rg2)" stroke-width="1.5"/>
+      <text x="200" y="14" text-anchor="middle" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Introspection</text>
+      <text x="292" y="68" text-anchor="start" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Depth</text>
+      <text x="272" y="168" text-anchor="start" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Expression</text>
+      <text x="200" y="184" text-anchor="middle" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Openness</text>
+      <text x="128" y="168" text-anchor="end" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Vulnerability</text>
+      <text x="108" y="68" text-anchor="end" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Sharing</text>
+      <defs>
+        <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient>
+        <linearGradient id="rg2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient>
+      </defs>
+    </svg></div>`,
+    // S8: interlocking rings
+    `<div class="viz"><svg class="viz-rings2" viewBox="0 0 700 90" fill="none">
+      <circle class="ring2-a" cx="320" cy="45" r="38" fill="rgba(29,185,84,0.05)" stroke="rgba(29,185,84,0.3)" stroke-width="1.5"/>
+      <text class="ring2-a" x="305" y="40" font-family="DM Sans" font-size="9.5" fill="rgba(255,255,255,0.35)" text-anchor="middle">Your Soulmate</text>
+      <text class="ring2-a" x="305" y="52" font-family="DM Sans" font-size="8" fill="rgba(255,255,255,0.2)" text-anchor="middle">playlists as love letters</text>
+      <circle class="ring2-b" cx="390" cy="45" r="38" fill="rgba(139,92,246,0.05)" stroke="rgba(139,92,246,0.3)" stroke-width="1.5"/>
+      <text class="ring2-b" x="405" y="40" font-family="DM Sans" font-size="9.5" fill="rgba(255,255,255,0.35)" text-anchor="middle">Your Nemesis</text>
+      <text class="ring2-b" x="405" y="52" font-family="DM Sans" font-size="8" fill="rgba(255,255,255,0.2)" text-anchor="middle">"I just shuffle everything"</text>
+    </svg></div>`,
+    // S9: no viz (quote section is the viz)
+    ``,
+  ];
+
+  // ─────────────────────────────────────────
+  //  PARSE HELPERS
+  // ─────────────────────────────────────────
+  function extractSection(fullText, idx) {
+    const sec = SECTIONS[idx];
+    const marker = sec.key + ' ' + sec.marker;
+    const start = fullText.indexOf(marker);
+    if (start === -1) return null;
+    let content = fullText.slice(start + marker.length).trimStart();
+    for (let i = idx + 1; i < SECTIONS.length; i++) {
+      const next = SECTIONS[i].key + ' ' + SECTIONS[i].marker;
+      const ni = content.indexOf(next);
+      if (ni !== -1) { content = content.slice(0, ni); break; }
+    }
+    return content.trim();
+  }
+
+  function extractArchetypeName(text) {
+    if (!text) return null;
+    // **The Xxx Xxx** pattern
+    const bold = text.match(/\*\*(?:The |)([\w\s]{4,40})\*\*/);
+    if (bold) return bold[1].trim().startsWith('The ') ? bold[1].trim() : 'The ' + bold[1].trim();
+    // "Your archetype: The ..." pattern
+    const arch = text.match(/[Aa]rchetype[:\s—–-]+[""]?(The [A-Z][^\n"—–\*]{3,40})/);
+    if (arch) return arch[1].trim();
+    // Any "The [Cap] [Cap]..." on its own line
+    const line = text.match(/^(The [A-Z][a-z]+(?:\s[A-Z][a-z]+)+)/m);
+    if (line) return line[1].trim();
+    return null;
+  }
+
+  function markdownToHtml(text) {
+    if (!text) return '';
+    return text
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*([^*\n]+?)\*/g, '<em>$1</em>')
+      .split(/\n{2,}/)
+      .map(p => p.trim())
+      .filter(p => p && p.length > 1)
+      .map((p, i) => {
+        const cls = i === 0 ? ' style="font-size:17.5px;color:rgba(255,255,255,0.82);line-height:1.88;"' : '';
+        return `<p${cls}>${p.replace(/\n/g, '<br>')}</p>`;
+      })
+      .join('\n');
+  }
+
+  function buildMovementsViz(text) {
+    const romans = ['I','II','III','IV','V'];
+    // Try to find movement-like headings in the text
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    const movements = [];
+    lines.forEach(line => {
+      const m = line.match(/(?:Movement\s+)?([IVX]+|[1-5])[\.:\s—–-]+(.{5,80})/);
+      if (m && movements.length < 5) {
+        movements.push({ num: romans[movements.length] || m[1], title: m[2].replace(/\*\*/g,'').trim() });
+      }
+    });
+    if (movements.length < 3) {
+      // Fallback generic
+      ['The Opening', 'The Turning', 'The Depth', 'The Shift', 'The Return'].slice(0, 5).forEach((t, i) => {
+        if (!movements[i]) movements.push({ num: romans[i], title: t });
+      });
+    }
+    const dots = movements.slice(0, 5).map((m, i) => `
+      <div class="movement" id="mv_r${i}">
+        <div class="movement-dot">${m.num}</div>
+        <div class="movement-content">
+          <div class="movement-label gt">${m.title}</div>
+        </div>
+      </div>`).join('');
+    return `<div class="viz"><div class="movements">${dots}</div></div>`;
+  }
+
+  // ─────────────────────────────────────────
+  //  MAIN RENDER
+  // ─────────────────────────────────────────
+  const rawText = sessionStorage.getItem('drlyra_report');
+
+  if (rawText) {
+    const section1Text = extractSection(rawText, 0) || '';
+    const archetypeName = extractArchetypeName(section1Text) || 'Your Profile';
+    const quoteText = extractSection(rawText, 8) || '';
+
+    // Hero
+    document.getElementById('hero-inner').innerHTML = `
+      <div class="hero-badge"><span class="badge-dot"></span>Your Psychological Profile · Dr. Lyra</div>
+      <div class="hero-archetype">${archetypeName}</div>
+      <p class="hero-sub">Your Spotify data, decoded.</p>
+      <div class="hero-stats">
+        <div class="stat-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          9 Sections Analysed
+        </div>
+        <div class="stat-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          by Dr. Lyra
+        </div>
+      </div>`;
+
+    // Section nav pills
+    const navInner = document.getElementById('section-nav-inner');
+    SECTIONS.forEach(s => {
+      const a = document.createElement('a');
+      a.className = 'sec-pill';
+      a.href = '#' + s.id;
+      a.textContent = s.short;
+      navInner.appendChild(a);
+    });
+
+    // Build section cards
+    const reportBody = document.getElementById('report-body');
+    SECTIONS.forEach((sec, idx) => {
+      const text = extractSection(rawText, idx);
+      if (!text) return;
+
+      const isQuote = idx === 8;
+      const div = document.createElement('div');
+      div.className = 'sec' + (isQuote ? ' sec-quote' : '');
+      div.id = sec.id;
+      if (isQuote) div.style.overflow = 'visible';
+
+      // Build viz for this section
+      let viz = VIZZES[idx];
+      if (idx === 5) viz = buildMovementsViz(text); // waves — parse movements
+
+      if (isQuote) {
+        // Special quote rendering
+        const cleanQuote = text.replace(/\*\*/g,'').replace(/\*/g,'').replace(/^["""]/,'').replace(/["""]$/,'').trim();
+        div.innerHTML = `
+          <span class="note" aria-hidden="true">♪</span>
+          <span class="note" aria-hidden="true">♫</span>
+          <span class="note" aria-hidden="true">♩</span>
+          <span class="note" aria-hidden="true">♬</span>
+          <div class="sec-label gt" style="display:block;margin-bottom:20px;">${sec.label}</div>
+          <span class="quote-mark">"</span>
+          <div class="quote-text">${cleanQuote}</div>
+          <div class="quote-attr">— Dr. Lyra<span>Music Intelligence Division</span></div>`;
+      } else {
+        // Normal section rendering
+        const titleLine = idx === 0 ? archetypeName : extractSectionTitle(text, sec);
+        div.innerHTML = `
+          <div class="sec-header">
+            <div class="sec-icon">${ICONS[idx]}</div>
+            <div class="sec-titles">
+              <div class="sec-label gt">${sec.label}</div>
+              <div class="sec-title">${titleLine}</div>
+            </div>
+          </div>
+          ${viz}
+          <div class="sec-body">${markdownToHtml(text)}</div>`;
+      }
+
+      reportBody.appendChild(div);
+    });
+
+    // Populate print cover
+    document.getElementById('print-cover-title').textContent = archetypeName;
+
+    // Populate story canvas
+    document.getElementById('sc-arch-name').textContent = archetypeName;
+    const cleanQ = quoteText.replace(/\*\*/g,'').replace(/\*/g,'').replace(/["""]/g,'').trim();
+    document.getElementById('sc-quote-text').textContent = cleanQ.slice(0, 200) + (cleanQ.length > 200 ? '…' : '');
+
+    // Observers + nav
+    initObservers();
+  }
+
+  function extractSectionTitle(text, sec) {
+    if (!text) return sec.marker.split(' ').map(w => w[0] + w.slice(1).toLowerCase()).join(' ');
+    // Look for a short bold phrase or first short line
+    const boldMatch = text.match(/\*\*([^*\n]{4,60})\*\*/);
+    if (boldMatch && boldMatch[1].length < 55) return boldMatch[1].trim();
+    // First line if short
+    const first = text.split('\n')[0].replace(/\*\*/g,'').trim();
+    if (first && first.length < 55 && first.length > 4) return first;
+    // Fallback: humanize marker
+    return sec.marker.split(' ').map(w => w[0] + w.slice(1).toLowerCase()).join(' ');
+  }
+
+  // ─────────────────────────────────────────
+  //  OBSERVERS + NAV
+  // ─────────────────────────────────────────
+  function initObservers() {
+    // Scroll reveal
+    const secObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.07 });
+    document.querySelectorAll('.sec').forEach(s => secObs.observe(s));
+
+    // Movement stagger
+    const movObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const all = [...document.querySelectorAll('[id^="mv_r"]')];
+          const idx = all.indexOf(e.target);
+          setTimeout(() => e.target.classList.add('visible'), idx * 140);
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('[id^="mv_r"]').forEach(m => movObs.observe(m));
+
+    // Active pill
+    const pills = document.querySelectorAll('.sec-pill');
+    const pillMap = {};
+    pills.forEach(p => { pillMap[p.getAttribute('href').replace('#','')] = p; });
+    const pillObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        const pill = pillMap[e.target.id];
+        if (!pill) return;
+        if (e.isIntersecting) {
+          pills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          pill.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+        }
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.sec[id]').forEach(s => pillObs.observe(s));
+
+    // Smooth scroll
+    document.querySelectorAll('.sec-pill').forEach(pill => {
+      pill.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.getElementById(pill.getAttribute('href').replace('#',''));
+        if (target) window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 98, behavior:'smooth' });
+      });
+    });
+  }
+
+  // ─────────────────────────────────────────
+  //  DOWNLOAD PDF (print)
+  // ─────────────────────────────────────────
+  document.getElementById('btn-download').addEventListener('click', () => {
+    window.print();
+  });
+
+  // ─────────────────────────────────────────
+  //  SHARE STORY
+  // ─────────────────────────────────────────
+  document.getElementById('btn-share').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-share');
+    btn.textContent = 'Rendering…';
+    btn.disabled = true;
+
+    try {
+      await document.fonts.ready;
+      await new Promise(r => setTimeout(r, 150));
+
+      const host = document.getElementById('story-canvas-host');
+      const canvas = await html2canvas(host, {
+        width: 540, height: 960, scale: 2,
+        backgroundColor: '#0a0a0f',
+        useCORS: true, logging: false,
+      });
+
+      const link = document.createElement('a');
+      link.download = 'Dr-Lyra-Story.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch(e) {
+      alert('Could not render story: ' + e.message);
+    }
+
+    btn.textContent = 'Share Story';
+    btn.disabled = false;
+  });
+</script>
+</body>
+</html>
