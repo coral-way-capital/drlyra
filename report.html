@@ -6,7 +6,7 @@
   <title>Dr. Lyra — Your Psychological Profile</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
   <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link rel="stylesheet" href="/styles/reports.css" />
@@ -15,11 +15,11 @@
 
 <!-- NAV -->
 <nav class="nav">
-  <a href="/app" class="nav-back">
+  <a href="/" class="nav-back">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-    New Profile
+    Home
   </a>
-  <span class="nav-brand gt">Dr. Lyra</span>
+  <a href="/" class="nav-brand gt" style="text-decoration:none;">Dr. Lyra</a>
   <div class="nav-actions">
     <button class="nav-btn nav-btn-outline" id="btn-share">Share Story</button>
     <button class="nav-btn nav-btn-primary" id="btn-download">Download PDF</button>
@@ -79,28 +79,26 @@
   <span class="footer-copy">Dr. Lyra © 2026 · Powered by Claude AI · Not affiliated with Spotify</span>
 </footer>
 
-<!-- STORY CANVAS (off-screen) -->
+<!-- STORY CANVAS (off-screen, rendered via html2canvas) -->
 <div id="story-canvas-host" aria-hidden="true">
   <div class="sc-bg"></div>
   <div class="sc-glow-top"></div>
   <div class="sc-glow-bot"></div>
   <div class="sc-inner">
-    <div class="sc-header">
-      <div class="sc-brand-row">
-        <img src="/images/drlyra-icon.svg" class="sc-logo" alt="Dr. Lyra" />
-        <span class="sc-brand-name">Dr. Lyra</span>
-      </div>
+    <div class="sc-brand-row">
+      <img src="/images/drlyra-icon.svg" class="sc-logo" alt="Dr. Lyra" />
+      <span class="sc-brand-name">Dr. Lyra</span>
     </div>
-    <div class="sc-main">
-      <div class="sc-label">Your Psychological Archetype</div>
-      <div class="sc-archetype-name" id="sc-arch-name">—</div>
-      <div class="sc-rule"></div>
-      <span class="sc-quote-mark">"</span>
+    <div class="sc-section-tag" id="sc-section-tag">Your Psychological Profile</div>
+    <div class="sc-divider"></div>
+    <div class="sc-quote-block">
+      <span class="sc-open-quote">"</span>
       <div class="sc-quote-text" id="sc-quote-text"></div>
     </div>
+    <div class="sc-attribution" id="sc-attribution"></div>
     <div class="sc-footer-row">
       <span class="sc-url">drlyra.app</span>
-      <span class="sc-tag">Spotify × Psychology</span>
+      <span class="sc-tag-pill">Spotify × Psychology</span>
     </div>
   </div>
 </div>
@@ -135,33 +133,28 @@
 
   // Generic viz HTML per section
   const VIZZES = [
-    // S1: constellation
-    `<div class="viz"><svg class="viz-constellation" viewBox="0 0 700 80" fill="none">
-      <circle class="constellation-star" cx="80" cy="40" r="2.5" fill="#1DB954"/>
-      <circle class="constellation-star" cx="200" cy="18" r="2.5" fill="#1DB954"/>
-      <circle class="constellation-star" cx="330" cy="55" r="3" fill="#8B5CF6"/>
-      <circle class="constellation-star" cx="450" cy="12" r="2.5" fill="#1DB954"/>
-      <circle class="constellation-star" cx="560" cy="48" r="3" fill="#8B5CF6"/>
-      <circle class="constellation-star" cx="640" cy="28" r="2.5" fill="#a78bfa"/>
-      <line class="constellation-line" x1="80" y1="40" x2="200" y2="18" stroke="url(#cg1)" stroke-width="1" opacity="0.4"/>
-      <line class="constellation-line" x1="200" y1="18" x2="330" y2="55" stroke="url(#cg1)" stroke-width="1" opacity="0.4"/>
-      <line class="constellation-line" x1="330" y1="55" x2="450" y2="12" stroke="url(#cg1)" stroke-width="1" opacity="0.4"/>
-      <line class="constellation-line" x1="450" y1="12" x2="560" y2="48" stroke="url(#cg1)" stroke-width="1" opacity="0.4"/>
-      <line class="constellation-line" x1="560" y1="48" x2="640" y2="28" stroke="url(#cg1)" stroke-width="1" opacity="0.4"/>
-      <defs><linearGradient id="cg1" x1="0" y1="0" x2="700" y2="0"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+    // S1: psychological DNA helix — "your personality decoded"
+    `<div class="viz"><svg class="viz-archetype" viewBox="0 0 660 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="ag1" x1="0" y1="0" x2="660" y2="0"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+      <text x="330" y="12" text-anchor="middle" font-family="DM Sans" font-size="9" font-weight="700" letter-spacing="3" fill="rgba(255,255,255,0.13)">YOUR PSYCHOLOGICAL DNA</text>
+      <path class="dna-top" d="M 20 52 C 62 18,104 18,146 52 C 188 86,230 86,272 52 C 314 18,356 18,398 52 C 440 86,482 86,524 52 C 566 18,608 18,648 52" stroke="url(#ag1)" stroke-width="2.5" stroke-linecap="round"/>
+      <path class="dna-bot" d="M 20 52 C 62 86,104 86,146 52 C 188 18,230 18,272 52 C 314 86,356 86,398 52 C 440 18,482 18,524 52 C 566 86,608 86,648 52" stroke="url(#ag1)" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
+      <line class="dna-rung" x1="83" y1="24" x2="83" y2="80" stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="4 3" style="animation-delay:0.7s"/>
+      <line class="dna-rung" x1="209" y1="24" x2="209" y2="80" stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="4 3" style="animation-delay:0.9s"/>
+      <line class="dna-rung" x1="335" y1="24" x2="335" y2="80" stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="4 3" style="animation-delay:1.1s"/>
+      <line class="dna-rung" x1="461" y1="24" x2="461" y2="80" stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="4 3" style="animation-delay:1.3s"/>
+      <line class="dna-rung" x1="587" y1="24" x2="587" y2="80" stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="4 3" style="animation-delay:1.5s"/>
+      <circle class="dna-node" cx="146" cy="52" r="4.5" fill="#1DB954" style="animation-delay:0.8s"/>
+      <circle class="dna-node" cx="272" cy="52" r="4.5" fill="#8B5CF6" style="animation-delay:1.0s"/>
+      <circle class="dna-node" cx="398" cy="52" r="4.5" fill="#1DB954" style="animation-delay:1.2s"/>
+      <circle class="dna-node" cx="524" cy="52" r="4.5" fill="#8B5CF6" style="animation-delay:1.4s"/>
     </svg></div>`,
-    // S2: EQ bars
-    `<div class="viz"><div style="font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Emotional Frequency</div>
-    <div class="eq-bars">
-      <div class="eq-bar" style="--h:45%"></div><div class="eq-bar" style="--h:80%"></div>
-      <div class="eq-bar" style="--h:55%"></div><div class="eq-bar" style="--h:95%"></div>
-      <div class="eq-bar" style="--h:65%"></div><div class="eq-bar" style="--h:40%"></div>
-      <div class="eq-bar" style="--h:88%"></div><div class="eq-bar" style="--h:60%"></div>
-      <div class="eq-bar" style="--h:72%"></div><div class="eq-bar" style="--h:38%"></div>
-      <div class="eq-bar" style="--h:68%"></div><div class="eq-bar" style="--h:50%"></div>
-      <div class="eq-bar" style="--h:83%"></div><div class="eq-bar" style="--h:28%"></div>
-      <div class="eq-bar" style="--h:92%"></div><div class="eq-bar" style="--h:48%"></div>
-    </div></div>`,
+    // S2: emotional heartbeat / EKG wave
+    `<div class="viz"><svg class="viz-heartbeat" viewBox="0 0 700 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="hg" x1="0" y1="0" x2="700" y2="0"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+      <text x="350" y="68" text-anchor="middle" font-family="DM Sans" font-size="9" font-weight="700" letter-spacing="3" fill="rgba(255,255,255,0.13)">EMOTIONAL FREQUENCY PATTERN</text>
+      <path class="heartbeat-path" d="M 0 36 L 50 36 L 60 26 L 65 14 L 74 56 L 82 14 L 87 36 L 140 36 L 148 24 L 153 12 L 162 58 L 170 12 L 175 36 L 230 36 L 238 20 L 243 8 L 253 60 L 261 8 L 266 36 L 325 36 L 333 26 L 338 14 L 347 56 L 355 14 L 360 36 L 415 36 L 423 22 L 428 10 L 437 60 L 445 10 L 450 36 L 510 36 L 518 24 L 523 12 L 532 58 L 540 12 L 545 36 L 700 36" stroke="url(#hg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg></div>`,
     // S3: orbiting circles
     `<div class="viz"><svg class="viz-orbit" viewBox="0 0 700 90" fill="none">
       <circle class="orbit-circle-a" cx="320" cy="45" r="38" fill="rgba(29,185,84,0.06)" stroke="rgba(29,185,84,0.25)" stroke-width="1.5"/>
@@ -184,8 +177,8 @@
       <div class="ring"></div><div class="ring"></div><div class="ring"></div>
       <div class="ring"></div><div class="ring"></div><div class="rings-center"></div>
     </div></div></div>`,
-    // S6: timeline (populated below via JS with movement parsing)
-    `__MOVEMENTS__`,
+    // S6: movements rendered inline via buildMovementsHtml
+    ``,
     // S7: radar chart
     `<div class="viz"><svg class="viz-radar" viewBox="0 0 400 200" fill="none">
       <circle cx="200" cy="100" r="80" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
@@ -252,19 +245,136 @@
     return null;
   }
 
-  function markdownToHtml(text) {
+  // Fixed subtitles for each section (replaces extractSectionTitle to avoid repetition)
+  const FIXED_SUBTITLES = [
+    null,  // 0: archetypeName used instead
+    'How you process feeling through sound',
+    'The parts of you the music quietly reveals',
+    'The architecture of your mind',
+    'What you are chasing right now',
+    'The emotional story of your year',
+    'Patterns holding you back — and how to break them',
+    'Your perfect match and your musical nemesis',
+    null,  // 8: quote section — different layout
+  ];
+
+  // Shared logic: pick the featured sentence from a section's raw text
+  function extractFeatSentence(rawText) {
+    if (!rawText) return '';
+    const clean = rawText.replace(/^#{1,6}\s*.*/gm, '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1');
+    const paras = clean.split(/\n{2,}/).map(p => p.trim()).filter(p => p && p.length > 2);
+    if (paras.length < 2) return '';
+    const srcPlain = paras[1];
+    const sents = srcPlain.match(/[^.!?]+[.!?]+/g) || [];
+    const pick = sents.find(s => /^\s*You\s/.test(s) && s.trim().length >= 50 && s.trim().length <= 190)
+              || sents.find(s => s.trim().length >= 60 && s.trim().length <= 190);
+    return pick ? pick.trim() : '';
+  }
+
+  function markdownToHtml(text, { pullQuote = true } = {}) {
     if (!text) return '';
-    return text
+
+    const processed = text
+      .replace(/^#{1,6}\s*.*/gm, '')
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*([^*\n]+?)\*/g, '<em>$1</em>')
-      .split(/\n{2,}/)
+      .replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
+
+    const paras = processed.split(/\n{2,}/)
       .map(p => p.trim())
-      .filter(p => p && p.length > 1)
-      .map((p, i) => {
-        const cls = i === 0 ? ' style="font-size:17.5px;color:rgba(255,255,255,0.82);line-height:1.88;"' : '';
-        return `<p${cls}>${p.replace(/\n/g, '<br>')}</p>`;
-      })
-      .join('\n');
+      .filter(p => p && p.length > 2);
+
+    if (!paras.length) return '';
+
+    // Use the shared extractor to find the featured sentence
+    let featIdx = -1, featSentence = '', featRemainder = '';
+    if (pullQuote && paras.length > 2) {
+      const srcPlain = paras[1].replace(/<[^>]+>/g, '');
+      const sents    = srcPlain.match(/[^.!?]+[.!?]+/g) || [];
+      const pick     = sents.find(s => /^\s*You\s/.test(s) && s.trim().length >= 50 && s.trim().length <= 190)
+                    || sents.find(s => s.trim().length >= 60 && s.trim().length <= 190);
+      if (pick) {
+        featIdx       = 1;
+        featSentence  = pick.trim();
+        featRemainder = srcPlain.replace(pick, '').trim();
+      }
+    }
+
+    const out = [];
+    paras.forEach((p, i) => {
+      const html     = p.replace(/\n/g, '<br>');
+      const plainLen = p.replace(/<[^>]+>/g, '').length;
+      const isShortBold = plainLen < 58 && p.startsWith('<strong>') && !p.includes('<br>');
+
+      if (i === 0) {
+        out.push(`<p class="lede">${html}</p>`);
+      } else if (i === featIdx) {
+        // One sentence in Playfair Display, remainder as normal body
+        out.push(`<blockquote class="feat-quote">${featSentence}</blockquote>`);
+        if (featRemainder) out.push(`<p>${featRemainder.replace(/\n/g, '<br>')}</p>`);
+      } else if (isShortBold) {
+        out.push(`<p class="body-insight">${html}</p>`);
+      } else {
+        out.push(`<p>${html}</p>`);
+      }
+
+      // Rhythm divider every 3 paragraphs
+      if (i > 0 && i % 3 === 0 && i < paras.length - 1 && i !== featIdx) {
+        out.push(`<div class="para-rule"></div>`);
+      }
+    });
+
+    return out.join('\n');
+  }
+
+  function stripLeadingTitle(text) {
+    // Remove a short bold line or plain line at the very start (the duplicated title)
+    return text
+      .replace(/^\*\*[^*\n]{3,60}\*\*\n+/, '')
+      .replace(/^[A-Z][^\n]{3,55}\n+/, (m) => m.length < 60 ? '' : m)
+      .trimStart();
+  }
+
+  function buildMovementsHtml(text) {
+    // Split by Movement I: / II: etc.
+    const parts = text.split(/\*{0,2}Movement\s+([IVX]+):\s*/i);
+    const movements = [];
+    for (let i = 1; i < parts.length - 1; i += 2) {
+      if (movements.length >= 5) break;
+      const roman = parts[i].trim();
+      const raw   = (parts[i + 1] || '').trim();
+      // First line is the title, rest is body
+      const nl = raw.indexOf('\n');
+      const title = nl > 0 ? raw.slice(0, nl).replace(/\*\*/g, '').trim() : raw.replace(/\*\*/g, '').trim();
+      const body  = nl > 0 ? raw.slice(nl + 1).trim() : '';
+      if (title) movements.push({ roman, title, body });
+    }
+    if (movements.length === 0) return markdownToHtml(text);
+
+    return `<div class="wave-movements">${
+      movements.map((m, i) => `
+        <div class="wave-movement" id="mv_r${i}">
+          <div class="wave-movement-left">
+            <div class="wave-dot">${m.roman}</div>
+            ${i < movements.length - 1 ? '<div class="wave-connector"></div>' : ''}
+          </div>
+          <div class="wave-movement-body">
+            <div class="wave-movement-title">${m.title}</div>
+            <div class="wave-movement-text">${markdownToHtml(m.body, { pullQuote: false })}</div>
+          </div>
+        </div>`).join('')
+    }</div>`;
+  }
+
+  function extractStoryQuote(text, maxLen = 220) {
+    if (!text) return '';
+    const clean = text.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1').replace(/^#{1,6}\s*/gm, '');
+    const sentences = clean.match(/[^.!?]+[.!?]+/g) || [];
+    for (const s of sentences) {
+      const t = s.trim();
+      if (t.length >= 70 && t.length <= maxLen) return t;
+    }
+    const para = clean.split(/\n{2,}/)[0].trim();
+    return para.length > maxLen ? para.slice(0, maxLen - 1) + '…' : para;
   }
 
   function buildMovementsViz(text) {
@@ -295,13 +405,40 @@
   }
 
   // ─────────────────────────────────────────
-  //  MAIN RENDER
+  //  MAIN RENDER (async to support URL-based reports)
   // ─────────────────────────────────────────
-  const rawText = sessionStorage.getItem('drlyra_report');
+  let rawText = null;
+  let archetypeName = 'Your Profile';
 
+  async function loadReport() {
+    // Check for /report/:id in URL
+    const idMatch = window.location.pathname.match(/\/report\/([a-f0-9]{20,})/);
+    const reportId = idMatch ? idMatch[1] : null;
+
+    rawText = sessionStorage.getItem('drlyra_report');
+
+    if (!rawText && reportId) {
+      try {
+        const res = await fetch(`/api/report/${reportId}`);
+        if (res.ok) { rawText = (await res.json()).text; sessionStorage.setItem('drlyra_report', rawText); }
+      } catch {}
+    }
+
+    if (!rawText) rawText = localStorage.getItem('drlyra_report');
+
+    if (rawText && reportId) {
+      localStorage.setItem('drlyra_report_id', reportId);
+      localStorage.setItem('drlyra_report', rawText);
+      localStorage.setItem('drlyra_has_report', '1');
+    }
+
+    render();
+  }
+
+  function render() {
   if (rawText) {
     const section1Text = extractSection(rawText, 0) || '';
-    const archetypeName = extractArchetypeName(section1Text) || 'Your Profile';
+    archetypeName = extractArchetypeName(section1Text) || 'Your Profile';
     const quoteText = extractSection(rawText, 8) || '';
 
     // Hero
@@ -347,7 +484,6 @@
       if (idx === 5) viz = buildMovementsViz(text); // waves — parse movements
 
       if (isQuote) {
-        // Special quote rendering
         const cleanQuote = text.replace(/\*\*/g,'').replace(/\*/g,'').replace(/^["""]/,'').replace(/["""]$/,'').trim();
         div.innerHTML = `
           <span class="note" aria-hidden="true">♪</span>
@@ -359,8 +495,11 @@
           <div class="quote-text">${cleanQuote}</div>
           <div class="quote-attr">— Dr. Lyra<span>Music Intelligence Division</span></div>`;
       } else {
-        // Normal section rendering
-        const titleLine = idx === 0 ? archetypeName : extractSectionTitle(text, sec);
+        const titleLine = idx === 0 ? archetypeName : (FIXED_SUBTITLES[idx] || sec.label);
+        // Strip the leading bold/title line from body so it doesn't repeat below the header
+        const bodyText = idx === 0 ? stripLeadingTitle(text) : text;
+        // Section 6 gets movement timeline; others get normal body
+        const bodyHtml = idx === 5 ? buildMovementsHtml(text) : markdownToHtml(bodyText);
         div.innerHTML = `
           <div class="sec-header">
             <div class="sec-icon">${ICONS[idx]}</div>
@@ -368,9 +507,10 @@
               <div class="sec-label gt">${sec.label}</div>
               <div class="sec-title">${titleLine}</div>
             </div>
+            <button class="sec-share-btn" data-idx="${idx}">↗ Share</button>
           </div>
           ${viz}
-          <div class="sec-body">${markdownToHtml(text)}</div>`;
+          <div class="sec-body">${bodyHtml}</div>`;
       }
 
       reportBody.appendChild(div);
@@ -379,14 +519,12 @@
     // Populate print cover
     document.getElementById('print-cover-title').textContent = archetypeName;
 
-    // Populate story canvas
-    document.getElementById('sc-arch-name').textContent = archetypeName;
-    const cleanQ = quoteText.replace(/\*\*/g,'').replace(/\*/g,'').replace(/["""]/g,'').trim();
-    document.getElementById('sc-quote-text').textContent = cleanQ.slice(0, 200) + (cleanQ.length > 200 ? '…' : '');
-
     // Observers + nav
     initObservers();
-  }
+  } // end if(rawText)
+  } // end render()
+
+  loadReport();
 
   function extractSectionTitle(text, sec) {
     if (!text) return sec.marker.split(' ').map(w => w[0] + w.slice(1).toLowerCase()).join(' ');
@@ -457,34 +595,60 @@
   });
 
   // ─────────────────────────────────────────
-  //  SHARE STORY
+  //  SHARE STORY (nav button = archetype)
   // ─────────────────────────────────────────
+  async function renderStory(sectionTag, quoteText, attribution, filename) {
+    document.getElementById('sc-section-tag').textContent = sectionTag;
+    document.getElementById('sc-quote-text').textContent  = quoteText;
+    document.getElementById('sc-attribution').textContent = attribution;
+    await document.fonts.ready;
+    await new Promise(r => setTimeout(r, 120));
+    const canvas = await html2canvas(document.getElementById('story-canvas-host'), {
+      width: 540, height: 960, scale: 2,
+      backgroundColor: '#070710',
+      useCORS: true, logging: false,
+    });
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
   document.getElementById('btn-share').addEventListener('click', async () => {
     const btn = document.getElementById('btn-share');
-    btn.textContent = 'Rendering…';
-    btn.disabled = true;
-
+    btn.textContent = 'Rendering…'; btn.disabled = true;
     try {
-      await document.fonts.ready;
-      await new Promise(r => setTimeout(r, 150));
+      const s1text = rawText ? extractSection(rawText, 0) : '';
+      const quote  = extractFeatSentence(s1text) || archetypeName;
+      await renderStory(
+        'Your Core Personality Archetype',
+        quote,
+        `— Dr. Lyra`,
+        'Dr-Lyra-Archetype-Story.png'
+      );
+    } catch(e) { alert('Could not render story: ' + e.message); }
+    btn.textContent = 'Share Story'; btn.disabled = false;
+  });
 
-      const host = document.getElementById('story-canvas-host');
-      const canvas = await html2canvas(host, {
-        width: 540, height: 960, scale: 2,
-        backgroundColor: '#0a0a0f',
-        useCORS: true, logging: false,
-      });
+  // ─────────────────────────────────────────
+  //  PER-SECTION SHARE STORY
+  // ─────────────────────────────────────────
+  document.getElementById('report-body').addEventListener('click', async (e) => {
+    const btn = e.target.closest('.sec-share-btn');
+    if (!btn || !rawText) return;
+    const idx  = parseInt(btn.dataset.idx);
+    const sec  = SECTIONS[idx];
+    const text = extractSection(rawText, idx);
+    if (!text) return;
 
-      const link = document.createElement('a');
-      link.download = 'Dr-Lyra-Story.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    } catch(e) {
-      alert('Could not render story: ' + e.message);
-    }
-
-    btn.textContent = 'Share Story';
-    btn.disabled = false;
+    btn.textContent = '…'; btn.disabled = true;
+    try {
+      const label = sec.marker.charAt(0) + sec.marker.slice(1).toLowerCase().replace(/ /g,' ');
+      const quote = extractFeatSentence(text) || extractStoryQuote(text, 190);
+      const attr  = `— Dr. Lyra`;
+      await renderStory(label, quote, attr, `Dr-Lyra-${sec.id}-Story.png`);
+    } catch(err) { alert('Could not generate story: ' + err.message); }
+    btn.textContent = '↗ Share'; btn.disabled = false;
   });
 </script>
 </body>

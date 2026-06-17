@@ -8,6 +8,9 @@ node_modules/
 # macOS
 .DS_Store
 
+# User data — never commit reports or leads
+data/
+
 # Logs
 *.log
 npm-debug.log*

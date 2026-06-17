@@ -6,7 +6,7 @@
   <title>Dr. Lyra — Spotify Psychological Profile</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Playfair+Display:ital,wght@1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/styles/site.css" />
 </head>
@@ -20,7 +20,6 @@
     <img src="/images/drlyra-icon.svg" class="nav-logo-icon" alt="Dr. Lyra" aria-hidden="true" />
     <span class="nav-wordmark">Dr. Lyra<span> · AI psychologist</span></span>
   </a>
-  <a href="/app" class="nav-cta">Open App →</a>
 </nav>
 
 
@@ -32,34 +31,121 @@
   <div class="hero-amb"></div>
   <div class="hero-inner">
 
-    <div class="hero-badge">
-      <span class="badge-dot"></span>
-      Free beta &nbsp;·&nbsp; No account needed
+    <div class="hero-text">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        9 sections &nbsp;·&nbsp; No account needed &nbsp;·&nbsp; Instant access
+      </div>
+
+      <h1 class="hero-h1">
+        The music you return to
+        <span class="hero-h1-accent gt">tells the truth about you.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Upload your <span class="hero-sub-hl">Spotify stats</span> and Dr. Lyra decodes what your listening patterns really reveal — your personality archetype, emotional landscape, shadow self, and deepest desires. Written in full, just for you. Some of it will surprise you.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn btn-checkout" id="hero-checkout-btn">
+          Get My Psychological Profile — $7.99
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <a href="/example" class="btn-ghost">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+          Read what a real report feels like
+        </a>
+        <p class="hero-fine">One-time payment · No account needed · Powered by Stripe</p>
+      </div>
     </div>
 
-    <h1 class="hero-h1">
-      Your music knows you
-      <span class="hero-h1-accent gt">better than you do.</span>
-    </h1>
+    <!-- CSS phone mockup -->
+    <div class="hero-device">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-fade-top"></div>
+          <div class="phone-report">
+            <div class="phone-brand">
+              <img src="/images/drlyra-icon.svg" width="14" height="14" alt="" />
+              <span>Dr. Lyra</span>
+            </div>
+            <div class="phone-arch">The Romantic<br/>Escapist</div>
+            <div class="phone-arch-label">Your Core Personality Archetype</div>
 
-    <p class="hero-sub">
-      Upload your Spotify stats and Dr. Lyra — our AI psychologist — will decode your personality, emotions, shadow self, and deepest desires from the music you actually listen to.
-    </p>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">01</span>
+              <div>
+                <div class="phone-sec-title">🎭 Core Personality Archetype</div>
+                <div class="phone-sec-desc">Your named psychological type, decoded from your most-played music.</div>
+              </div>
+            </div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">02</span>
+              <div>
+                <div class="phone-sec-title">🧠 Emotional Landscape</div>
+                <div class="phone-sec-desc">How you process feelings through music — and what it says about your inner life.</div>
+              </div>
+            </div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">03</span>
+              <div>
+                <div class="phone-sec-title">🌙 Shadow Self</div>
+                <div class="phone-sec-desc">What your contradictions and outlier artists secretly reveal about you.</div>
+              </div>
+            </div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">04</span>
+              <div>
+                <div class="phone-sec-title">💡 Cognitive Style</div>
+                <div class="phone-sec-desc">How your mind actually works — intuitive or analytical, scattered or focused.</div>
+              </div>
+            </div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">05</span>
+              <div>
+                <div class="phone-sec-title">🔥 Desire Profile</div>
+                <div class="phone-sec-desc">What you're truly chasing right now — freedom, connection, intensity, belonging.</div>
+              </div>
+            </div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">06</span>
+              <div>
+                <div class="phone-sec-title">🌊 Year in Emotional Waves</div>
+                <div class="phone-sec-desc">The story of your year told through sound, written like a memoir.</div>
+              </div>
+            </div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">07</span>
+              <div>
+                <div class="phone-sec-title">🎯 Blind Spots & Growth Edge</div>
+                <div class="phone-sec-desc">What you might be avoiding, plus 3 artist recommendations to unlock you.</div>
+              </div>
+            </div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">08</span>
+              <div>
+                <div class="phone-sec-title">✨ Musical Soulmate Profile</div>
+                <div class="phone-sec-desc">Your perfect musical match — and your musical nemesis.</div>
+              </div>
+            </div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">09</span>
+              <div>
+                <div class="phone-sec-title">🏷️ Signature Quote</div>
+                <div class="phone-sec-desc">One original sentence that captures your essence. Something to put on your wall.</div>
+              </div>
+            </div>
 
-    <div class="hero-actions">
-      <a href="/app" class="btn">
-        Get My Reading
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
-      <a href="/example" class="btn-ghost">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-        </svg>
-        See a Profile Example
-      </a>
-      <p class="hero-fine"><b>Free beta</b> · No account needed · Results in ~30 seconds</p>
+            <div class="phone-fade"></div>
+          </div>
+        </div>
+        <div class="phone-home-bar"></div>
+      </div>
     </div>
 
   </div>
@@ -75,58 +161,47 @@
   <div class="wrap">
 
     <div class="reveal" style="text-align:center; max-width:520px; margin:0 auto;">
-      <span class="section-eyebrow gt">How it works</span>
-      <h2 class="section-h">Three steps to your profile</h2>
+      <span class="section-eyebrow gt">How to find your stats</span>
+      <h2 class="section-h">Three taps in Spotify</h2>
     </div>
 
     <div class="steps-grid">
 
       <div class="card step-card reveal" style="transition-delay:.08s">
         <span class="step-num">01</span>
-        <span class="step-icon-naked">
+        <span class="step-icon-naked" style="color:#1DB954;">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+          </svg>
+        </span>
+        <div class="step-title">Open Spotify &amp; go to Your Profile</div>
+        <p class="step-body">Tap the <strong>Home</strong> tab, then tap your <strong>profile picture</strong> in the top-right corner to open your profile page.</p>
+      </div>
+
+      <div class="card step-card reveal" style="transition-delay:.16s">
+        <span class="step-num">02</span>
+        <span class="step-icon-naked" style="color:#1DB954;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 3 3 21 21 21"/>
+            <polyline points="3 16 8 10 12 14 16 7 21 7"/>
+          </svg>
+        </span>
+        <div class="step-title">Find Listening Stats or Wrapped</div>
+        <p class="step-body">Scroll down to <strong>Listening Stats</strong> and tap <strong>See all</strong>. Spotify Wrapped works too — any stats page is perfect.</p>
+      </div>
+
+      <div class="card step-card reveal" style="transition-delay:.24s">
+        <span class="step-num">03</span>
+        <span class="step-icon-naked" style="color:#1DB954;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="3"/>
             <circle cx="8.5" cy="8.5" r="1.5"/>
             <path d="M21 15l-5-5L5 21"/>
           </svg>
         </span>
-        <div class="step-title">Upload your Spotify stats</div>
-        <p class="step-body">Screenshot your Wrapped or any Spotify stats page. Up to 10 images. Any screenshot works.</p>
-        <span class="step-arrow" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </span>
-      </div>
-
-      <div class="card step-card reveal" style="transition-delay:.16s">
-        <span class="step-num">02</span>
-        <span class="step-icon-naked">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="2 12 5 7 8 15 11 4 14 18 17 9 20 12 22 12"/>
-          </svg>
-        </span>
-        <div class="step-title">Dr. Lyra reads your music</div>
-        <p class="step-body">Our AI psychologist analyzes your listening patterns using real music psychology frameworks — mood regulation, emotional contagion, and more.</p>
-        <span class="step-arrow" aria-hidden="true">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </span>
-      </div>
-
-      <div class="card step-card reveal" style="transition-delay:.24s">
-        <span class="step-num">03</span>
-        <span class="step-icon-naked">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="8" y1="13" x2="16" y2="13"/>
-            <line x1="8" y1="17" x2="12" y2="17"/>
-          </svg>
-        </span>
-        <div class="step-title">Get your full profile</div>
-        <p class="step-body">A 9-section psychological report, streamed live as Dr. Lyra writes it. Download as PDF or share as an Instagram story.</p>
+        <div class="step-title">Screenshot &amp; upload here</div>
+        <p class="step-body">Take screenshots of whatever you see — top artists, top songs, genres. Upload them here and Dr. Lyra does the rest.</p>
+        <p class="step-tip">Up to 10 screenshots. More data = deeper, more personal profile.</p>
       </div>
 
     </div>
@@ -142,12 +217,10 @@
 <section id="insights">
   <div class="wrap">
 
-    <div class="insights-header reveal">
-      <div>
-        <span class="section-eyebrow gt">The report</span>
-        <h2 class="section-h" style="margin-bottom:0">9 deeply personal insights</h2>
-      </div>
-      <p class="section-body" style="max-width:320px; font-size:15px;">Every section is written specifically about you, referencing your actual artists and songs.</p>
+    <div class="reveal" style="text-align:center; max-width:580px; margin:0 auto 48px;">
+      <span class="section-eyebrow gt">The report</span>
+      <h2 class="section-h">9 deeply personal insights</h2>
+      <p class="section-body" style="font-size:15px; color:rgba(255,255,255,0.45); margin-top:12px; text-wrap:balance;">Every section is written specifically about you, referencing your actual artists and&nbsp;songs.</p>
     </div>
 
     <div class="insights-grid">
@@ -272,7 +345,7 @@
       <h2 class="section-h">What people are saying</h2>
     </div>
 
-    <div class="testi-grid">
+    <div class="testi-grid" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:24px;padding:4px 2px 8px;">
 
       <div class="card testi-card reveal" style="transition-delay:.08s">
         <div class="testi-stars">
@@ -342,6 +415,28 @@
 
 
 <!-- ══════════════════════════════════════════
+     LEAD CAPTURE
+══════════════════════════════════════════ -->
+<section id="lead">
+  <div class="wrap">
+    <div class="lead-box reveal">
+      <div class="lead-text">
+        <span class="section-eyebrow gt">Not ready yet?</span>
+        <h3 class="lead-h">Get a free sample report</h3>
+        <p class="lead-sub">Drop your email and we'll send you a real example so you know exactly what you're getting.</p>
+      </div>
+      <form class="lead-form" id="lead-form">
+        <input class="lead-input" type="email" id="lead-email" placeholder="your@email.com" required />
+        <button class="lead-btn" type="submit" id="lead-btn">Send it</button>
+      </form>
+      <p class="lead-fine" id="lead-msg"></p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<!-- ══════════════════════════════════════════
      FINAL CTA
 ══════════════════════════════════════════ -->
 <section id="final">
@@ -351,19 +446,21 @@
 
       <span class="section-eyebrow gt" style="display:block; text-align:center;">Your turn</span>
       <h2 class="section-h" style="text-align:center; font-size:clamp(2rem,4.5vw,3.2rem);">
-        Ready to meet yourself?
+        What does your music<br/>say about you?
       </h2>
       <p class="section-body" style="text-align:center; margin:16px auto 44px; font-size:17px;">
-        It only takes 30 seconds to upload.<br/>The insight lasts much longer.
+        Upload your Spotify screenshots. Dr. Lyra does the rest.<br/>
+        <span style="color:var(--muted);font-size:15px;">Takes 30 seconds. The insight stays with you.</span>
       </p>
 
-      <div style="text-align:center">
-        <a href="/app" class="btn">
-          Get My Reading
+      <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px;">
+        <button class="btn btn-checkout" id="final-checkout-btn">
+          Get My Psychological Profile — $7.99
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-        </a>
+        </button>
+        <p style="font-size:13px;color:var(--muted);margin:0;">One-time payment · No account needed · Powered by Stripe</p>
       </div>
 
       <div class="final-compat">
@@ -403,6 +500,57 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  async function startCheckout(btn) {
+    btn.disabled = true;
+    btn.textContent = 'Redirecting…';
+    try {
+      const r = await fetch('/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin: window.location.origin }),
+      });
+      const data = await r.json();
+      if (data.url) window.location.href = data.url;
+      else throw new Error(data.error || 'Checkout error');
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Get Full Report — $7.99';
+      alert('Could not start checkout: ' + err.message);
+    }
+  }
+
+  document.getElementById('hero-checkout-btn').addEventListener('click', function() { startCheckout(this); });
+  document.getElementById('final-checkout-btn').addEventListener('click', function() { startCheckout(this); });
+
+  document.getElementById('lead-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('lead-btn');
+    const msg = document.getElementById('lead-msg');
+    const email = document.getElementById('lead-email').value;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const r = await fetch('/submit-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await r.json();
+      if (data.ok) {
+        msg.textContent = '✓ Got it — check your inbox soon.';
+        msg.style.color = '#1DB954';
+        document.getElementById('lead-form').style.display = 'none';
+      } else {
+        throw new Error('Failed');
+      }
+    } catch {
+      msg.textContent = 'Something went wrong. Try again.';
+      msg.style.color = '#f87171';
+      btn.disabled = false;
+      btn.textContent = 'Send it';
+    }
+  });
 </script>
 </body>
 </html>

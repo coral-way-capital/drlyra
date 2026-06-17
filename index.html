@@ -10,6 +10,91 @@
   <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    #payment-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #payment-modal.open { display: flex; }
+    .pm-box {
+      position: relative;
+      background: #0d0d1a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 36px 32px 28px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+    }
+    .pm-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: #555;
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 6px;
+    }
+    .pm-close:hover { color: #aaa; }
+    .pm-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .pm-title {
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+    .pm-sub {
+      color: #777;
+      font-size: 13px;
+      margin: 0 0 24px;
+    }
+    .pm-error {
+      color: #ef4444;
+      font-size: 13px;
+      margin: 10px 0 0;
+      min-height: 18px;
+    }
+    .pm-submit {
+      width: 100%;
+      margin-top: 20px;
+      padding: 15px;
+      background: #1DB954;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .pm-submit:hover { opacity: 0.88; }
+    .pm-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+    .pm-fine {
+      text-align: center;
+      color: #444;
+      font-size: 12px;
+      margin: 16px 0 0;
+    }
+  </style>
   <link rel="stylesheet" href="/styles/site.css" />
 </head>
 <body class="app">
@@ -18,10 +103,10 @@
 
   <!-- Header -->
   <header>
-    <div class="logo-mark">
+    <a href="/" class="logo-mark" style="text-decoration:none;color:inherit;">
       <img src="/images/drlyra-icon.svg" alt="Dr. Lyra" />
       <span>Dr. Lyra</span>
-    </div>
+    </a>
     <h1>Your Spotify<br/>Psychological Profile</h1>
     <p class="subtitle">Upload your Spotify stats screenshots. Dr. Lyra will decode your music taste into a deep psychological portrait.</p>
   </header>
@@ -44,6 +129,13 @@
     ✦ Generate My Profile
   </button>
 
+  <div id="payment-success" style="display:none">
+    <div class="payment-success-banner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <span><strong>Payment confirmed!</strong> Upload your Spotify screenshots to generate your full 9-section report.</span>
+    </div>
+  </div>
+
   <div class="error-box" id="error-box"></div>
 
   <!-- Loading -->
@@ -64,15 +156,38 @@
       <h2>Your Psychological Profile</h2>
       <p>As interpreted by Dr. Lyra, Musicologist & Behavioral Analyst</p>
     </div>
-    <div class="report-actions">
-      <button class="btn-action btn-download" id="btn-download">⬇ Download PDF</button>
-      <button class="btn-action btn-copy" id="btn-copy">⎘ Copy to Clipboard</button>
-      <button class="btn-action btn-share" id="btn-share">◈ Share Story</button>
-      <button class="btn-action btn-new" id="btn-new">↺ New Profile</button>
-    </div>
     <div id="sections-container"></div>
+
+    <div id="paywall" style="display:none">
+      <div class="paywall-cta">
+        <button class="btn-unlock" id="btn-unlock">Unlock Full Report — $7.99</button>
+        <p class="paywall-fine">One-time payment &nbsp;·&nbsp; Instant access &nbsp;·&nbsp; Powered by Stripe</p>
+        <button class="btn-start-over" id="btn-start-over">↺ Start over</button>
+      </div>
+    </div>
   </div>
 
+</div>
+
+<!-- Payment modal -->
+<div id="payment-modal">
+  <div class="pm-box" id="pm-box">
+    <button class="pm-close" id="pm-close">✕</button>
+    <div class="pm-logo">
+      <img src="/images/drlyra-icon.svg" alt="Dr. Lyra" style="width:28px;height:28px;" />
+      <span>Dr. Lyra</span>
+    </div>
+    <h3 class="pm-title">Unlock Full Report</h3>
+    <p class="pm-sub">9-section Spotify Psychological Profile &nbsp;·&nbsp; one-time $7.99</p>
+    <form id="pm-form">
+      <input type="email" id="pm-email" placeholder="Your email — we'll send you the report" required
+        style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:#fff;font-size:14px;font-family:inherit;margin-bottom:14px;outline:none;box-sizing:border-box;" />
+      <div id="pm-payment-element"></div>
+      <p class="pm-error" id="pm-error"></p>
+      <button class="pm-submit" id="pm-submit" type="submit">Pay $7.99</button>
+    </form>
+    <p class="pm-fine">Secured by Stripe &nbsp;·&nbsp; No subscription &nbsp;·&nbsp; Instant access</p>
+  </div>
 </div>
 
 <!-- Off-screen story render target -->
@@ -117,7 +232,60 @@
     { key: '🏷️', title: 'YOUR SIGNATURE QUOTE', cls: 'card-quote' },
   ];
 
+  // Force fresh load if browser restores from bfcache (prevents seeing section 1 after clicking back from Stripe)
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) window.location.reload();
+  });
+
   let files = [];
+  let hasPaid = false;
+
+  // If user already has a paid report, send them straight to their unique URL
+  if (localStorage.getItem('drlyra_has_report') && !window.location.search) {
+    const reportId = localStorage.getItem('drlyra_report_id');
+    if (reportId) { window.location.replace(`/report/${reportId}`); }
+  }
+
+  // Check URL params on load — handles friend bypass, Stripe redirect (session or 3DS payment intent)
+  (async () => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const sessionId = params.get('session_id');
+    const paymentIntentId = params.get('payment_intent');
+    const redirectStatus = params.get('redirect_status');
+
+    if (code === 'FRIENDS') {
+      hasPaid = true;
+      history.replaceState({}, '', '/app');
+      document.getElementById('payment-success').style.display = 'block';
+      return;
+    }
+
+    if (sessionId) {
+      try {
+        const r = await fetch(`/verify-session?session_id=${encodeURIComponent(sessionId)}`);
+        const data = await r.json();
+        if (data.paid) {
+          hasPaid = true;
+          history.replaceState({}, '', '/app');
+          document.getElementById('payment-success').style.display = 'block';
+        }
+      } catch {}
+      return;
+    }
+
+    if (paymentIntentId && redirectStatus === 'succeeded') {
+      try {
+        const r = await fetch(`/verify-payment?payment_intent_id=${encodeURIComponent(paymentIntentId)}`);
+        const data = await r.json();
+        if (data.paid) {
+          hasPaid = true;
+          history.replaceState({}, '', '/app');
+          document.getElementById('payment-success').style.display = 'block';
+        }
+      } catch {}
+    }
+  })();
 
   const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('file-input');
@@ -210,8 +378,7 @@
 
   let stopTypewriter = null;
 
-  // Generate
-  btnGenerate.addEventListener('click', async () => {
+  async function runGenerate() {
     if (!files.length) return;
     showError('');
     uploadSection.style.display = 'none';
@@ -223,6 +390,7 @@
 
     const formData = new FormData();
     files.forEach(f => formData.append('images', f));
+    formData.append('free', 'false'); // always full report
 
     try {
       const response = await fetch('/analyze', { method: 'POST', body: formData });
@@ -298,10 +466,23 @@
         }
       }
 
-      // Final render — save and redirect to beautiful report page
       document.querySelectorAll('.cursor').forEach(c => c.remove());
+
+      // Save report to server → get unique URL
       sessionStorage.setItem('drlyra_report', fullText);
-      window.location.href = '/report';
+      try {
+        const saveRes = await fetch('/save-report', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: fullText, email: sessionStorage.getItem('drlyra_buyer_email') || null }),
+        });
+        const { id } = await saveRes.json();
+        localStorage.setItem('drlyra_report_id', id);
+        localStorage.setItem('drlyra_report', fullText);
+        localStorage.setItem('drlyra_has_report', '1');
+        window.location.href = `/report/${id}`;
+      } catch {
+        window.location.href = '/report';
+      }
 
     } catch (err) {
       loading.style.display = 'none';
@@ -310,6 +491,13 @@
       btnGenerate.style.display = 'block';
       showError('Something went wrong: ' + err.message);
     }
+  }
+
+  // Generate button — require payment first
+  btnGenerate.addEventListener('click', () => {
+    if (!files.length) return;
+    if (!hasPaid) { openPaymentModal(); return; }
+    runGenerate();
   });
 
   function createSectionCard(sec) {
@@ -531,7 +719,126 @@
     report.style.display = 'none';
     uploadSection.style.display = 'block';
     btnGenerate.style.display = 'block';
+    document.querySelector('.report-actions').style.display = '';
+    document.getElementById('paywall').style.display = 'none';
     showError('');
+  });
+
+  // Start over (from paywall)
+  document.getElementById('btn-start-over').addEventListener('click', () => {
+    files = [];
+    renderThumbnails();
+    btnGenerate.disabled = true;
+    sectionsContainer.innerHTML = '';
+    report.style.display = 'none';
+    uploadSection.style.display = 'block';
+    btnGenerate.style.display = 'block';
+    document.querySelector('.report-actions').style.display = '';
+    document.getElementById('paywall').style.display = 'none';
+    showError('');
+  });
+
+  // Payment modal state
+  let activeStripe = null;
+  let activeElements = null;
+
+  function closePaymentModal() {
+    document.getElementById('payment-modal').classList.remove('open');
+  }
+
+  document.getElementById('pm-close').addEventListener('click', closePaymentModal);
+  document.getElementById('payment-modal').addEventListener('click', (e) => {
+    if (!document.getElementById('pm-box').contains(e.target)) closePaymentModal();
+  });
+
+  // Unlock — open embedded payment modal
+  document.getElementById('btn-unlock').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-unlock');
+    btn.textContent = 'Loading…';
+    btn.disabled = true;
+
+    document.getElementById('pm-error').textContent = '';
+    document.getElementById('pm-submit').textContent = 'Pay $7.99';
+    document.getElementById('pm-submit').disabled = false;
+    document.getElementById('pm-payment-element').innerHTML = '';
+    document.getElementById('payment-modal').classList.add('open');
+
+    try {
+      const [configRes, intentRes] = await Promise.all([
+        fetch('/config'),
+        fetch('/create-payment-intent', { method: 'POST', headers: { 'Content-Type': 'application/json' } }),
+      ]);
+      const { publishableKey } = await configRes.json();
+      const { clientSecret, error } = await intentRes.json();
+      if (error) throw new Error(error);
+
+      if (!activeStripe) activeStripe = Stripe(publishableKey);
+      activeElements = activeStripe.elements({
+        clientSecret,
+        appearance: {
+          theme: 'night',
+          variables: {
+            colorPrimary: '#1DB954',
+            colorBackground: '#111122',
+            colorText: '#e0e0e0',
+            colorTextSecondary: '#888',
+            borderRadius: '8px',
+            fontFamily: 'DM Sans, system-ui, sans-serif',
+          },
+        },
+      });
+      activeElements.create('payment').mount('#pm-payment-element');
+    } catch (err) {
+      document.getElementById('pm-error').textContent = 'Could not load payment form: ' + err.message;
+    }
+
+    btn.textContent = 'Unlock Full Report — $7.99';
+    btn.disabled = false;
+  });
+
+  document.getElementById('pm-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!activeStripe || !activeElements) return;
+
+    const submitBtn = document.getElementById('pm-submit');
+    submitBtn.textContent = 'Processing…';
+    submitBtn.disabled = true;
+    document.getElementById('pm-error').textContent = '';
+
+    const { error, paymentIntent } = await activeStripe.confirmPayment({
+      elements: activeElements,
+      confirmParams: { return_url: window.location.origin + '/app' },
+      redirect: 'if_required',
+    });
+
+    if (error) {
+      document.getElementById('pm-error').textContent = error.message;
+      submitBtn.textContent = 'Pay $7.99';
+      submitBtn.disabled = false;
+      return;
+    }
+
+    if (paymentIntent && paymentIntent.status === 'succeeded') {
+      try {
+        const r = await fetch(`/verify-payment?payment_intent_id=${encodeURIComponent(paymentIntent.id)}`);
+        const data = await r.json();
+        if (data.paid) {
+          const pmEmail = document.getElementById('pm-email').value;
+          if (pmEmail) sessionStorage.setItem('drlyra_buyer_email', pmEmail);
+          hasPaid = true;
+          closePaymentModal();
+          if (files.length > 0) {
+            runGenerate(); // auto-start generation after payment
+          } else {
+            document.getElementById('payment-success').style.display = 'block';
+          }
+        }
+      } catch {
+        document.getElementById('pm-error').textContent = 'Payment succeeded but verification failed — please refresh.';
+        submitBtn.textContent = 'Pay $7.99';
+        submitBtn.disabled = false;
+      }
+    }
   });
 </script>
 </body>
