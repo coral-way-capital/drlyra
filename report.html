@@ -103,6 +103,16 @@
   </div>
 </div>
 
+<!-- FEEDBACK BANNER -->
+<div id="feedback-banner">
+  <div class="fb-box">
+    <button class="fb-close" id="fb-close">✕</button>
+    <div class="fb-progress" id="fb-progress">Quick feedback · 1 of 4</div>
+    <div class="fb-question" id="fb-question"></div>
+    <div id="fb-body"></div>
+  </div>
+</div>
+
 <script>
   // ─────────────────────────────────────────
   //  SECTION DEFINITIONS
@@ -650,6 +660,129 @@
     } catch(err) { alert('Could not generate story: ' + err.message); }
     btn.textContent = '↗ Share'; btn.disabled = false;
   });
+
+  // ─────────────────────────────────────────
+  //  FEEDBACK SURVEY
+  // ─────────────────────────────────────────
+  const SECTION_LABELS = [
+    'Core Personality Archetype','Emotional Landscape','Shadow Self',
+    'Cognitive Style','Desire Profile','Year in Emotional Waves',
+    'Blind Spots & Growth Edge','Musical Soulmate Profile','Signature Quote'
+  ];
+
+  const fbState = { step: 1, accuracy: null, section: null, nps: null, surprise: null, liked: null, improve: null };
+  const banner  = document.getElementById('feedback-banner');
+  const fbProg  = document.getElementById('fb-progress');
+  const fbQ     = document.getElementById('fb-question');
+  const fbBody  = document.getElementById('fb-body');
+
+  if (!localStorage.getItem('drlyra_feedback_done')) {
+    let shown = false;
+    const onScroll = () => {
+      if (shown || window.scrollY < 100) return;
+      shown = true;
+      banner.classList.add('show');
+      window.removeEventListener('scroll', onScroll);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  document.getElementById('fb-close').addEventListener('click', () => {
+    banner.classList.remove('show');
+  });
+
+  function renderStep(step) {
+    fbProg.textContent = step < 7 ? `Quick feedback · ${step} of 6` : '';
+    if (step === 1) {
+      fbQ.textContent = 'How accurate did your profile feel?';
+      fbBody.innerHTML = `<div class="fb-stars">${[1,2,3,4,5].map(n =>
+        `<span class="fb-star" data-n="${n}">★</span>`).join('')}</div>`;
+      fbBody.querySelectorAll('.fb-star').forEach(s => {
+        s.addEventListener('mouseenter', () => {
+          fbBody.querySelectorAll('.fb-star').forEach(x => x.classList.toggle('lit', +x.dataset.n <= +s.dataset.n));
+        });
+        s.addEventListener('mouseleave', () => {
+          fbBody.querySelectorAll('.fb-star').forEach(x => x.classList.toggle('lit', +x.dataset.n <= (fbState.accuracy||0)));
+        });
+        s.addEventListener('click', () => {
+          fbState.accuracy = +s.dataset.n;
+          fbBody.querySelectorAll('.fb-star').forEach(x => x.classList.toggle('lit', +x.dataset.n <= fbState.accuracy));
+          setTimeout(() => renderStep(2), 400);
+        });
+      });
+    } else if (step === 2) {
+      fbQ.textContent = 'Which section resonated most?';
+      fbBody.innerHTML = `<div class="fb-sections">${SECTION_LABELS.map((l,i) =>
+        `<button class="fb-sec-btn" data-i="${i}">${l}</button>`).join('')}</div>`;
+      fbBody.querySelectorAll('.fb-sec-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          fbState.section = SECTION_LABELS[+b.dataset.i];
+          fbBody.querySelectorAll('.fb-sec-btn').forEach(x => x.classList.remove('selected'));
+          b.classList.add('selected');
+          setTimeout(() => renderStep(3), 350);
+        });
+      });
+    } else if (step === 3) {
+      fbQ.textContent = 'How likely are you to recommend Dr. Lyra to a friend?';
+      fbBody.innerHTML = `
+        <div class="fb-nps">${[0,1,2,3,4,5,6,7,8,9,10].map(n =>
+          `<button class="fb-nps-btn" data-n="${n}">${n}</button>`).join('')}</div>
+        <div class="fb-nps-labels"><span>Not at all</span><span>Definitely</span></div>`;
+      fbBody.querySelectorAll('.fb-nps-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          fbState.nps = +b.dataset.n;
+          fbBody.querySelectorAll('.fb-nps-btn').forEach(x => x.classList.remove('selected'));
+          b.classList.add('selected');
+          setTimeout(() => renderStep(4), 350);
+        });
+      });
+    } else if (step === 4) {
+      fbQ.textContent = 'What surprised you most? (optional)';
+      fbBody.innerHTML = `
+        <textarea class="fb-textarea" id="fb-text" placeholder="Anything that caught you off guard…"></textarea>
+        <button class="fb-submit" id="fb-next-btn">Next →</button>`;
+      document.getElementById('fb-next-btn').addEventListener('click', () => {
+        fbState.surprise = document.getElementById('fb-text').value.trim();
+        renderStep(5);
+      });
+    } else if (step === 5) {
+      fbQ.textContent = 'What did you love most about Dr. Lyra?';
+      fbBody.innerHTML = `
+        <textarea class="fb-textarea" id="fb-liked" placeholder="Tell us what stood out…"></textarea>
+        <button class="fb-submit" id="fb-next-btn">Next →</button>`;
+      document.getElementById('fb-next-btn').addEventListener('click', () => {
+        fbState.liked = document.getElementById('fb-liked').value.trim();
+        renderStep(6);
+      });
+    } else if (step === 6) {
+      fbQ.textContent = 'How would you improve Dr. Lyra?';
+      fbBody.innerHTML = `
+        <textarea class="fb-textarea" id="fb-improve" placeholder="Any ideas or suggestions…"></textarea>
+        <button class="fb-submit" id="fb-submit-btn">Submit feedback</button>`;
+      document.getElementById('fb-submit-btn').addEventListener('click', async () => {
+        fbState.improve = document.getElementById('fb-improve').value.trim();
+        const reportId = window.location.pathname.split('/').pop();
+        try {
+          await fetch('/submit-feedback', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              accuracy: fbState.accuracy, section: fbState.section, nps: fbState.nps,
+              surprise: fbState.surprise, liked: fbState.liked, improve: fbState.improve,
+              reportId,
+            }),
+          });
+        } catch {}
+        localStorage.setItem('drlyra_feedback_done', '1');
+        renderStep(7);
+      });
+    } else {
+      fbQ.textContent = '';
+      fbBody.innerHTML = `<div class="fb-done">Thank you 💚<span>Your feedback helps Dr. Lyra get better.</span></div>`;
+      setTimeout(() => banner.classList.remove('show'), 3000);
+    }
+  }
+
+  renderStep(1);
 </script>
 </body>
 </html>

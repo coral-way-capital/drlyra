@@ -30,9 +30,10 @@ async function sendReportEmail(toEmail, reportId) {
 }
 
 // ── Persistent data storage ──────────────────────────────────────────────────
-const DATA_DIR    = path.join(__dirname, 'data');
-const REPORTS_FILE = path.join(DATA_DIR, 'reports.json');
-const LEADS_FILE   = path.join(DATA_DIR, 'leads.json');
+const DATA_DIR       = path.join(__dirname, 'data');
+const REPORTS_FILE   = path.join(DATA_DIR, 'reports.json');
+const LEADS_FILE     = path.join(DATA_DIR, 'leads.json');
+const FEEDBACK_FILE  = path.join(DATA_DIR, 'feedback.json');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 function readJSON(fp)    { try { return JSON.parse(fs.readFileSync(fp, 'utf8')); } catch { return {}; } }
 function writeJSON(fp,d) { fs.writeFileSync(fp, JSON.stringify(d, null, 2)); }
@@ -102,29 +103,134 @@ app.get('/admin', (req, res) => {
     res.setHeader('WWW-Authenticate', 'Basic realm="Dr. Lyra Admin"');
     return res.status(401).send('Unauthorized');
   }
-  const reports = readJSON(REPORTS_FILE);
-  const leads   = readJSON(LEADS_FILE);
-  const rList   = Object.entries(reports).sort((a,b)=>b[1].createdAt.localeCompare(a[1].createdAt)).slice(0,50);
-  const lList   = Object.values(leads).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
-  const rRows   = rList.map(([id,r]) => `<tr><td>${r.email || '<span style="color:#ccc">—</span>'}</td><td><code>${id.slice(0,12)}…</code></td><td>${r.createdAt.slice(0,16).replace('T',' ')}</td><td><a href="/report/${id}" target="_blank">View</a></td></tr>`).join('');
-  const lRows   = lList.map(l => `<tr><td>${l.email}</td><td>${l.createdAt.slice(0,16).replace('T',' ')}</td></tr>`).join('');
+  const reports  = readJSON(REPORTS_FILE);
+  const leads    = readJSON(LEADS_FILE);
+  const feedback = readJSON(FEEDBACK_FILE);
+  const rList = Object.entries(reports).sort((a,b)=>b[1].createdAt.localeCompare(a[1].createdAt)).slice(0,50);
+  const lList = Object.values(leads).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  const fList = Object.values(feedback).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  const feedbackByReport = {};
+  Object.values(feedback).forEach(f => { if (f.reportId) feedbackByReport[f.reportId] = true; });
+  const rRows = rList.map(([id,r]) => `<tr><td>${r.email||'<span style="color:#ccc">—</span>'}</td><td><code>${id.slice(0,12)}…</code></td><td>${r.createdAt.slice(0,16).replace('T',' ')}</td><td><a href="/report/${id}" target="_blank">View</a>${feedbackByReport[id] ? ` · <a href="/admin/survey/${id}">Survey</a>` : ''}</td></tr>`).join('');
+  const lRows = lList.map(l => `<tr><td>${l.email}</td><td>${l.createdAt.slice(0,16).replace('T',' ')}</td></tr>`).join('');
+  const stars = n => '★'.repeat(n||0) + '☆'.repeat(5-(n||0));
+  const fRows = fList.map(f => `<tr><td style="color:#f59e0b">${stars(f.accuracy)}</td><td>${f.section||'—'}</td><td>${f.nps??'—'}/10</td><td style="color:#888;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.surprise||'—'}</td><td>${f.createdAt.slice(0,16).replace('T',' ')}</td></tr>`).join('');
+  const avgNps = fList.filter(f=>f.nps!=null).length ? (fList.filter(f=>f.nps!=null).reduce((s,f)=>s+f.nps,0)/fList.filter(f=>f.nps!=null).length).toFixed(1) : '—';
   res.send(`<!DOCTYPE html><html><head><title>Dr. Lyra Admin</title><style>
     *{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui;background:#f5f5f5;padding:32px;color:#333}
     h1{font-size:1.3rem;font-weight:700;margin-bottom:24px}h2{font-size:1rem;font-weight:600;margin-bottom:12px}
-    .stats{display:flex;gap:20px;margin-bottom:24px}.stat{background:#fff;border-radius:10px;padding:20px 28px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+    .stats{display:flex;gap:20px;margin-bottom:24px;flex-wrap:wrap}.stat{background:#fff;border-radius:10px;padding:20px 28px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
     .stat-n{font-size:2.2rem;font-weight:800;color:#1DB954}.stat-l{font-size:12px;color:#888;margin-top:2px}
     .card{background:#fff;border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
     table{width:100%;border-collapse:collapse}th,td{padding:9px 12px;text-align:left;border-bottom:1px solid #f0f0f0;font-size:13px}
     th{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#aaa}a{color:#1DB954}
   </style></head><body>
   <h1>Dr. Lyra — Admin</h1>
+  <nav style="margin-bottom:24px;display:flex;gap:16px"><a href="/admin">Overview</a><a href="/admin/survey">Survey Responses</a></nav>
   <div class="stats">
     <div class="stat"><div class="stat-n">${Object.keys(reports).length}</div><div class="stat-l">Reports Generated</div></div>
     <div class="stat"><div class="stat-n">${lList.length}</div><div class="stat-l">Email Leads</div></div>
+    <div class="stat"><div class="stat-n">${fList.length}</div><div class="stat-l">Feedback Responses</div></div>
+    <div class="stat"><div class="stat-n">${avgNps}</div><div class="stat-l">Avg NPS Score</div></div>
   </div>
   ${lList.length ? `<div class="card"><h2>Email Leads</h2><table><tr><th>Email</th><th>Date</th></tr>${lRows}</table></div>` : ''}
   ${rList.length ? `<div class="card"><h2>Buyers / Reports</h2><table><tr><th>Email</th><th>ID</th><th>Date</th><th></th></tr>${rRows}</table></div>` : ''}
+  ${fList.length ? `<div class="card"><h2>Feedback</h2><table><tr><th>Accuracy</th><th>Top Section</th><th>NPS</th><th>Surprise</th><th>Date</th></tr>${fRows}</table></div>` : ''}
   </body></html>`);
+});
+
+app.get('/admin/survey', (req, res) => {
+  const pass = process.env.ADMIN_PASSWORD || 'drlyra2026';
+  const expected = 'Basic ' + Buffer.from('admin:' + pass).toString('base64');
+  if (req.headers.authorization !== expected) {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Dr. Lyra Admin"');
+    return res.status(401).send('Unauthorized');
+  }
+  const feedback = readJSON(FEEDBACK_FILE);
+  const fList = Object.values(feedback).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  const stars = n => '★'.repeat(n||0) + '☆'.repeat(5-(n||0));
+  const avgNps = fList.filter(f=>f.nps!=null).length
+    ? (fList.filter(f=>f.nps!=null).reduce((s,f)=>s+f.nps,0)/fList.filter(f=>f.nps!=null).length).toFixed(1) : '—';
+  const avgAcc = fList.filter(f=>f.accuracy!=null).length
+    ? (fList.filter(f=>f.accuracy!=null).reduce((s,f)=>s+f.accuracy,0)/fList.filter(f=>f.accuracy!=null).length).toFixed(1) : '—';
+  const fRows = fList.map(f => `<tr>
+    <td style="color:#f59e0b">${stars(f.accuracy)}</td>
+    <td>${f.section||'—'}</td>
+    <td>${f.nps??'—'}/10</td>
+    <td style="color:#555;max-width:200px;white-space:pre-wrap">${f.surprise||'—'}</td>
+    <td style="color:#555;max-width:200px;white-space:pre-wrap">${f.liked||'—'}</td>
+    <td style="color:#555;max-width:200px;white-space:pre-wrap">${f.improve||'—'}</td>
+    <td>${f.createdAt.slice(0,16).replace('T',' ')}</td>
+  </tr>`).join('');
+  res.send(`<!DOCTYPE html><html><head><title>Survey — Dr. Lyra Admin</title><style>
+    *{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui;background:#f5f5f5;padding:32px;color:#333}
+    h1{font-size:1.3rem;font-weight:700;margin-bottom:24px}
+    nav{margin-bottom:24px;display:flex;gap:16px}
+    .stats{display:flex;gap:20px;margin-bottom:24px;flex-wrap:wrap}.stat{background:#fff;border-radius:10px;padding:20px 28px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+    .stat-n{font-size:2.2rem;font-weight:800;color:#1DB954}.stat-l{font-size:12px;color:#888;margin-top:2px}
+    .card{background:#fff;border-radius:10px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+    table{width:100%;border-collapse:collapse}th,td{padding:9px 12px;text-align:left;border-bottom:1px solid #f0f0f0;font-size:13px;vertical-align:top}
+    th{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#aaa}a{color:#1DB954}
+    p.empty{color:#aaa;font-size:14px;padding:16px 0}
+  </style></head><body>
+  <h1>Dr. Lyra — Survey</h1>
+  <nav><a href="/admin">Overview</a><a href="/admin/survey"><strong>Survey Responses</strong></a></nav>
+  <div class="stats">
+    <div class="stat"><div class="stat-n">${fList.length}</div><div class="stat-l">Total Responses</div></div>
+    <div class="stat"><div class="stat-n">${avgAcc}/5</div><div class="stat-l">Avg Accuracy Rating</div></div>
+    <div class="stat"><div class="stat-n">${avgNps}/10</div><div class="stat-l">Avg NPS Score</div></div>
+  </div>
+  <div class="card">
+    ${fList.length
+      ? `<table><tr><th>Accuracy</th><th>Top Section</th><th>NPS</th><th>Surprise</th><th>Loved Most</th><th>Improvements</th><th>Date</th></tr>${fRows}</table>`
+      : `<p class="empty">No survey responses yet.</p>`}
+  </div>
+  </body></html>`);
+});
+
+app.get('/admin/survey/:reportId', (req, res) => {
+  const pass = process.env.ADMIN_PASSWORD || 'drlyra2026';
+  const expected = 'Basic ' + Buffer.from('admin:' + pass).toString('base64');
+  if (req.headers.authorization !== expected) {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Dr. Lyra Admin"');
+    return res.status(401).send('Unauthorized');
+  }
+  const { reportId } = req.params;
+  const feedback = readJSON(FEEDBACK_FILE);
+  const f = Object.values(feedback).find(x => x.reportId === reportId);
+  const reports = readJSON(REPORTS_FILE);
+  const report = reports[reportId];
+  const stars = n => '★'.repeat(n||0) + '☆'.repeat(5-(n||0));
+  if (!f) return res.status(404).send('No survey found for this report.');
+  res.send(`<!DOCTYPE html><html><head><title>Survey — Dr. Lyra Admin</title><style>
+    *{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui;background:#f5f5f5;padding:32px;color:#333}
+    h1{font-size:1.3rem;font-weight:700;margin-bottom:8px}
+    .sub{color:#888;font-size:13px;margin-bottom:24px}
+    nav{margin-bottom:24px;display:flex;gap:16px}
+    .card{background:#fff;border-radius:10px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.07);margin-bottom:20px}
+    .label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#aaa;margin-bottom:4px}
+    .value{font-size:14px;color:#333;white-space:pre-wrap}
+    .stars{color:#f59e0b;font-size:1.2rem}
+    a{color:#1DB954}
+  </style></head><body>
+  <h1>Survey Response</h1>
+  <p class="sub">${report?.email || reportId} · ${f.createdAt.slice(0,16).replace('T',' ')}</p>
+  <nav><a href="/admin">Overview</a> · <a href="/admin/survey">All Surveys</a> · <a href="/report/${reportId}" target="_blank">View Report</a></nav>
+  <div class="card"><div class="label">Accuracy</div><div class="stars value">${stars(f.accuracy)} (${f.accuracy||'—'}/5)</div></div>
+  <div class="card"><div class="label">Section that resonated most</div><div class="value">${f.section||'—'}</div></div>
+  <div class="card"><div class="label">NPS — Likelihood to recommend</div><div class="value">${f.nps??'—'}/10</div></div>
+  <div class="card"><div class="label">What surprised them most</div><div class="value">${f.surprise||'—'}</div></div>
+  <div class="card"><div class="label">What they loved most</div><div class="value">${f.liked||'—'}</div></div>
+  <div class="card"><div class="label">How they'd improve Dr. Lyra</div><div class="value">${f.improve||'—'}</div></div>
+  </body></html>`);
+});
+
+app.post('/submit-feedback', (req, res) => {
+  const { accuracy, section, nps, surprise, liked, improve, reportId } = req.body;
+  const feedback = readJSON(FEEDBACK_FILE);
+  feedback[Date.now()] = { accuracy, section, nps, surprise: surprise || null, liked: liked || null, improve: improve || null, reportId: reportId || null, createdAt: new Date().toISOString() };
+  writeJSON(FEEDBACK_FILE, feedback);
+  res.json({ ok: true });
 });
 
 app.get('/test-email', async (req, res) => {
@@ -282,7 +388,7 @@ Tone: Warm, intelligent, slightly theatrical. Like a trusted friend with a PhD i
 
   try {
     const stream = await client.messages.stream({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-5',
       max_tokens: 4000,
       system: `You are Dr. Lyra — a witty, warm, and deeply insightful psychologist, musicologist, and behavioral analyst with 20 years of experience decoding the human psyche through the lens of music. You have a gift for making people feel deeply seen — not through cold clinical language, but through vivid, poetic, and eerily accurate observations that feel like someone finally put words to something the person always knew about themselves but could never articulate. Extract all visible data from the images first (artists, songs, genres, play counts, minutes, any stats shown), then generate the full psychological profile. If you cannot read certain parts clearly, work with what you can see and make smart inferences. Do not add any preamble before section 1 — start directly with the first section header.`,
       messages: [
