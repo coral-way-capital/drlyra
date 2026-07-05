@@ -113,6 +113,12 @@
   </div>
 </div>
 
+<!-- FEEDBACK MINIMIZED PILL -->
+<button id="fb-mini">
+  <span class="fb-mini-dot"></span>
+  Quick feedback
+</button>
+
 <script>
   // ─────────────────────────────────────────
   //  SECTION DEFINITIONS
@@ -238,6 +244,8 @@
       const ni = content.indexOf(next);
       if (ni !== -1) { content = content.slice(0, ni); break; }
     }
+    // Strip markdown horizontal rules (Claude separates sections with "---")
+    content = content.replace(/^[ \t]*[-*_]{3,}[ \t]*$/gm, '');
     return content.trim();
   }
 
@@ -272,7 +280,7 @@
   function extractFeatSentence(rawText) {
     if (!rawText) return '';
     const clean = rawText.replace(/^#{1,6}\s*.*/gm, '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1');
-    const paras = clean.split(/\n{2,}/).map(p => p.trim()).filter(p => p && p.length > 2);
+    const paras = clean.split(/\n{2,}/).map(p => p.trim()).filter(p => p && p.length > 2 && !/^[-*_]{3,}$/.test(p));
     if (paras.length < 2) return '';
     const srcPlain = paras[1];
     const sents = srcPlain.match(/[^.!?]+[.!?]+/g) || [];
@@ -291,7 +299,7 @@
 
     const paras = processed.split(/\n{2,}/)
       .map(p => p.trim())
-      .filter(p => p && p.length > 2);
+      .filter(p => p && p.length > 2 && !/^[-*_]{3,}$/.test(p));
 
     if (!paras.length) return '';
 
@@ -672,23 +680,62 @@
 
   const fbState = { step: 1, accuracy: null, section: null, nps: null, surprise: null, liked: null, improve: null };
   const banner  = document.getElementById('feedback-banner');
+  const fbMini  = document.getElementById('fb-mini');
   const fbProg  = document.getElementById('fb-progress');
   const fbQ     = document.getElementById('fb-question');
   const fbBody  = document.getElementById('fb-body');
 
-  if (!localStorage.getItem('drlyra_feedback_done')) {
-    let shown = false;
-    const onScroll = () => {
-      if (shown || window.scrollY < 100) return;
-      shown = true;
-      banner.classList.add('show');
-      window.removeEventListener('scroll', onScroll);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
+  function fbDone() { return !!localStorage.getItem('drlyra_feedback_done'); }
+
+  function fbShow() {
+    if (fbDone()) return;
+    banner.classList.add('show');
+    fbMini.classList.remove('show');
+  }
+  function fbMinimize() {
+    banner.classList.remove('show');
+    if (!fbDone()) fbMini.classList.add('show');
+  }
+  function fbFinish() {
+    banner.classList.remove('show');
+    fbMini.classList.remove('show');
+  }
+
+  if (!fbDone()) {
+    // Trigger 1 — first time section 6 (Emotional Waves) scrolls into view
+    let firstShown = false;
+    const s06 = document.getElementById('s06');
+    if (s06) {
+      const io6 = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !firstShown && !fbDone()) {
+            firstShown = true;
+            fbShow();
+            io6.disconnect();
+          }
+        });
+      }, { threshold: 0.25 });
+      io6.observe(s06);
+    }
+
+    // Trigger 2 — reopen once the user reaches the end, if not filled out yet
+    const bottomCta = document.querySelector('.bottom-cta');
+    if (bottomCta) {
+      const ioEnd = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !fbDone()) fbShow();
+        });
+      }, { threshold: 0.2 });
+      ioEnd.observe(bottomCta);
+    }
   }
 
   document.getElementById('fb-close').addEventListener('click', () => {
-    banner.classList.remove('show');
+    fbMinimize();
+  });
+
+  fbMini.addEventListener('click', () => {
+    fbShow();
   });
 
   function renderStep(step) {
@@ -778,7 +825,7 @@
     } else {
       fbQ.textContent = '';
       fbBody.innerHTML = `<div class="fb-done">Thank you 💚<span>Your feedback helps Dr. Lyra get better.</span></div>`;
-      setTimeout(() => banner.classList.remove('show'), 3000);
+      setTimeout(fbFinish, 3000);
     }
   }
 

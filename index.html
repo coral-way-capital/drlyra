@@ -148,6 +148,11 @@
       <span class="typed-prefix">Consulting </span><span class="typed-name" id="typed-name"></span><span class="type-cursor" id="type-cursor"></span>
     </div>
     <div class="loading-sub">Reading between the frequencies</div>
+    <div class="loading-status">
+      <div class="loading-status-title">Hang tight — Dr. Lyra is writing your full report</div>
+      <div class="loading-progress-bar"><div class="loading-progress-fill" id="loading-progress-fill"></div></div>
+      <div class="loading-step-label" id="loading-step-label">Starting up…</div>
+    </div>
   </div>
 
   <!-- Report -->
@@ -399,17 +404,28 @@
         throw new Error(err?.error || `Server error (${response.status}). Check that the server is running and your API key has credits.`);
       }
 
-      loading.style.display = 'none';
-      if (stopTypewriter) { stopTypewriter(); stopTypewriter = null; }
-      report.style.display = 'block';
+      // Keep the preloader up for the whole generation — the raw section-by-section
+      // build is confusing to watch, so we track progress silently and only reveal
+      // the finished report on the /report page after redirect.
+      const loadingStepLabel = document.getElementById('loading-step-label');
+      const loadingProgressFill = document.getElementById('loading-progress-fill');
+      const STEP_LABELS = [
+        'Your Core Personality Archetype',
+        'Your Emotional Landscape',
+        'Your Shadow Self',
+        'Your Cognitive Style',
+        'Your Desire Profile',
+        'Your Year in Emotional Waves',
+        'Your Blind Spots & Growth Edge',
+        'Your Musical Soulmate Profile',
+        'Your Signature Quote',
+      ];
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
       let fullText = '';
       let currentSectionIndex = -1;
-      let currentCard = null;
-      let currentContent = null;
 
       while (true) {
         const { done, value } = await reader.read();
@@ -430,43 +446,20 @@
 
           fullText += parsed.text;
 
-          // Detect section headers in the accumulated text
+          // Track progress by section header, without rendering the raw streamed text
           SECTIONS.forEach((sec, idx) => {
             const marker = sec.key + ' ' + sec.title;
             if (fullText.includes(marker) && currentSectionIndex < idx) {
               currentSectionIndex = idx;
-              currentCard = createSectionCard(sec);
-              currentContent = currentCard.querySelector('.section-content');
-              sectionsContainer.appendChild(currentCard);
-              currentCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              const pct = Math.round(((idx + 1) / SECTIONS.length) * 100);
+              loadingProgressFill.style.width = pct + '%';
+              loadingStepLabel.textContent = `Writing section ${idx + 1} of ${SECTIONS.length} — ${STEP_LABELS[idx]}`;
             }
           });
-
-          if (currentContent) {
-            // Strip everything up to and including the section title from the streamed text for display
-            let displayText = fullText;
-            for (let i = 0; i <= currentSectionIndex; i++) {
-              const marker = SECTIONS[i].key + ' ' + SECTIONS[i].title;
-              const idx2 = displayText.indexOf(marker);
-              if (i === currentSectionIndex && idx2 !== -1) {
-                displayText = displayText.slice(idx2 + marker.length).trimStart();
-              }
-            }
-            // Clip at next section
-            for (let i = currentSectionIndex + 1; i < SECTIONS.length; i++) {
-              const nextMarker = SECTIONS[i].key + ' ' + SECTIONS[i].title;
-              const nextIdx = displayText.indexOf(nextMarker);
-              if (nextIdx !== -1) {
-                displayText = displayText.slice(0, nextIdx);
-                break;
-              }
-            }
-            currentContent.innerHTML = escapeHtml(displayText.trimStart()) + '<span class="cursor"></span>';
-          }
         }
       }
 
-      document.querySelectorAll('.cursor').forEach(c => c.remove());
+      if (stopTypewriter) { stopTypewriter(); stopTypewriter = null; }
 
       // Save report to server → get unique URL
       sessionStorage.setItem('drlyra_report', fullText);
