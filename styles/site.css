@@ -307,10 +307,12 @@ body.landing { overflow-x: hidden; }
 .hero-inner {
   position: relative; z-index: 1;
   max-width: 1080px; margin: 0 auto;
-  display: flex; align-items: center; gap: 0;
+  display: flex; align-items: center; justify-content: center; gap: 52px;
   width: 100%;
 }
-.hero-text { flex: 1; min-width: 0; }
+/* Capped rather than flex:1 — without a max-width the text column stretches
+   to fill all remaining space, stranding the phone out at the far edge. */
+.hero-text { flex: 0 1 520px; min-width: 0; }
 
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px;
@@ -351,8 +353,12 @@ body.landing { overflow-x: hidden; }
   font-style: italic;
   font-weight: 600;
   letter-spacing: -0.01em;
-  line-height: 1.1;
-  margin-bottom: 32px;
+  /* 1.1 was tight enough to clip descenders (the "y" in "you") on the
+     gradient-clipped text — the background-clip:text fill conforms to
+     the line box, so italic descenders need real room to breathe. */
+  line-height: 1.3;
+  padding-bottom: 4px;
+  margin-bottom: 28px;
 }
 
 .hero-sub {
@@ -642,8 +648,9 @@ body.landing { overflow-x: hidden; }
 }
 @media (max-width: 680px) {
   .lead-box { flex-direction: column; padding: 28px 24px; }
-  .lead-form { width: 100%; }
-  .lead-input { flex: 1; width: auto; }
+  .lead-form { width: 100%; flex-direction: column; }
+  .lead-input { flex: 1; width: 100%; }
+  .lead-btn { width: 100%; }
 }
 
 /* ══════════════════════════════
@@ -789,12 +796,11 @@ footer {
     radial-gradient(ellipse 70% 40% at 90% 105%, rgba(139,92,246,0.10) 0%, transparent 55%);
 }
 .phone-report {
-  padding: 14px 16px 0;
-  animation: report-scroll 20s cubic-bezier(0.4, 0, 0.2, 1) 2s 1 forwards;
-}
-@keyframes report-scroll {
-  0%   { transform: translateY(0px);    }
-  100% { transform: translateY(-255px); }
+  --phone-fold: 500px;
+  position: relative;
+  /* Transform is driven by a looping GSAP timeline (see script) — cycling
+     through 9 stops with holds is much more maintainable there than as a
+     hand-written keyframe percentage table. */
 }
 
 .phone-brand {
@@ -802,66 +808,54 @@ footer {
   font-family: 'DM Sans', sans-serif;
   font-size: 11px; font-weight: 700;
   color: rgba(255,255,255,0.35);
-  margin-bottom: 18px;
+  padding: 14px 16px 10px;
+  flex-shrink: 0;
 }
-.phone-arch {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 26px; font-weight: 800;
-  line-height: 1.08; letter-spacing: -0.03em;
-  background: linear-gradient(135deg, #fff 0%, #c8f0d8 45%, #a78bfa 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 6px;
+.phone-section-view {
+  height: var(--phone-fold);
+  box-sizing: border-box;
+  padding: 6px 16px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-.phone-arch-label {
+.phone-sec-label {
   font-family: 'DM Sans', sans-serif;
   font-size: 9px; font-weight: 700;
   letter-spacing: 2px; text-transform: uppercase;
   color: rgba(29,185,84,0.65);
-  margin-bottom: 16px;
+  margin-bottom: 26px;
 }
-.phone-sec-card {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  padding: 10px 12px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 11px;
-  margin-bottom: 7px;
-  position: relative;
-  overflow: hidden;
-}
-.phone-sec-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1.5px;
-  background: linear-gradient(90deg, #1DB954, #8B5CF6);
-  opacity: 0.45;
-}
-.phone-sec-num {
+.phone-sec-icon { font-size: 30px; line-height: 1; margin-bottom: 20px; }
+.phone-sec-heading {
   font-family: 'DM Sans', sans-serif;
-  font-size: 9px; font-weight: 800;
-  color: rgba(29,185,84,0.65);
-  letter-spacing: 0.5px;
-  flex-shrink: 0;
-  padding-top: 2px;
-  min-width: 16px;
+  font-size: 22px; font-weight: 800;
+  line-height: 1.12; letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 24px;
 }
-.phone-sec-title {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 11px; font-weight: 700;
-  color: rgba(255,255,255,0.78);
-  margin-bottom: 3px;
-  line-height: 1.3;
-}
-.phone-sec-desc {
+.phone-sec-body {
   font-family: 'Inter', sans-serif;
-  font-size: 9.5px; line-height: 1.5;
-  color: rgba(255,255,255,0.35);
+  font-size: 11.5px; line-height: 1.75;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 26px;
+}
+.phone-pull-quote {
+  font-family: 'DM Sans', sans-serif;
+  font-style: italic;
+  font-size: 12px; font-weight: 600;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.85);
+  padding: 12px 14px;
+  background: rgba(29,185,84,0.08);
+  border-left: 2px solid #1DB954;
+  border-radius: 0 8px 8px 0;
 }
 .phone-fade-top {
+  /* Starts below the persistent .phone-brand header, not the top of the
+     screen — softens the handoff into the scrolling section beneath it. */
   position: absolute;
-  top: 0; left: 0; right: 0; height: 56px;
+  top: 38px; left: 0; right: 0; height: 30px;
   background: linear-gradient(to bottom, #08080f 10%, transparent);
   pointer-events: none;
   z-index: 10;
@@ -886,7 +880,9 @@ footer {
 ══════════════════════════════ */
 @media (max-width: 960px) {
   .hero-inner { flex-direction: column; text-align: center; gap: 48px; }
-  .hero-text { display: flex; flex-direction: column; align-items: center; }
+  /* Reset the desktop 520px flex-basis — in column mode that basis applies
+     to height, not width, and fights the content's natural size. */
+  .hero-text { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; }
   .hero-sub { margin: 0 auto 48px; }
   .hero-actions { align-items: center; }
   .phone-frame { transform: none; }
@@ -897,6 +893,10 @@ footer {
   .steps-grid, .insights-grid { grid-template-columns: repeat(2, 1fr); }
   .step-arrow { display: none; }
   section { padding: 72px 0; }
+  /* Testimonials: below ~860px, 3 cards no longer fit at their min-width and
+     fall back to an unaffordanced horizontal scroll strip — stack instead. */
+  .testi-grid { flex-direction: column !important; overflow-x: visible !important; }
+  .testi-grid .testi-card { min-width: 0 !important; width: 100%; }
 }
 @media (max-width: 560px) {
   .steps-grid, .insights-grid { grid-template-columns: 1fr; }
@@ -904,6 +904,15 @@ footer {
   .wrap { padding: 0 20px; }
   footer { flex-direction: column; align-items: flex-start; }
   .footer-legal { text-align: left; }
+  /* Badge text is long enough to wrap to 2-3 lines at phone widths, which
+     breaks the pill shape — shrink it down until it holds one line. */
+  .hero-badge {
+    font-size: 10.5px;
+    gap: 6px;
+    padding: 6px 14px 6px 9px;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
   /* Phone shows below text on mobile, scaled down */
   .hero-device { display: flex; }
   .phone-frame {
@@ -912,7 +921,9 @@ footer {
     border-radius: 36px;
     transform: none !important;
   }
-  .phone-arch { font-size: 20px; }
+  .phone-report { --phone-fold: 372px; }
+  .phone-sec-heading { font-size: 19px; }
+  .phone-sec-body { font-size: 11px; }
   #hero { padding: 100px 20px 60px; overflow-x: hidden; }
   .hero-inner { gap: 36px; }
 }

@@ -3,96 +3,61 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dr. Lyra — Spotify Psychological Profile</title>
+  <title>Dr. Lyra — Amber Palette Proposal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/styles/site.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!--
+    PROPOSAL PREVIEW ONLY — not linked from the app, does not affect production.
+    Overrides every purple/violet accent with the "Amber Clay" direction from
+    design-library.html, leaving the Spotify green untouched.
+  -->
   <style>
-    /* Neutralize every var(--purple)/var(--violet) gradient stop to green —
-       turns two-tone gradients into flat solid fills without hunting down
-       every var()-based rule individually. */
     :root {
-      --purple:        #1DB954;
-      --violet:        #1DB954;
-      --brand-purple:  #1DB954;
-      --accent-purple: #1DB954;
-      --grad-ui:       linear-gradient(135deg, #1DB954, #1DB954);
+      --purple:        #E08A4B;
+      --violet:        #F2B98A;
+      --brand-purple:  #C96A2E;
+      --accent-purple: #E08A4B;
+      --grad-brand:    linear-gradient(135deg, #C96A2E, #00B25F);
+      --grad-ui:       linear-gradient(135deg, #1DB954, #E08A4B);
+      --grad-heading:  linear-gradient(135deg, #ffffff 0%, #f5ddc0 40%, #E08A4B 100%);
     }
-
-    /* ── Remove remaining hardcoded (non-var) gradients ── */
-    h1 { background: none !important; -webkit-text-fill-color: unset !important; color: var(--heading) !important; }
-    .hero-sub-hl { background: none !important; -webkit-text-fill-color: #1DB954 !important; color: #1DB954 !important; }
-    .testi-avatar { background: rgba(29,185,84,0.16) !important; backdrop-filter: blur(6px); }
-    .hero-amb { background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%) !important; }
+    h1 { background: linear-gradient(135deg, #ffffff 0%, #f5ddc0 50%, var(--purple) 100%) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+    .hero-sub-hl { background: linear-gradient(135deg, #1DB954, #E08A4B) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+    .card:hover { border-color: rgba(224,138,75,0.22) !important; }
+    .hero-amb { background: radial-gradient(circle, rgba(224,138,75,0.09), transparent 70%) !important; }
+    .btn:hover { box-shadow: 0 8px 40px rgba(29,185,84,0.4), 0 4px 20px rgba(224,138,75,0.25) !important; }
+    @keyframes breath { 0%,100% { box-shadow: 0 0 20px rgba(29,185,84,0.25), 0 0 40px rgba(224,138,75,0.1); } 50% { box-shadow: 0 0 32px rgba(29,185,84,0.42), 0 0 64px rgba(224,138,75,0.2); } }
+    .testi-avatar { background: linear-gradient(135deg, rgba(29,185,84,0.18), rgba(224,138,75,0.22)) !important; }
     .hero-device::before {
       background:
         radial-gradient(ellipse 70% 55% at 50% 15%, rgba(29,185,84,0.22) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 50% 90%, rgba(255,255,255,0.08) 0%, transparent 55%) !important;
+        radial-gradient(ellipse 60% 50% at 50% 90%, rgba(224,138,75,0.20) 0%, transparent 55%) !important;
     }
     .phone-screen {
       background:
         radial-gradient(ellipse 90% 45% at 50% -5%, rgba(29,185,84,0.13) 0%, transparent 60%),
-        radial-gradient(ellipse 70% 40% at 90% 105%, rgba(255,255,255,0.06) 0%, transparent 55%) !important;
+        radial-gradient(ellipse 70% 40% at 90% 105%, rgba(224,138,75,0.10) 0%, transparent 55%) !important;
     }
+    .phone-sec-card::before { background: linear-gradient(90deg, #1DB954, #E08A4B) !important; }
+    .phone-arch { background: linear-gradient(135deg, #fff 0%, #c8f0d8 45%, #E08A4B 100%) !important; -webkit-background-clip: text !important; background-clip: text !important; }
 
-    /* ── Glass button (replaces the green→purple gradient pill) ── */
-    .btn {
-      background: rgba(29,185,84,0.16) !important;
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      border: 1px solid rgba(29,185,84,0.4);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 8px 30px rgba(29,185,84,0.15) !important;
-      animation: none !important;
+    /* Proposal marker banner */
+    #proposal-banner {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      background: linear-gradient(90deg, #E08A4B, #C96A2E);
+      color: #0a0a0f; text-align: center;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.02em; padding: 9px 16px;
     }
-    .btn:hover {
-      background: rgba(29,185,84,0.24) !important;
-      border-color: rgba(29,185,84,0.6);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 10px 42px rgba(29,185,84,0.32) !important;
-    }
-    .btn-ghost {
-      backdrop-filter: blur(14px) saturate(160%);
-      -webkit-backdrop-filter: blur(14px) saturate(160%);
-    }
-
-    /* ── True glass cards ── */
-    .card {
-      background: rgba(255,255,255,0.05) !important;
-      border: 1px solid rgba(255,255,255,0.1) !important;
-      backdrop-filter: blur(22px) saturate(160%);
-      -webkit-backdrop-filter: blur(22px) saturate(160%);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.2);
-    }
-    .card:hover {
-      border-color: rgba(255,255,255,0.2) !important;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 16px 44px rgba(0,0,0,0.34) !important;
-    }
-    .hero-badge, .lead-box {
-      backdrop-filter: blur(14px) saturate(160%);
-      -webkit-backdrop-filter: blur(14px) saturate(160%);
-    }
-
-    /* ── Glass nav, intensifies on scroll (see JS) ── */
-    nav {
-      backdrop-filter: blur(16px) saturate(160%);
-      -webkit-backdrop-filter: blur(16px) saturate(160%);
-      transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
-    }
-    nav.nav-scrolled {
-      background: rgba(10,10,15,0.92) !important;
-      border-bottom-color: rgba(255,255,255,0.09) !important;
-      backdrop-filter: blur(22px) saturate(180%);
-      -webkit-backdrop-filter: blur(22px) saturate(180%);
-    }
-
-    /* GSAP owns .reveal animation now — stop the CSS transition from double-firing */
-    .reveal { transition: none !important; }
+    body.landing { padding-top: 38px; }
   </style>
 </head>
 <body class="landing">
+
+<div id="proposal-banner">⚡ Design Proposal — Amber Clay Palette · Not the live site · Purple swapped for amber throughout</div>
 
 <!-- ══════════════════════════════════════════
      NAV
@@ -150,77 +115,81 @@
       <div class="phone-frame">
         <div class="phone-notch"></div>
         <div class="phone-screen">
-          <div class="phone-brand">
-            <img src="/images/drlyra-icon.svg" width="14" height="14" alt="" />
-            <span>Dr. Lyra</span>
-          </div>
           <div class="phone-fade-top"></div>
           <div class="phone-report">
-            <div class="phone-section-view">
-              <div class="phone-sec-label">01 · Your Core Personality Archetype</div>
-              <div class="phone-sec-icon">🎭</div>
-              <div class="phone-sec-heading">The Romantic<br/>Escapist</div>
-              <p class="phone-sec-body">Your late-night rotation of one song on repeat, your pull toward music that aches — this is someone who processes the world through feeling first, logic a distant second.</p>
-              <div class="phone-pull-quote">"You don't just listen to music — you disappear into it."</div>
+            <div class="phone-brand">
+              <img src="/images/drlyra-icon.svg" width="14" height="14" alt="" />
+              <span>Dr. Lyra</span>
             </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">02 · Your Emotional Landscape</div>
-              <div class="phone-sec-icon">🧠</div>
-              <div class="phone-sec-heading">How You Process Feeling</div>
-              <p class="phone-sec-body">The swing between euphoric pop and melancholic ballads within the same week reveals an emotional range most people learn to suppress by adulthood.</p>
-              <div class="phone-pull-quote">"You feel in stereo — nothing gets the mono treatment."</div>
+            <div class="phone-arch">The Romantic<br/>Escapist</div>
+            <div class="phone-arch-label">Your Core Personality Archetype</div>
+
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">01</span>
+              <div>
+                <div class="phone-sec-title">🎭 Core Personality Archetype</div>
+                <div class="phone-sec-desc">Your named psychological type, decoded from your most-played music.</div>
+              </div>
             </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">03 · Your Shadow Self</div>
-              <div class="phone-sec-icon">🌙</div>
-              <div class="phone-sec-heading">What You Don't Show</div>
-              <p class="phone-sec-body">The outlier artist buried in your top fifty, the genre you'd never admit to loving out loud — these contradictions aren't flaws. They're the parts of you still figuring themselves out.</p>
-              <div class="phone-pull-quote">"Your shadow self has better taste than you give it credit for."</div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">02</span>
+              <div>
+                <div class="phone-sec-title">🧠 Emotional Landscape</div>
+                <div class="phone-sec-desc">How you process feelings through music — and what it says about your inner life.</div>
+              </div>
             </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">04 · Your Cognitive Style</div>
-              <div class="phone-sec-icon">💡</div>
-              <div class="phone-sec-heading">How Your Mind Works</div>
-              <p class="phone-sec-body">Your loyalty to a narrow rotation of albums, played start to finish, says more about how you think than any personality quiz — focused, deliberate, allergic to shuffle.</p>
-              <div class="phone-pull-quote">"You don't sample. You commit."</div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">03</span>
+              <div>
+                <div class="phone-sec-title">🌙 Shadow Self</div>
+                <div class="phone-sec-desc">What your contradictions and outlier artists secretly reveal about you.</div>
+              </div>
             </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">05 · Your Desire Profile</div>
-              <div class="phone-sec-icon">🔥</div>
-              <div class="phone-sec-heading">What You're Chasing</div>
-              <p class="phone-sec-body">The tempo you keep returning to, the lyrics you know by heart — underneath it all is a craving for something specific: freedom, closeness, intensity, or all three at once.</p>
-              <div class="phone-pull-quote">"Your playlists are a wish list you haven't said out loud."</div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">04</span>
+              <div>
+                <div class="phone-sec-title">💡 Cognitive Style</div>
+                <div class="phone-sec-desc">How your mind actually works — intuitive or analytical, scattered or focused.</div>
+              </div>
             </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">06 · Your Year in Emotional Waves</div>
-              <div class="phone-sec-icon">🌊</div>
-              <div class="phone-sec-heading">Your Year, Told in Sound</div>
-              <p class="phone-sec-body">Five movements, one story — the tracks that got you through January aren't the ones that carried you in December, and that arc is the plot of your year.</p>
-              <div class="phone-pull-quote">"Your listening history is a memoir you didn't know you were writing."</div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">05</span>
+              <div>
+                <div class="phone-sec-title">🔥 Desire Profile</div>
+                <div class="phone-sec-desc">What you're truly chasing right now — freedom, connection, intensity, belonging.</div>
+              </div>
             </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">07 · Blind Spots & Growth Edge</div>
-              <div class="phone-sec-icon">🎯</div>
-              <div class="phone-sec-heading">What You're Avoiding</div>
-              <p class="phone-sec-body">The genres you skip, the moods you never queue up — patterns like these point at exactly what you're not ready to sit with yet, plus three artists to start with.</p>
-              <div class="phone-pull-quote">"The song you always skip is trying to tell you something."</div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">06</span>
+              <div>
+                <div class="phone-sec-title">🌊 Year in Emotional Waves</div>
+                <div class="phone-sec-desc">The story of your year told through sound, written like a memoir.</div>
+              </div>
             </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">08 · Your Musical Soulmate Profile</div>
-              <div class="phone-sec-icon">✨</div>
-              <div class="phone-sec-heading">Your Perfect Match — and Nemesis</div>
-              <p class="phone-sec-body">Somewhere out there is a person whose stats would make you fall in love on sight — and someone else whose taste would end the conversation in ten seconds.</p>
-              <div class="phone-pull-quote">"Compatibility, one genre at a time."</div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">07</span>
+              <div>
+                <div class="phone-sec-title">🎯 Blind Spots & Growth Edge</div>
+                <div class="phone-sec-desc">What you might be avoiding, plus 3 artist recommendations to unlock you.</div>
+              </div>
             </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">09 · Your Signature Quote</div>
-              <div class="phone-sec-icon">🏷️</div>
-              <div class="phone-sec-heading">One Line, All of You</div>
-              <p class="phone-sec-body">The final section distills everything — archetype, shadow, desire — into a single original sentence built entirely from your data. Something worth putting on your wall.</p>
-              <div class="phone-pull-quote">"Some people keep a diary. You made a playlist."</div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">08</span>
+              <div>
+                <div class="phone-sec-title">✨ Musical Soulmate Profile</div>
+                <div class="phone-sec-desc">Your perfect musical match — and your musical nemesis.</div>
+              </div>
             </div>
+            <div class="phone-sec-card">
+              <span class="phone-sec-num">09</span>
+              <div>
+                <div class="phone-sec-title">🏷️ Signature Quote</div>
+                <div class="phone-sec-desc">One original sentence that captures your essence. Something to put on your wall.</div>
+              </div>
+            </div>
+
+            <div class="phone-fade"></div>
           </div>
-          <div class="phone-fade"></div>
         </div>
         <div class="phone-home-bar"></div>
       </div>
@@ -574,101 +543,10 @@
 
 
 <script>
-  gsap.registerPlugin(ScrollTrigger);
-
-  // ── Hero entrance timeline ──────────────────────────────────────
-  // Text block arrives as one group (small stagger just to feel less
-  // mechanical) instead of each line entering on its own beat, so the
-  // hero reads as two pieces — text, then phone — not four.
-  const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-  heroTl
-    .from(['.hero-badge', '.hero-h1', '.hero-sub', '.hero-actions'], {
-      opacity: 0, y: 18, duration: 0.7, stagger: 0.06,
-    })
-    .from('.hero-device', { opacity: 0, y: 30, scale: 0.94, duration: 0.9, ease: 'power2.out' }, '-=0.5');
-
-  // ── Cursor-tilt parallax on the phone mockup ────────────────────
-  const heroSection = document.getElementById('hero');
-  const phoneFrame  = document.querySelector('.phone-frame');
-  if (heroSection && phoneFrame && window.matchMedia('(pointer: fine)').matches) {
-    gsap.set(phoneFrame, { transformPerspective: 1000, rotationY: -8, rotationX: 3 });
-    const setRotY = gsap.quickTo(phoneFrame, 'rotationY', { duration: 0.7, ease: 'power3' });
-    const setRotX = gsap.quickTo(phoneFrame, 'rotationX', { duration: 0.7, ease: 'power3' });
-    heroSection.addEventListener('mousemove', (e) => {
-      const rect = heroSection.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width - 0.5;
-      const py = (e.clientY - rect.top) / rect.height - 0.5;
-      setRotY(px * 16 - 8);
-      setRotX(-py * 10 + 3);
-    });
-    heroSection.addEventListener('mouseleave', () => { setRotY(-8); setRotX(3); });
-  }
-
-  // ── Phone mockup: loop through all 9 report sections ────────────
-  const phoneReport   = document.querySelector('.phone-report');
-  const phoneSections = document.querySelectorAll('.phone-section-view');
-  if (phoneReport && phoneSections.length) {
-    const foldH = parseFloat(getComputedStyle(phoneReport).getPropertyValue('--phone-fold')) || phoneSections[0].offsetHeight;
-    const HOLD = 3.2;   // seconds spent reading each section
-    const MOVE = 1;     // seconds to scroll to the next section
-    const phoneTl = gsap.timeline({ repeat: -1, delay: 2.5 });
-    phoneTl.to({}, { duration: HOLD }); // hold on section 1 (already at y:0)
-    for (let i = 1; i < phoneSections.length; i++) {
-      phoneTl
-        .to(phoneReport, { y: -foldH * i, duration: MOVE, ease: 'power2.inOut' })
-        .to({}, { duration: HOLD });
-    }
-    phoneTl
-      .to(phoneReport, { y: 0, duration: 1.4, ease: 'power2.inOut' }) // smooth return to top
-      .to({}, { duration: 0.6 }); // brief pause before the loop restarts
-  }
-
-  // ── Scroll parallax — layers move at different speeds for depth ──
-  gsap.to('.hero-spot', { y: 120, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 } });
-  gsap.to('.hero-amb',  { y: -80, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 } });
-  gsap.to('.final-glow', { y: -60, ease: 'none', scrollTrigger: { trigger: '#final', start: 'top bottom', end: 'bottom top', scrub: 1 } });
-  // Foreground content drifts slower than the background glow behind it —
-  // same parallax technique as above, just applied to one more layer.
-  // (Targets .phone-frame rather than .hero-device, which already has its
-  // own infinite idle-float tween on `y` — a second tween on the same
-  // property of the same element would fight it; a child element composes
-  // cleanly instead, and reads as an extra layer of depth.)
-  gsap.to('.hero-text',   { y: -36, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 } });
-  gsap.to('.phone-frame', { y: -14, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 } });
-
-  // ── Staggered scroll reveals (replaces the plain fade-in) ───────
-  // Slight scale-in alongside the fade/slide gives entrances a bit of depth
-  // (settling into place from just behind the screen) without adding a
-  // separate animation of its own.
-  const revealGroups = [
-    '.steps-grid .reveal',
-    '.insights-grid .reveal',
-    '#testimonials .testi-grid .reveal',
-  ];
-  revealGroups.forEach(sel => {
-    const els = gsap.utils.toArray(sel);
-    if (!els.length) return;
-    gsap.fromTo(els, { opacity: 0, y: 28, scale: 0.97 }, {
-      opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'power3.out', stagger: 0.1,
-      scrollTrigger: { trigger: els[0].closest('section'), start: 'top 82%' },
-    });
-  });
-  // Standalone reveal elements (section headers, lead box, final CTA) — one at a time
-  document.querySelectorAll('.reveal').forEach(el => {
-    if (el.closest('.steps-grid, .insights-grid, .testi-grid')) return; // handled by the grouped stagger above
-    gsap.fromTo(el, { opacity: 0, y: 28 }, {
-      opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
-      scrollTrigger: { trigger: el, start: 'top 88%' },
-    });
-  });
-
-  // ── Nav glass intensifies on scroll ─────────────────────────────
-  ScrollTrigger.create({
-    start: 'top -60',
-    onUpdate: (self) => {
-      document.querySelector('nav').classList.toggle('nav-scrolled', self.scroll() > 60);
-    },
-  });
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
   async function startCheckout(btn) {
     btn.disabled = true;
