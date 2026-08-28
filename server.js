@@ -24,6 +24,7 @@ async function sendReportEmail(toEmail, reportId) {
         <p style="font-size:15px;color:#888;line-height:1.7;margin:0 0 32px;">Dr. Lyra has decoded your music taste into a 9-section psychological portrait. Some of it will surprise you.</p>
         <a href="${reportUrl}" style="display:inline-block;padding:14px 28px;background:#1DB954;color:#000;font-weight:700;font-size:15px;border-radius:10px;text-decoration:none;">Read Your Profile →</a>
         <p style="font-size:12px;color:#444;margin-top:32px;">Or copy this link: ${reportUrl}</p>
+        <p style="font-size:11px;color:#333;margin-top:8px;">For entertainment purposes only — not professional psychological advice.</p>
       </div>`,
   });
   if (error) throw new Error(error.message);
@@ -236,7 +237,7 @@ app.post('/submit-feedback', (req, res) => {
 app.get('/test-email', async (req, res) => {
   const to = req.query.to;
   if (!to) return res.status(400).send('Missing ?to=email');
-  if (!mailer) return res.status(503).send('SMTP not configured');
+  if (!resend) return res.status(503).send('RESEND_API_KEY not configured');
   try {
     await sendReportEmail(to, 'test-preview-id');
     res.send(`✓ Email sent to ${to}`);
@@ -311,7 +312,10 @@ app.get('/verify-session', async (req, res) => {
   if (!session_id) return res.status(400).json({ paid: false });
   try {
     const session = await stripe.checkout.sessions.retrieve(session_id);
-    res.json({ paid: session.payment_status === 'paid' });
+    res.json({
+      paid: session.payment_status === 'paid',
+      email: session.customer_details?.email || null,
+    });
   } catch (err) {
     res.status(400).json({ paid: false });
   }

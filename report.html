@@ -51,7 +51,7 @@
   <div class="print-cover-title" id="print-cover-title">—</div>
   <div class="print-cover-rule"></div>
   <div class="print-cover-sub">Decoded by Dr. Lyra · Music Intelligence Division</div>
-  <div class="print-cover-footer">drlyra.app · Powered by Claude AI</div>
+  <div class="print-cover-footer">drlyra.app · Powered by Claude AI · For entertainment purposes only, not professional psychological advice</div>
 </div>
 
 <!-- REPORT SECTIONS (populated by JS) -->
@@ -76,7 +76,7 @@
 
 <footer>
   <span class="footer-brand gt">Dr. Lyra</span>
-  <span class="footer-copy">Dr. Lyra © 2026 · Powered by Claude AI · Not affiliated with Spotify</span>
+  <span class="footer-copy">Dr. Lyra © 2026 · Powered by Claude AI · Not affiliated with Spotify · For entertainment purposes only, not professional psychological advice</span>
 </footer>
 
 <!-- STORY CANVAS (off-screen, rendered via html2canvas) -->
@@ -172,11 +172,11 @@
       <path class="heartbeat-path" d="M 0 36 L 50 36 L 60 26 L 65 14 L 74 56 L 82 14 L 87 36 L 140 36 L 148 24 L 153 12 L 162 58 L 170 12 L 175 36 L 230 36 L 238 20 L 243 8 L 253 60 L 261 8 L 266 36 L 325 36 L 333 26 L 338 14 L 347 56 L 355 14 L 360 36 L 415 36 L 423 22 L 428 10 L 437 60 L 445 10 L 450 36 L 510 36 L 518 24 L 523 12 L 532 58 L 540 12 L 545 36 L 700 36" stroke="url(#hg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg></div>`,
     // S3: orbiting circles
-    `<div class="viz"><svg class="viz-orbit" viewBox="0 0 700 90" fill="none">
-      <circle class="orbit-circle-a" cx="320" cy="45" r="38" fill="rgba(29,185,84,0.06)" stroke="rgba(29,185,84,0.25)" stroke-width="1.5"/>
-      <text class="orbit-circle-a" x="320" y="49" font-family="DM Sans" font-size="10" fill="rgba(255,255,255,0.3)" text-anchor="middle">The Curated</text>
-      <circle class="orbit-circle-b" cx="380" cy="45" r="38" fill="rgba(139,92,246,0.06)" stroke="rgba(139,92,246,0.25)" stroke-width="1.5"/>
-      <text class="orbit-circle-b" x="380" y="49" font-family="DM Sans" font-size="10" fill="rgba(255,255,255,0.3)" text-anchor="middle">The Shadow</text>
+    `<div class="viz"><svg class="viz-orbit" viewBox="0 0 700 104" fill="none">
+      <circle class="orbit-circle-a" cx="320" cy="52" r="44" fill="rgba(29,185,84,0.08)" stroke="rgba(29,185,84,0.3)" stroke-width="1.5"/>
+      <text class="orbit-circle-a" x="320" y="57" font-family="DM Sans" font-size="15" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Curated</text>
+      <circle class="orbit-circle-b" cx="380" cy="52" r="44" fill="rgba(139,92,246,0.08)" stroke="rgba(139,92,246,0.3)" stroke-width="1.5"/>
+      <text class="orbit-circle-b" x="380" y="57" font-family="DM Sans" font-size="15" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Shadow</text>
     </svg></div>`,
     // S4: simple EQ bars (different heights)
     `<div class="viz"><div style="font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Listening Pattern</div>
@@ -249,17 +249,27 @@
     return content.trim();
   }
 
+  function toTitleCase(str) {
+    return str.trim().split(/\s+/)
+      .map(w => w.length ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w)
+      .join(' ');
+  }
+
   function extractArchetypeName(text) {
     if (!text) return null;
-    // **The Xxx Xxx** pattern
-    const bold = text.match(/\*\*(?:The |)([\w\s]{4,40})\*\*/);
-    if (bold) return bold[1].trim().startsWith('The ') ? bold[1].trim() : 'The ' + bold[1].trim();
+    function normalize(raw) {
+      const name = raw.trim().replace(/^the\s+/i, '').trim();
+      return name ? 'The ' + toTitleCase(name) : null;
+    }
+    // **The Xxx Xxx** or **THE XXX XXX** pattern (bold, optional "The " prefix, any case)
+    const bold = text.match(/\*\*(?:the\s+)?([\w\s]{4,40})\*\*/i);
+    if (bold) return normalize(bold[1]);
     // "Your archetype: The ..." pattern
-    const arch = text.match(/[Aa]rchetype[:\s—–-]+[""]?(The [A-Z][^\n"—–\*]{3,40})/);
-    if (arch) return arch[1].trim();
-    // Any "The [Cap] [Cap]..." on its own line
-    const line = text.match(/^(The [A-Z][a-z]+(?:\s[A-Z][a-z]+)+)/m);
-    if (line) return line[1].trim();
+    const arch = text.match(/archetype[:\s—–-]+[""]?(the\s+[a-z][^\n"—–\*]{3,40})/i);
+    if (arch) return normalize(arch[1]);
+    // Any "The [Word] [Word]..." on its own line
+    const line = text.match(/^(the\s+[a-z]+(?:\s[a-z]+)+)/im);
+    if (line) return normalize(line[1]);
     return null;
   }
 
@@ -373,7 +383,6 @@
         <div class="wave-movement" id="mv_r${i}">
           <div class="wave-movement-left">
             <div class="wave-dot">${m.roman}</div>
-            ${i < movements.length - 1 ? '<div class="wave-connector"></div>' : ''}
           </div>
           <div class="wave-movement-body">
             <div class="wave-movement-title">${m.title}</div>

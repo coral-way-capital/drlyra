@@ -185,7 +185,7 @@
     <h3 class="pm-title">Unlock Full Report</h3>
     <p class="pm-sub">9-section Spotify Psychological Profile &nbsp;·&nbsp; one-time $7.99</p>
     <form id="pm-form">
-      <input type="email" id="pm-email" placeholder="Your email — we'll send you the report" required
+      <input type="email" id="pm-email" placeholder="Your email — for your receipt" required
         style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:#fff;font-size:14px;font-family:inherit;margin-bottom:14px;outline:none;box-sizing:border-box;" />
       <div id="pm-payment-element"></div>
       <p class="pm-error" id="pm-error"></p>
@@ -271,6 +271,7 @@
         const r = await fetch(`/verify-session?session_id=${encodeURIComponent(sessionId)}`);
         const data = await r.json();
         if (data.paid) {
+          if (data.email) sessionStorage.setItem('drlyra_buyer_email', data.email);
           hasPaid = true;
           history.replaceState({}, '', '/app');
           document.getElementById('payment-success').style.display = 'block';
