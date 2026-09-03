@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Lyra — Readability Mock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <link rel="stylesheet" href="/styles/reports-preview.css" />
+  <style>
+    #mock-banner {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(29,185,84,0.35);
+      color: #eafff1; text-align: center;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.02em; padding: 9px 16px;
+    }
+    body { padding-top: 38px; }
+  </style>
+</head>
+<body>
+<div id="mock-banner">⚡ Readability Mock — narrower text column, drop cap, second highlight box · Not the live report page</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Home
+  </a>
+  <a href="/" class="nav-brand gt" style="text-decoration:none;">Dr. Lyra</a>
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-outline" id="btn-share">Share Story</button>
+    <button class="nav-btn nav-btn-primary" id="btn-download">Download PDF</button>
+  </div>
+</nav>
+
+<!-- SECTION NAV (populated by JS) -->
+<nav class="section-nav" id="section-nav">
+  <div class="section-nav-inner" id="section-nav-inner"></div>
+</nav>
+
+<!-- HERO (populated by JS) -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-inner" id="hero-inner">
+    <div class="empty-state">
+      <h2>No report found</h2>
+      <p>Generate your profile first, then come back here to see the beautiful version.</p>
+      <a href="/app" style="display:inline-flex;align-items:center;gap:8px;padding:14px 30px;background:linear-gradient(135deg,var(--green),var(--purple));color:#fff;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;border-radius:100px;text-decoration:none;">
+        Generate My Profile →
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT COVER (only visible when printing/saving PDF) -->
+<div class="print-cover" id="print-cover">
+  <div class="print-cover-label">Your Psychological Profile · Dr. Lyra</div>
+  <div class="print-cover-title" id="print-cover-title">—</div>
+  <div class="print-cover-rule"></div>
+  <div class="print-cover-sub">Decoded by Dr. Lyra · Music Intelligence Division</div>
+  <div class="print-cover-footer">drlyra.app · Powered by Claude AI · For entertainment purposes only, not professional psychological advice</div>
+</div>
+
+<!-- REPORT SECTIONS (populated by JS) -->
+<div class="report" id="report-body"></div>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <div class="bottom-cta-glow"></div>
+  <div class="bottom-cta-inner">
+    <h2>Share your reading.</h2>
+    <p>Download your PDF to keep it or generate a story image to share.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button onclick="document.getElementById('btn-download').click()" class="btn-cta-primary">
+        Download PDF
+      </button>
+      <button onclick="document.getElementById('btn-share').click()" class="btn-cta-secondary">
+        Share Story
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-brand gt">Dr. Lyra</span>
+  <span class="footer-copy">Dr. Lyra © 2026 · Powered by Claude AI · Not affiliated with Spotify · For entertainment purposes only, not professional psychological advice</span>
+</footer>
+
+<!-- STORY CANVAS (off-screen, rendered via html2canvas) -->
+<div id="story-canvas-host" aria-hidden="true">
+  <div class="sc-bg"></div>
+  <div class="sc-glow-top"></div>
+  <div class="sc-glow-bot"></div>
+  <div class="sc-inner">
+    <div class="sc-brand-row">
+      <img src="/images/drlyra-icon.svg" class="sc-logo" alt="Dr. Lyra" />
+      <span class="sc-brand-name">Dr. Lyra</span>
+    </div>
+    <div class="sc-section-tag" id="sc-section-tag">Your Psychological Profile</div>
+    <div class="sc-divider"></div>
+    <div class="sc-quote-block">
+      <span class="sc-open-quote">"</span>
+      <div class="sc-quote-text" id="sc-quote-text"></div>
+    </div>
+    <div class="sc-attribution" id="sc-attribution"></div>
+    <div class="sc-footer-row">
+      <span class="sc-url">drlyra.app</span>
+      <span class="sc-tag-pill">Spotify × Psychology</span>
+    </div>
+  </div>
+</div>
+
+<!-- FEEDBACK BANNER -->
+<div id="feedback-banner">
+  <div class="fb-box">
+    <button class="fb-close" id="fb-close">✕</button>
+    <div class="fb-progress" id="fb-progress">Quick feedback · 1 of 4</div>
+    <div class="fb-question" id="fb-question"></div>
+    <div id="fb-body"></div>
+  </div>
+</div>
+
+<!-- FEEDBACK MINIMIZED PILL -->
+<button id="fb-mini">
+  <span class="fb-mini-dot"></span>
+  Quick feedback
+</button>
+
+<script>
+  // ─────────────────────────────────────────
+  //  SECTION DEFINITIONS
+  // ─────────────────────────────────────────
+  const SECTIONS = [
+    { key:'🎭', marker:'YOUR CORE PERSONALITY ARCHETYPE', label:'01 · Your Core Personality Archetype', short:'01 Archetype', id:'s01' },
+    { key:'🧠', marker:'YOUR EMOTIONAL LANDSCAPE',        label:'02 · Your Emotional Landscape',        short:'02 Emotions',  id:'s02' },
+    { key:'🌙', marker:'YOUR SHADOW SELF',                label:'03 · Your Shadow Self',                short:'03 Shadow',    id:'s03' },
+    { key:'💡', marker:'YOUR COGNITIVE STYLE',            label:'04 · Your Cognitive Style',            short:'04 Cognitive', id:'s04' },
+    { key:'🔥', marker:'YOUR DESIRE PROFILE',             label:'05 · Your Desire Profile',             short:'05 Desire',    id:'s05' },
+    { key:'🌊', marker:'YOUR YEAR IN EMOTIONAL WAVES',    label:'06 · Your Year in Emotional Waves',    short:'06 Waves',     id:'s06' },
+    { key:'🎯', marker:'YOUR BLIND SPOTS AND GROWTH EDGE',label:'07 · Blind Spots & Growth Edge',       short:'07 Blind Spots',id:'s07'},
+    { key:'✨', marker:'YOUR MUSICAL SOULMATE PROFILE',   label:'08 · Your Musical Soulmate Profile',   short:'08 Soulmate',  id:'s08' },
+    { key:'🏷️',marker:'YOUR SIGNATURE QUOTE',            label:'09 · Your Signature Quote',            short:'09 Quote',     id:'s09' },
+  ];
+
+  const ICONS = [
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M36 38v-3a7 7 0 0 0-7-7H15a7 7 0 0 0-7 7v3"/><circle cx="22" cy="14" r="7"/></svg>`,
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M37 22.8A15 15 0 1 1 21.2 7 11 11 0 0 0 37 22.8z"/></svg>`,
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="21" x2="15" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="22" cy="22" r="18"/><polygon points="28 17 25 25 17 28 20 20"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 20c3-6 5-6 8 0s5 6 8 0 5-6 8 0 5 6 8 0"/><path d="M2 30c3-6 5-6 8 0s5 6 8 0 5-6 8 0 5 6 8 0"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="22" cy="22" r="18"/><circle cx="22" cy="22" r="11"/><circle cx="22" cy="22" r="4"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M30 38v-3a7 7 0 0 0-7-7H9a7 7 0 0 0-7 7v3"/><circle cx="16" cy="14" r="7"/><path d="M42 38v-3a7 7 0 0 0-5-6.8"/><path d="M29 7.2a7 7 0 0 1 0 13.6"/></svg>`,
+    `<svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2H4c-1.25 0-2 .75-2 2v11c0 1 1 2 2 2s1 .008 1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2h-4c-1.25 0-2 .75-2 2v11c0 1 1 2 2 2s1 .008 1 1.031V20c0 1 0 1 1 1z"/></svg>`,
+  ];
+
+  // Generic viz HTML per section
+  const VIZZES = [
+    // S1: psychological DNA helix — "your personality decoded"
+    `<div class="viz"><svg class="viz-archetype" viewBox="0 0 660 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="ag1" x1="0" y1="0" x2="660" y2="0"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+      <path class="dna-top" d="M 20 52 C 62 18,104 18,146 52 C 188 86,230 86,272 52 C 314 18,356 18,398 52 C 440 86,482 86,524 52 C 566 18,608 18,648 52" stroke="url(#ag1)" stroke-width="2.5" stroke-linecap="round"/>
+      <path class="dna-bot" d="M 20 52 C 62 86,104 86,146 52 C 188 18,230 18,272 52 C 314 86,356 86,398 52 C 440 18,482 18,524 52 C 566 86,608 86,648 52" stroke="url(#ag1)" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
+      <line class="dna-rung" x1="83" y1="24" x2="83" y2="80" stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="4 3" style="animation-delay:0.7s"/>
+      <line class="dna-rung" x1="209" y1="24" x2="209" y2="80" stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="4 3" style="animation-delay:0.9s"/>
+      <line class="dna-rung" x1="335" y1="24" x2="335" y2="80" stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="4 3" style="animation-delay:1.1s"/>
+      <line class="dna-rung" x1="461" y1="24" x2="461" y2="80" stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="4 3" style="animation-delay:1.3s"/>
+      <line class="dna-rung" x1="587" y1="24" x2="587" y2="80" stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="4 3" style="animation-delay:1.5s"/>
+      <circle class="dna-node" cx="146" cy="52" r="4.5" fill="#1DB954" style="animation-delay:0.8s"/>
+      <circle class="dna-node" cx="272" cy="52" r="4.5" fill="#8B5CF6" style="animation-delay:1.0s"/>
+      <circle class="dna-node" cx="398" cy="52" r="4.5" fill="#1DB954" style="animation-delay:1.2s"/>
+      <circle class="dna-node" cx="524" cy="52" r="4.5" fill="#8B5CF6" style="animation-delay:1.4s"/>
+    </svg><div class="viz-caption">Your Psychological DNA</div></div>`,
+    // S2: emotional heartbeat / EKG wave
+    `<div class="viz"><svg class="viz-heartbeat" viewBox="0 0 700 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="hg" x1="0" y1="0" x2="700" y2="0"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+      <path class="heartbeat-path" d="M 0 36 L 50 36 L 60 26 L 65 14 L 74 56 L 82 14 L 87 36 L 140 36 L 148 24 L 153 12 L 162 58 L 170 12 L 175 36 L 230 36 L 238 20 L 243 8 L 253 60 L 261 8 L 266 36 L 325 36 L 333 26 L 338 14 L 347 56 L 355 14 L 360 36 L 415 36 L 423 22 L 428 10 L 437 60 L 445 10 L 450 36 L 510 36 L 518 24 L 523 12 L 532 58 L 540 12 L 545 36 L 700 36" stroke="url(#hg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg><div class="viz-caption">Emotional Frequency Pattern</div></div>`,
+    // S3: orbiting circles — separate, larger mobile version (own viewBox
+    // and animation) so labels stay readable instead of shrinking with
+    // the viewport; desktop version untouched.
+    `<div class="viz">
+      <svg class="viz-orbit viz-orbit-desktop" viewBox="0 0 700 104" fill="none">
+        <circle class="orbit-circle-a" cx="320" cy="52" r="44" fill="rgba(29,185,84,0.08)" stroke="rgba(29,185,84,0.3)" stroke-width="1.5"/>
+        <text class="orbit-circle-a" x="320" y="57" font-family="DM Sans" font-size="15" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Curated</text>
+        <circle class="orbit-circle-b" cx="380" cy="52" r="44" fill="rgba(139,92,246,0.08)" stroke="rgba(139,92,246,0.3)" stroke-width="1.5"/>
+        <text class="orbit-circle-b" x="380" y="57" font-family="DM Sans" font-size="15" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Shadow</text>
+      </svg>
+      <svg class="viz-orbit viz-orbit-mobile" viewBox="0 0 380 260" fill="none">
+        <circle class="orbit-circle-a-m" cx="175" cy="130" r="85" fill="rgba(29,185,84,0.08)" stroke="rgba(29,185,84,0.3)" stroke-width="1.5"/>
+        <text class="orbit-circle-a-m" x="175" y="138" font-family="DM Sans" font-size="24" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Curated</text>
+        <circle class="orbit-circle-b-m" cx="205" cy="130" r="85" fill="rgba(139,92,246,0.08)" stroke="rgba(139,92,246,0.3)" stroke-width="1.5"/>
+        <text class="orbit-circle-b-m" x="205" y="138" font-family="DM Sans" font-size="24" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Shadow</text>
+      </svg>
+    </div>`,
+    // S4: simple EQ bars (different heights)
+    `<div class="viz"><div style="font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Listening Pattern</div>
+    <div class="eq-bars">
+      <div class="eq-bar" style="--h:90%"></div><div class="eq-bar" style="--h:35%"></div>
+      <div class="eq-bar" style="--h:85%"></div><div class="eq-bar" style="--h:40%"></div>
+      <div class="eq-bar" style="--h:75%"></div><div class="eq-bar" style="--h:50%"></div>
+      <div class="eq-bar" style="--h:65%"></div><div class="eq-bar" style="--h:55%"></div>
+      <div class="eq-bar" style="--h:80%"></div><div class="eq-bar" style="--h:30%"></div>
+      <div class="eq-bar" style="--h:70%"></div><div class="eq-bar" style="--h:60%"></div>
+    </div></div>`,
+    // S5: concentric rings
+    `<div class="viz"><div class="viz-rings"><div class="rings-wrap">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+      <div class="ring"></div><div class="ring"></div><div class="rings-center"></div>
+    </div></div></div>`,
+    // S6: movements rendered inline via buildMovementsHtml
+    ``,
+    // S7: radar chart
+    `<div class="viz"><svg class="viz-radar" viewBox="0 0 400 200" fill="none">
+      <circle cx="200" cy="100" r="80" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <circle cx="200" cy="100" r="55" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <circle cx="200" cy="100" r="30" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <line x1="200" y1="20" x2="200" y2="180" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <line x1="120" y1="100" x2="280" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <line x1="143" y1="43" x2="257" y2="157" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <line x1="257" y1="43" x2="143" y2="157" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <g class="radar-sweep">
+        <path d="M 200 100 L 200 20 A 80 80 0 0 1 251.4 38.7 Z" fill="url(#sweepGrad)"/>
+      </g>
+      <polygon class="radar-polygon" points="200,32 268,72 260,152 200,168 140,152 132,72"
+        fill="url(#rg)" fill-opacity="0.12" stroke="url(#rg2)" stroke-width="1.5"/>
+      <text x="200" y="14" text-anchor="middle" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Introspection</text>
+      <text x="292" y="68" text-anchor="start" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Depth</text>
+      <text x="272" y="168" text-anchor="start" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Expression</text>
+      <text x="200" y="184" text-anchor="middle" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Openness</text>
+      <text x="128" y="168" text-anchor="end" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Vulnerability</text>
+      <text x="108" y="68" text-anchor="end" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Sharing</text>
+      <defs>
+        <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient>
+        <linearGradient id="rg2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient>
+        <linearGradient id="sweepGrad" x1="200" y1="20" x2="251.4" y2="38.7" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#1DB954" stop-opacity="0.4"/>
+          <stop offset="1" stop-color="#1DB954" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+    </svg></div>`,
+    // S8: interlocking rings — mobile swaps the tiny two-circle SVG (text
+    // was down to 8px once scaled) for stacked HTML cards at full readable size.
+    `<div class="viz">
+      <svg class="viz-rings2 viz-rings2-desktop" viewBox="0 0 700 90" fill="none">
+        <circle class="ring2-a" cx="320" cy="45" r="38" fill="rgba(29,185,84,0.05)" stroke="rgba(29,185,84,0.3)" stroke-width="1.5"/>
+        <text class="ring2-a" x="305" y="40" font-family="DM Sans" font-size="9.5" fill="rgba(255,255,255,0.35)" text-anchor="middle">Your Soulmate</text>
+        <text class="ring2-a" x="305" y="52" font-family="DM Sans" font-size="8" fill="rgba(255,255,255,0.2)" text-anchor="middle">playlists as love letters</text>
+        <circle class="ring2-b" cx="390" cy="45" r="38" fill="rgba(139,92,246,0.05)" stroke="rgba(139,92,246,0.3)" stroke-width="1.5"/>
+        <text class="ring2-b" x="405" y="40" font-family="DM Sans" font-size="9.5" fill="rgba(255,255,255,0.35)" text-anchor="middle">Your Nemesis</text>
+        <text class="ring2-b" x="405" y="52" font-family="DM Sans" font-size="8" fill="rgba(255,255,255,0.2)" text-anchor="middle">"I just shuffle everything"</text>
+      </svg>
+      <div class="rings2-mobile">
+        <div class="rings2-card rings2-card-a">
+          <div class="rings2-dot"></div>
+          <div class="rings2-text">
+            <div class="rings2-title">Your Soulmate</div>
+            <div class="rings2-sub">playlists as love letters</div>
+          </div>
+        </div>
+        <div class="rings2-card rings2-card-b">
+          <div class="rings2-dot"></div>
+          <div class="rings2-text">
+            <div class="rings2-title">Your Nemesis</div>
+            <div class="rings2-sub">"I just shuffle everything"</div>
+          </div>
+        </div>
+      </div>
+    </div>`,
+    // S9: no viz (quote section is the viz)
+    ``,
+  ];
+
+  // ─────────────────────────────────────────
+  //  PARSE HELPERS
+  // ─────────────────────────────────────────
+  function extractSection(fullText, idx) {
+    const sec = SECTIONS[idx];
+    const marker = sec.key + ' ' + sec.marker;
+    const start = fullText.indexOf(marker);
+    if (start === -1) return null;
+    let content = fullText.slice(start + marker.length).trimStart();
+    for (let i = idx + 1; i < SECTIONS.length; i++) {
+      const next = SECTIONS[i].key + ' ' + SECTIONS[i].marker;
+      const ni = content.indexOf(next);
+      if (ni !== -1) { content = content.slice(0, ni); break; }
+    }
+    // Strip markdown horizontal rules (Claude separates sections with "---")
+    content = content.replace(/^[ \t]*[-*_]{3,}[ \t]*$/gm, '');
+    return content.trim();
+  }
+
+  function toTitleCase(str) {
+    return str.trim().split(/\s+/)
+      .map(w => w.length ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w)
+      .join(' ');
+  }
+
+  function extractArchetypeName(text) {
+    if (!text) return null;
+    function normalize(raw) {
+      const name = raw.trim().replace(/^the\s+/i, '').trim();
+      return name ? 'The ' + toTitleCase(name) : null;
+    }
+    // **The Xxx Xxx** or **THE XXX XXX** pattern (bold, optional "The " prefix, any case)
+    const bold = text.match(/\*\*(?:the\s+)?([\w\s]{4,40})\*\*/i);
+    if (bold) return normalize(bold[1]);
+    // "Your archetype: The ..." pattern
+    const arch = text.match(/archetype[:\s—–-]+[""]?(the\s+[a-z][^\n"—–\*]{3,40})/i);
+    if (arch) return normalize(arch[1]);
+    // Any "The [Word] [Word]..." on its own line
+    const line = text.match(/^(the\s+[a-z]+(?:\s[a-z]+)+)/im);
+    if (line) return normalize(line[1]);
+    return null;
+  }
+
+  // Fixed subtitles for each section (replaces extractSectionTitle to avoid repetition)
+  const FIXED_SUBTITLES = [
+    null,  // 0: archetypeName used instead
+    'How you process feeling through sound',
+    'The parts of you the music quietly reveals',
+    'The architecture of your mind',
+    'What you are chasing right now',
+    'The emotional story of your year',
+    'Patterns holding you back — and how to break them',
+    'Your perfect match and your musical nemesis',
+    null,  // 8: quote section — different layout
+  ];
+
+  // Shared logic: pick the featured sentence from a section's raw text
+  function extractFeatSentence(rawText) {
+    if (!rawText) return '';
+    const clean = rawText.replace(/^#{1,6}\s*.*/gm, '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1');
+    const paras = clean.split(/\n{2,}/).map(p => p.trim()).filter(p => p && p.length > 2 && !/^[-*_]{3,}$/.test(p));
+    if (paras.length < 2) return '';
+    const srcPlain = paras[1];
+    const sents = srcPlain.match(/[^.!?]+[.!?]+/g) || [];
+    const pick = sents.find(s => /^\s*You\s/.test(s) && s.trim().length >= 50 && s.trim().length <= 190)
+              || sents.find(s => s.trim().length >= 60 && s.trim().length <= 190);
+    return pick ? pick.trim() : '';
+  }
+
+  // MOCK: rotating micro-labels inserted before a couple of paragraphs per
+  // section, so long sections read as a few labeled beats instead of one
+  // undifferentiated block. Cycled by section index so consecutive
+  // sections don't all show the same pair.
+  const BEAT_LABELS = ['THE PATTERN', 'WHAT THIS REVEALS', 'THE DEEPER LAYER', 'WORTH SITTING WITH', 'THE TELL', 'UNDER THE SURFACE'];
+
+  function markdownToHtml(text, { pullQuote = true, beatOffset = 0 } = {}) {
+    if (!text) return '';
+
+    const stripped = text.replace(/^#{1,6}\s*.*/gm, '');
+
+    let rawParas = stripped.split(/\n{2,}/)
+      .map(p => p.trim())
+      .filter(p => p && p.length > 2 && !/^[-*_]{3,}$/.test(p));
+
+    // MOCK: break overly long paragraphs into shorter ones at a sentence
+    // boundary near the midpoint — same words, just more breathing room.
+    // Done on the plain text, before bold/italic markup is added, so a
+    // split never lands inside a tag.
+    const MAX_PARA_LEN = 420;
+    rawParas = rawParas.flatMap(p => {
+      if (p.length <= MAX_PARA_LEN) return [p];
+      const sentences = p.match(/[^.!?]+[.!?]+(?:\s+|$)/g);
+      if (!sentences || sentences.length < 2) return [p];
+      const chunks = [];
+      let acc = '';
+      const halfway = p.length / 2;
+      for (const s of sentences) {
+        if (acc.length >= halfway && chunks.length === 0) {
+          chunks.push(acc.trim());
+          acc = '';
+        }
+        acc += s;
+      }
+      if (acc.trim()) chunks.push(acc.trim());
+      return chunks.length > 1 ? chunks : [p];
+    });
+
+    const paras = rawParas.map(p => p
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*([^*\n]+?)\*/g, '<em>$1</em>'));
+
+    if (!paras.length) return '';
+
+    // Use the shared extractor to find the featured sentence
+    let featIdx = -1, featSentence = '', featRemainder = '';
+    if (pullQuote && paras.length > 2) {
+      const srcPlain = paras[1].replace(/<[^>]+>/g, '');
+      const sents    = srcPlain.match(/[^.!?]+[.!?]+/g) || [];
+      const pick     = sents.find(s => /^\s*You\s/.test(s) && s.trim().length >= 50 && s.trim().length <= 190)
+                    || sents.find(s => s.trim().length >= 60 && s.trim().length <= 190);
+      if (pick) {
+        featIdx       = 1;
+        featSentence  = pick.trim();
+        featRemainder = srcPlain.replace(pick, '').trim();
+      }
+    }
+
+    // MOCK: pick 1-2 beat-label insertion points, spaced out and clear of
+    // the lede / pull-quote indices.
+    const beatIndices = [];
+    if (pullQuote && paras.length >= 4) {
+      const candidates = [Math.round(paras.length * 0.3), Math.round(paras.length * 0.78)];
+      candidates.forEach(c => {
+        if (c > 0 && c !== featIdx && c < paras.length - 1 && !beatIndices.includes(c)) {
+          beatIndices.push(c);
+        }
+      });
+    }
+
+    const out = [];
+    paras.forEach((p, i) => {
+      const html     = p.replace(/\n/g, '<br>');
+      const plainLen = p.replace(/<[^>]+>/g, '').length;
+      const isShortBold = plainLen < 58 && p.startsWith('<strong>') && !p.includes('<br>');
+
+      const beatPos = beatIndices.indexOf(i);
+      if (beatPos !== -1) {
+        const label = BEAT_LABELS[(beatOffset + beatPos) % BEAT_LABELS.length];
+        out.push(`<div class="beat-label">${label}</div>`);
+      }
+
+      if (i === 0) {
+        out.push(`<p class="lede">${html}</p>`);
+      } else if (i === featIdx) {
+        // One sentence in Playfair Display, remainder as normal body
+        out.push(`<blockquote class="feat-quote">${featSentence}</blockquote>`);
+        if (featRemainder) out.push(`<p>${featRemainder.replace(/\n/g, '<br>')}</p>`);
+      } else if (isShortBold) {
+        out.push(`<p class="body-insight">${html}</p>`);
+      } else {
+        out.push(`<p>${html}</p>`);
+      }
+
+      // Rhythm divider every 3 paragraphs
+      if (i > 0 && i % 3 === 0 && i < paras.length - 1 && i !== featIdx) {
+        out.push(`<div class="para-rule"><span class="para-rule-diamond"></span></div>`);
+      }
+    });
+
+    // MOCK: every section gets a key insight, always at the very end —
+    // searches backward from the last paragraph for a well-sized sentence
+    // (skipping the one already used as the feat-quote), and falls back to
+    // the section's closing sentence if nothing matches the ideal length.
+    if (pullQuote && paras.length >= 2) {
+      const insight = pickKeyInsight(paras, featIdx);
+      if (insight) out.push(`<div class="key-insight">${insight}</div>`);
+    }
+
+    return out.join('\n');
+  }
+
+  function pickKeyInsight(paras, excludeIdx) {
+    for (let i = paras.length - 1; i >= 0; i--) {
+      if (i === excludeIdx) continue;
+      const plain = paras[i].replace(/<[^>]+>/g, '');
+      const sents = plain.match(/[^.!?]+[.!?]+/g) || [];
+      const reversed = sents.slice().reverse();
+      const pick = reversed.find(s => /^\s*You\s/.test(s) && s.trim().length >= 40 && s.trim().length <= 190)
+                || reversed.find(s => s.trim().length >= 45 && s.trim().length <= 190);
+      if (pick) return pick.trim();
+    }
+    // Fallback: last sentence of the last paragraph, whatever its length —
+    // guarantees every section produces something rather than nothing.
+    const lastPlain = paras[paras.length - 1].replace(/<[^>]+>/g, '');
+    const lastSents = lastPlain.match(/[^.!?]+[.!?]+/g);
+    if (lastSents && lastSents.length) return lastSents[lastSents.length - 1].trim();
+    return lastPlain.trim();
+  }
+
+  function stripLeadingTitle(text) {
+    // Remove a short bold line or plain line at the very start (the duplicated title)
+    return text
+      .replace(/^\*\*[^*\n]{3,60}\*\*\n+/, '')
+      .replace(/^[A-Z][^\n]{3,55}\n+/, (m) => m.length < 60 ? '' : m)
+      .trimStart();
+  }
+
+  function buildMovementsHtml(text) {
+    // Split by Movement I: / II: etc.
+    const parts = text.split(/\*{0,2}Movement\s+([IVX]+):\s*/i);
+    const movements = [];
+    for (let i = 1; i < parts.length - 1; i += 2) {
+      if (movements.length >= 5) break;
+      const roman = parts[i].trim();
+      const raw   = (parts[i + 1] || '').trim();
+      // First line is the title, rest is body
+      const nl = raw.indexOf('\n');
+      const title = nl > 0 ? raw.slice(0, nl).replace(/\*\*/g, '').trim() : raw.replace(/\*\*/g, '').trim();
+      const body  = nl > 0 ? raw.slice(nl + 1).trim() : '';
+      if (title) movements.push({ roman, title, body });
+    }
+    if (movements.length === 0) return markdownToHtml(text);
+
+    // Accordion: title lives once as the clickable header (no separate dots
+    // preview repeating it above), first movement open by default.
+    return `<div class="wave-movements">${
+      movements.map((m, i) => `
+        <div class="wave-movement${i === 0 ? ' open' : ''}" id="mv_r${i}">
+          <button class="wave-movement-header" data-idx="${i}" aria-expanded="${i === 0}">
+            <div class="wave-movement-left">
+              <div class="wave-dot">${m.roman}</div>
+            </div>
+            <div class="wave-movement-title">${m.title}</div>
+            <svg class="wave-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="wave-movement-body">
+            <div class="wave-movement-body-inner">
+              <div class="wave-movement-text">${markdownToHtml(m.body, { pullQuote: false })}</div>
+            </div>
+          </div>
+        </div>`).join('')
+    }</div>`;
+  }
+
+  function extractStoryQuote(text, maxLen = 220) {
+    if (!text) return '';
+    const clean = text.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1').replace(/^#{1,6}\s*/gm, '');
+    const sentences = clean.match(/[^.!?]+[.!?]+/g) || [];
+    for (const s of sentences) {
+      const t = s.trim();
+      if (t.length >= 70 && t.length <= maxLen) return t;
+    }
+    const para = clean.split(/\n{2,}/)[0].trim();
+    return para.length > maxLen ? para.slice(0, maxLen - 1) + '…' : para;
+  }
+
+  // ─────────────────────────────────────────
+  //  MAIN RENDER (async to support URL-based reports)
+  // ─────────────────────────────────────────
+  let rawText = null;
+  let archetypeName = 'Your Profile';
+
+  async function loadReport() {
+    // MOCK: this file lives at /report-preview.html, not /report/:id, so
+    // read the id from a query param instead (?id=...). Checked before
+    // sessionStorage so an explicit ?id= always wins over whatever this
+    // browser happened to load last.
+    const reportId = new URLSearchParams(window.location.search).get('id');
+
+    if (reportId) {
+      try {
+        const res = await fetch(`/api/report/${reportId}`);
+        if (res.ok) rawText = (await res.json()).text;
+      } catch {}
+    }
+
+    if (!rawText) rawText = sessionStorage.getItem('drlyra_report');
+    if (!rawText) rawText = localStorage.getItem('drlyra_report');
+
+    if (rawText && reportId) {
+      localStorage.setItem('drlyra_report_id', reportId);
+      localStorage.setItem('drlyra_report', rawText);
+      localStorage.setItem('drlyra_has_report', '1');
+    }
+
+    render();
+  }
+
+  function render() {
+  if (rawText) {
+    const section1Text = extractSection(rawText, 0) || '';
+    archetypeName = extractArchetypeName(section1Text) || 'Your Profile';
+    const quoteText = extractSection(rawText, 8) || '';
+
+    // Hero
+    document.getElementById('hero-inner').innerHTML = `
+      <div class="hero-badge"><span class="badge-dot"></span>Your Psychological Profile · Dr. Lyra</div>
+      <div class="hero-archetype">${archetypeName}</div>
+      <p class="hero-sub">Your Spotify data, decoded.</p>
+      <div class="hero-stats">
+        <div class="stat-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          9 Sections Analysed
+        </div>
+        <div class="stat-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          by Dr. Lyra
+        </div>
+      </div>`;
+
+    // Section nav pills
+    const navInner = document.getElementById('section-nav-inner');
+    SECTIONS.forEach(s => {
+      const a = document.createElement('a');
+      a.className = 'sec-pill';
+      a.href = '#' + s.id;
+      a.textContent = s.short;
+      navInner.appendChild(a);
+    });
+
+    // Build section cards
+    const reportBody = document.getElementById('report-body');
+    SECTIONS.forEach((sec, idx) => {
+      const text = extractSection(rawText, idx);
+      if (!text) return;
+
+      const isQuote = idx === 8;
+      const div = document.createElement('div');
+      div.className = 'sec' + (isQuote ? ' sec-quote' : '');
+      div.id = sec.id;
+      if (isQuote) div.style.overflow = 'visible';
+
+      // Build viz for this section
+      let viz = VIZZES[idx];
+      if (idx === 5) viz = ''; // waves — accordion body IS the viz, no separate preview
+
+      if (isQuote) {
+        const cleanQuote = text.replace(/\*\*/g,'').replace(/\*/g,'').replace(/^["""]/,'').replace(/["""]$/,'').trim();
+        div.innerHTML = `
+          <span class="note" aria-hidden="true">♪</span>
+          <span class="note" aria-hidden="true">♫</span>
+          <span class="note" aria-hidden="true">♩</span>
+          <span class="note" aria-hidden="true">♬</span>
+          <div class="sec-label gt" style="display:block;margin-bottom:20px;">${sec.label}</div>
+          <span class="quote-mark">"</span>
+          <div class="quote-text">${cleanQuote}</div>
+          <div class="quote-attr">— Dr. Lyra<span>Music Intelligence Division</span></div>`;
+      } else {
+        const titleLine = idx === 0 ? archetypeName : (FIXED_SUBTITLES[idx] || sec.label);
+        // Strip the leading bold/title line from body so it doesn't repeat below the header
+        const bodyText = idx === 0 ? stripLeadingTitle(text) : text;
+        // Section 6 gets movement timeline; others get normal body
+        const bodyHtml = idx === 5 ? buildMovementsHtml(text) : markdownToHtml(bodyText, { beatOffset: idx * 2 });
+        div.innerHTML = `
+          <div class="sec-header">
+            <div class="sec-icon">${ICONS[idx]}</div>
+            <div class="sec-titles">
+              <div class="sec-label gt">${sec.label}</div>
+              <div class="sec-title">${titleLine}</div>
+            </div>
+            <button class="sec-share-btn" data-idx="${idx}">↗ Share</button>
+          </div>
+          ${viz}
+          <div class="sec-body">${bodyHtml}</div>`;
+      }
+
+      reportBody.appendChild(div);
+    });
+
+    // Populate print cover
+    document.getElementById('print-cover-title').textContent = archetypeName;
+
+    // Traveling signal pulse on S1/S2 line paths — continues after the
+    // initial draw-in so those visuals read as clearly, ongoingly alive.
+    document.querySelectorAll('.dna-top').forEach(p => addTravelingPulse(p, { duration: 3.4, delay: 2.3, dashRatio: 0.1 }));
+    document.querySelectorAll('.heartbeat-path').forEach(p => addTravelingPulse(p, { duration: 2.8, delay: 2.5, dashRatio: 0.05 }));
+
+    // Observers + nav
+    initObservers();
+  } // end if(rawText)
+  } // end render()
+
+  loadReport();
+
+  function extractSectionTitle(text, sec) {
+    if (!text) return sec.marker.split(' ').map(w => w[0] + w.slice(1).toLowerCase()).join(' ');
+    // Look for a short bold phrase or first short line
+    const boldMatch = text.match(/\*\*([^*\n]{4,60})\*\*/);
+    if (boldMatch && boldMatch[1].length < 55) return boldMatch[1].trim();
+    // First line if short
+    const first = text.split('\n')[0].replace(/\*\*/g,'').trim();
+    if (first && first.length < 55 && first.length > 4) return first;
+    // Fallback: humanize marker
+    return sec.marker.split(' ').map(w => w[0] + w.slice(1).toLowerCase()).join(' ');
+  }
+
+  // Clones a line path and animates a short bright dash traveling along its
+  // exact length (via getTotalLength, so it can't clip or misalign) —
+  // gives S1/S2 a genuine ongoing "signal" motion instead of a static line.
+  // Starts paused; secObs below plays it once its section is visible.
+  function addTravelingPulse(path, { duration = 3, delay = 0, dashRatio = 0.09 } = {}) {
+    if (!path) return;
+    const len = path.getTotalLength();
+    const pulse = path.cloneNode();
+    pulse.removeAttribute('style');
+    pulse.classList.add('pulse-travel');
+    pulse.setAttribute('stroke-dasharray', `${len * dashRatio} ${len}`);
+    path.insertAdjacentElement('afterend', pulse);
+    const anim = pulse.animate(
+      [{ strokeDashoffset: 0 }, { strokeDashoffset: -len }],
+      { duration: duration * 1000, delay: delay * 1000, iterations: Infinity, easing: 'linear' }
+    );
+    anim.pause();
+    pulse._travelAnim = anim;
+  }
+
+  // ─────────────────────────────────────────
+  //  OBSERVERS + NAV
+  // ─────────────────────────────────────────
+  function initObservers() {
+    // Scroll reveal
+    const secObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          e.target.querySelectorAll('.pulse-travel').forEach(el => el._travelAnim && el._travelAnim.play());
+        }
+      });
+    }, { threshold: 0.07 });
+    document.querySelectorAll('.sec').forEach(s => secObs.observe(s));
+
+    // Movement stagger
+    const movObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const all = [...document.querySelectorAll('[id^="mv_r"]')];
+          const idx = all.indexOf(e.target);
+          setTimeout(() => e.target.classList.add('visible'), idx * 140);
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('[id^="mv_r"]').forEach(m => movObs.observe(m));
+
+    // Movement accordion — click a header to open it, closing the others
+    document.querySelectorAll('.wave-movement-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const item = header.closest('.wave-movement');
+        const wasOpen = item.classList.contains('open');
+        item.parentElement.querySelectorAll('.wave-movement').forEach(m => {
+          m.classList.remove('open');
+          m.querySelector('.wave-movement-header').setAttribute('aria-expanded', 'false');
+        });
+        if (!wasOpen) {
+          item.classList.add('open');
+          header.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    // Active pill
+    const pills = document.querySelectorAll('.sec-pill');
+    const pillMap = {};
+    pills.forEach(p => { pillMap[p.getAttribute('href').replace('#','')] = p; });
+    const pillObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        const pill = pillMap[e.target.id];
+        if (!pill) return;
+        if (e.isIntersecting) {
+          pills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          pill.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+        }
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.sec[id]').forEach(s => pillObs.observe(s));
+
+    // Smooth scroll
+    document.querySelectorAll('.sec-pill').forEach(pill => {
+      pill.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.getElementById(pill.getAttribute('href').replace('#',''));
+        if (target) window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 98, behavior:'smooth' });
+      });
+    });
+  }
+
+  // ─────────────────────────────────────────
+  //  DOWNLOAD PDF (print)
+  // ─────────────────────────────────────────
+  document.getElementById('btn-download').addEventListener('click', () => {
+    window.print();
+  });
+
+  // ─────────────────────────────────────────
+  //  SHARE STORY (nav button = archetype)
+  // ─────────────────────────────────────────
+  async function renderStory(sectionTag, quoteText, attribution, filename) {
+    document.getElementById('sc-section-tag').textContent = sectionTag;
+    document.getElementById('sc-quote-text').textContent  = quoteText;
+    document.getElementById('sc-attribution').textContent = attribution;
+    await document.fonts.ready;
+    await new Promise(r => setTimeout(r, 120));
+    const canvas = await html2canvas(document.getElementById('story-canvas-host'), {
+      width: 540, height: 960, scale: 2,
+      backgroundColor: '#070710',
+      useCORS: true, logging: false,
+    });
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  document.getElementById('btn-share').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-share');
+    btn.textContent = 'Rendering…'; btn.disabled = true;
+    try {
+      const s1text = rawText ? extractSection(rawText, 0) : '';
+      const quote  = extractFeatSentence(s1text) || archetypeName;
+      await renderStory(
+        'Your Core Personality Archetype',
+        quote,
+        `— Dr. Lyra`,
+        'Dr-Lyra-Archetype-Story.png'
+      );
+    } catch(e) { alert('Could not render story: ' + e.message); }
+    btn.textContent = 'Share Story'; btn.disabled = false;
+  });
+
+  // ─────────────────────────────────────────
+  //  PER-SECTION SHARE STORY
+  // ─────────────────────────────────────────
+  document.getElementById('report-body').addEventListener('click', async (e) => {
+    const btn = e.target.closest('.sec-share-btn');
+    if (!btn || !rawText) return;
+    const idx  = parseInt(btn.dataset.idx);
+    const sec  = SECTIONS[idx];
+    const text = extractSection(rawText, idx);
+    if (!text) return;
+
+    btn.textContent = '…'; btn.disabled = true;
+    try {
+      const label = sec.marker.charAt(0) + sec.marker.slice(1).toLowerCase().replace(/ /g,' ');
+      const quote = extractFeatSentence(text) || extractStoryQuote(text, 190);
+      const attr  = `— Dr. Lyra`;
+      await renderStory(label, quote, attr, `Dr-Lyra-${sec.id}-Story.png`);
+    } catch(err) { alert('Could not generate story: ' + err.message); }
+    btn.textContent = '↗ Share'; btn.disabled = false;
+  });
+
+  // ─────────────────────────────────────────
+  //  FEEDBACK SURVEY
+  // ─────────────────────────────────────────
+  const SECTION_LABELS = [
+    'Core Personality Archetype','Emotional Landscape','Shadow Self',
+    'Cognitive Style','Desire Profile','Year in Emotional Waves',
+    'Blind Spots & Growth Edge','Musical Soulmate Profile','Signature Quote'
+  ];
+
+  const fbState = { step: 1, accuracy: null, section: null, nps: null, surprise: null, liked: null, improve: null };
+  const banner  = document.getElementById('feedback-banner');
+  const fbMini  = document.getElementById('fb-mini');
+  const fbProg  = document.getElementById('fb-progress');
+  const fbQ     = document.getElementById('fb-question');
+  const fbBody  = document.getElementById('fb-body');
+
+  function fbDone() { return !!localStorage.getItem('drlyra_feedback_done'); }
+
+  function fbShow() {
+    if (fbDone()) return;
+    banner.classList.add('show');
+    fbMini.classList.remove('show');
+  }
+  function fbMinimize() {
+    banner.classList.remove('show');
+    if (!fbDone()) fbMini.classList.add('show');
+  }
+  function fbFinish() {
+    banner.classList.remove('show');
+    fbMini.classList.remove('show');
+  }
+
+  if (!fbDone()) {
+    // Trigger 1 — first time section 6 (Emotional Waves) scrolls into view
+    let firstShown = false;
+    const s06 = document.getElementById('s06');
+    if (s06) {
+      const io6 = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !firstShown && !fbDone()) {
+            firstShown = true;
+            fbShow();
+            io6.disconnect();
+          }
+        });
+      }, { threshold: 0.25 });
+      io6.observe(s06);
+    }
+
+    // Trigger 2 — reopen once the user reaches the end, if not filled out yet
+    const bottomCta = document.querySelector('.bottom-cta');
+    if (bottomCta) {
+      const ioEnd = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !fbDone()) fbShow();
+        });
+      }, { threshold: 0.2 });
+      ioEnd.observe(bottomCta);
+    }
+  }
+
+  document.getElementById('fb-close').addEventListener('click', () => {
+    fbMinimize();
+  });
+
+  fbMini.addEventListener('click', () => {
+    fbShow();
+  });
+
+  function renderStep(step) {
+    fbProg.textContent = step < 7 ? `Quick feedback · ${step} of 6` : '';
+    if (step === 1) {
+      fbQ.textContent = 'How accurate did your profile feel?';
+      fbBody.innerHTML = `<div class="fb-stars">${[1,2,3,4,5].map(n =>
+        `<span class="fb-star" data-n="${n}">★</span>`).join('')}</div>`;
+      fbBody.querySelectorAll('.fb-star').forEach(s => {
+        s.addEventListener('mouseenter', () => {
+          fbBody.querySelectorAll('.fb-star').forEach(x => x.classList.toggle('lit', +x.dataset.n <= +s.dataset.n));
+        });
+        s.addEventListener('mouseleave', () => {
+          fbBody.querySelectorAll('.fb-star').forEach(x => x.classList.toggle('lit', +x.dataset.n <= (fbState.accuracy||0)));
+        });
+        s.addEventListener('click', () => {
+          fbState.accuracy = +s.dataset.n;
+          fbBody.querySelectorAll('.fb-star').forEach(x => x.classList.toggle('lit', +x.dataset.n <= fbState.accuracy));
+          setTimeout(() => renderStep(2), 400);
+        });
+      });
+    } else if (step === 2) {
+      fbQ.textContent = 'Which section resonated most?';
+      fbBody.innerHTML = `<div class="fb-sections">${SECTION_LABELS.map((l,i) =>
+        `<button class="fb-sec-btn" data-i="${i}">${l}</button>`).join('')}</div>`;
+      fbBody.querySelectorAll('.fb-sec-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          fbState.section = SECTION_LABELS[+b.dataset.i];
+          fbBody.querySelectorAll('.fb-sec-btn').forEach(x => x.classList.remove('selected'));
+          b.classList.add('selected');
+          setTimeout(() => renderStep(3), 350);
+        });
+      });
+    } else if (step === 3) {
+      fbQ.textContent = 'How likely are you to recommend Dr. Lyra to a friend?';
+      fbBody.innerHTML = `
+        <div class="fb-nps">${[0,1,2,3,4,5,6,7,8,9,10].map(n =>
+          `<button class="fb-nps-btn" data-n="${n}">${n}</button>`).join('')}</div>
+        <div class="fb-nps-labels"><span>Not at all</span><span>Definitely</span></div>`;
+      fbBody.querySelectorAll('.fb-nps-btn').forEach(b => {
+        b.addEventListener('click', () => {
+          fbState.nps = +b.dataset.n;
+          fbBody.querySelectorAll('.fb-nps-btn').forEach(x => x.classList.remove('selected'));
+          b.classList.add('selected');
+          setTimeout(() => renderStep(4), 350);
+        });
+      });
+    } else if (step === 4) {
+      fbQ.textContent = 'What surprised you most? (optional)';
+      fbBody.innerHTML = `
+        <textarea class="fb-textarea" id="fb-text" placeholder="Anything that caught you off guard…"></textarea>
+        <button class="fb-submit" id="fb-next-btn">Next →</button>`;
+      document.getElementById('fb-next-btn').addEventListener('click', () => {
+        fbState.surprise = document.getElementById('fb-text').value.trim();
+        renderStep(5);
+      });
+    } else if (step === 5) {
+      fbQ.textContent = 'What did you love most about Dr. Lyra?';
+      fbBody.innerHTML = `
+        <textarea class="fb-textarea" id="fb-liked" placeholder="Tell us what stood out…"></textarea>
+        <button class="fb-submit" id="fb-next-btn">Next →</button>`;
+      document.getElementById('fb-next-btn').addEventListener('click', () => {
+        fbState.liked = document.getElementById('fb-liked').value.trim();
+        renderStep(6);
+      });
+    } else if (step === 6) {
+      fbQ.textContent = 'How would you improve Dr. Lyra?';
+      fbBody.innerHTML = `
+        <textarea class="fb-textarea" id="fb-improve" placeholder="Any ideas or suggestions…"></textarea>
+        <button class="fb-submit" id="fb-submit-btn">Submit feedback</button>`;
+      document.getElementById('fb-submit-btn').addEventListener('click', async () => {
+        fbState.improve = document.getElementById('fb-improve').value.trim();
+        const reportId = window.location.pathname.split('/').pop();
+        try {
+          await fetch('/submit-feedback', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              accuracy: fbState.accuracy, section: fbState.section, nps: fbState.nps,
+              surprise: fbState.surprise, liked: fbState.liked, improve: fbState.improve,
+              reportId,
+            }),
+          });
+        } catch {}
+        localStorage.setItem('drlyra_feedback_done', '1');
+        renderStep(7);
+      });
+    } else {
+      fbQ.textContent = '';
+      fbBody.innerHTML = `<div class="fb-done">Thank you 💚<span>Your feedback helps Dr. Lyra get better.</span></div>`;
+      setTimeout(fbFinish, 3000);
+    }
+  }
+
+  renderStep(1);
+</script>
+</body>
+</html>

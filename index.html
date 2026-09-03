@@ -77,8 +77,8 @@
       width: 100%;
       margin-top: 20px;
       padding: 15px;
-      background: #1DB954;
-      color: #000;
+      background: #7C3AED;
+      color: #fff;
       border: none;
       border-radius: 10px;
       font-weight: 700;
@@ -108,7 +108,7 @@
       <span>Dr. Lyra</span>
     </a>
     <h1>Your Spotify<br/>Psychological Profile</h1>
-    <p class="subtitle">Upload your Spotify stats screenshots. Dr. Lyra will decode your music taste into a deep psychological portrait.</p>
+    <p class="subtitle">Upload your Spotify stats and Dr. Lyra decodes what they really reveal about you. Some of it will surprise you.</p>
   </header>
 
   <!-- Upload -->
@@ -129,10 +129,51 @@
     ✦ Generate My Profile
   </button>
 
-  <div id="payment-success" style="display:none">
-    <div class="payment-success-banner">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      <span><strong>Payment confirmed!</strong> Upload your Spotify screenshots to generate your full 9-section report.</span>
+  <!-- How to find your stats -->
+  <div class="app-howto">
+    <div class="app-howto-header">
+      <h2 class="app-howto-title">Not sure how to find your stats?</h2>
+      <p class="app-howto-sub">Four taps in Spotify — here's exactly where to look.</p>
+    </div>
+    <div class="steps-grid">
+
+      <div class="card step-card" style="transition-delay:.08s">
+        <span class="step-num">01</span>
+        <div class="step-title">Open your profile</div>
+        <p class="step-body">From the Home tab, tap your profile picture.</p>
+        <div class="step-shot">
+          <img src="/images/step0_tap_profile_picture.png" alt="Tap your profile picture in the Spotify app" width="296" height="586" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="card step-card" style="transition-delay:.16s">
+        <span class="step-num">02</span>
+        <div class="step-title">Tap Listening Stats</div>
+        <p class="step-body">It's listed right in your profile menu.</p>
+        <div class="step-shot">
+          <img src="/images/step1_open_listening_stats.png" alt="Tap Listening Stats in the Spotify profile menu" width="296" height="586" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="card step-card" style="transition-delay:.24s">
+        <span class="step-num">03</span>
+        <div class="step-title">Tap the share icon</div>
+        <p class="step-body">Top-right of each category — about 10 in total.</p>
+        <div class="step-shot">
+          <img src="/images/step2_tap_share_icon.png" alt="Tap the share icon on the Listening Stats page" width="296" height="586" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="card step-card" style="transition-delay:.32s">
+        <span class="step-num">04</span>
+        <div class="step-title">Swipe &amp; download</div>
+        <p class="step-body">The first card's a summary — download it, or swipe for more.</p>
+        <p class="step-tip">Up to 10 screenshots. More data = deeper, more personal profile.</p>
+        <div class="step-shot">
+          <img src="/images/step3_tap_download.png" alt="Tap Download on a Spotify Listening Stats card" width="296" height="586" loading="lazy" />
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -262,7 +303,6 @@
     if (code === 'FRIENDS') {
       hasPaid = true;
       history.replaceState({}, '', '/app');
-      document.getElementById('payment-success').style.display = 'block';
       return;
     }
 
@@ -274,7 +314,6 @@
           if (data.email) sessionStorage.setItem('drlyra_buyer_email', data.email);
           hasPaid = true;
           history.replaceState({}, '', '/app');
-          document.getElementById('payment-success').style.display = 'block';
         }
       } catch {}
       return;
@@ -287,11 +326,21 @@
         if (data.paid) {
           hasPaid = true;
           history.replaceState({}, '', '/app');
-          document.getElementById('payment-success').style.display = 'block';
         }
       } catch {}
     }
   })();
+
+  // Each "how to find your stats" card fades in on its own as it scrolls into view
+  const howtoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        howtoObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.app-howto .step-card').forEach(el => howtoObserver.observe(el));
 
   const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('file-input');
@@ -823,8 +872,6 @@
           closePaymentModal();
           if (files.length > 0) {
             runGenerate(); // auto-start generation after payment
-          } else {
-            document.getElementById('payment-success').style.display = 'block';
           }
         }
       } catch {

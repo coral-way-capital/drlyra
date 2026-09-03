@@ -39,19 +39,42 @@
         radial-gradient(ellipse 70% 40% at 90% 105%, rgba(255,255,255,0.06) 0%, transparent 55%) !important;
     }
 
-    /* ── Glass button (replaces the green→purple gradient pill) ── */
+    /* ── Solid purple CTA button with an animated gradient border ring
+       (no fill gradient — the motion lives in the border, via a rotating
+       conic-gradient + mask-composite ring) ── */
+    @property --btn-border-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
     .btn {
-      background: rgba(29,185,84,0.16) !important;
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      border: 1px solid rgba(29,185,84,0.4);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 8px 30px rgba(29,185,84,0.15) !important;
+      position: relative;
+      z-index: 0; /* establishes a stacking context so the ring's z-index:-1
+                     stays scoped to this button instead of escaping behind
+                     other page elements */
+      background: #7C3AED !important;
+      color: #fff !important;
+      border: 2px solid transparent !important;
+      box-shadow: 0 8px 26px rgba(107,45,209,0.4) !important;
       animation: none !important;
     }
-    .btn:hover {
-      background: rgba(29,185,84,0.24) !important;
-      border-color: rgba(29,185,84,0.6);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 10px 42px rgba(29,185,84,0.32) !important;
+    .btn:hover { background: #8B4EF0 !important; }
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      z-index: -1;
+      border-radius: inherit;
+      padding: 2px;
+      background: conic-gradient(from var(--btn-border-angle), #C084FC, #7C3AED, #5F27B8, #C084FC);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: btn-border-spin 3s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes btn-border-spin {
+      to { --btn-border-angle: 360deg; }
     }
     .btn-ghost {
       backdrop-filter: blur(14px) saturate(160%);
@@ -125,7 +148,7 @@
       </h1>
 
       <p class="hero-sub">
-        Upload your <span class="hero-sub-hl">Spotify stats</span> and Dr. Lyra decodes what your listening patterns really reveal — your personality archetype, emotional landscape, shadow self, and deepest desires. Written in full, just for you. Some of it will surprise you.
+        Upload your <span class="hero-sub-hl">Spotify stats</span> and Dr. Lyra decodes what they really reveal about you. Some of it will surprise you.
       </p>
 
       <div class="hero-actions">
@@ -240,46 +263,46 @@
 
     <div class="reveal" style="text-align:center; max-width:520px; margin:0 auto;">
       <span class="section-eyebrow gt">How to find your stats</span>
-      <h2 class="section-h">Three taps in Spotify</h2>
+      <h2 class="section-h">Four taps in Spotify</h2>
     </div>
 
     <div class="steps-grid">
 
       <div class="card step-card reveal" style="transition-delay:.08s">
         <span class="step-num">01</span>
-        <span class="step-icon-naked" style="color:#1DB954;">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-          </svg>
-        </span>
-        <div class="step-title">Open Spotify &amp; go to Your Profile</div>
-        <p class="step-body">Tap the <strong>Home</strong> tab, then tap your <strong>profile picture</strong> in the top-right corner to open your profile page.</p>
+        <div class="step-title">Open your profile</div>
+        <p class="step-body">From the Home tab, tap your profile picture.</p>
+        <div class="step-shot">
+          <img src="/images/step0_tap_profile_picture.png" alt="Tap your profile picture in the Spotify app" width="296" height="586" loading="lazy" />
+        </div>
       </div>
 
       <div class="card step-card reveal" style="transition-delay:.16s">
         <span class="step-num">02</span>
-        <span class="step-icon-naked" style="color:#1DB954;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 3 3 21 21 21"/>
-            <polyline points="3 16 8 10 12 14 16 7 21 7"/>
-          </svg>
-        </span>
-        <div class="step-title">Find Listening Stats or Wrapped</div>
-        <p class="step-body">Scroll down to <strong>Listening Stats</strong> and tap <strong>See all</strong>. Spotify Wrapped works too — any stats page is perfect.</p>
+        <div class="step-title">Tap Listening Stats</div>
+        <p class="step-body">It's listed right in your profile menu.</p>
+        <div class="step-shot">
+          <img src="/images/step1_open_listening_stats.png" alt="Tap Listening Stats in the Spotify profile menu" width="296" height="586" loading="lazy" />
+        </div>
       </div>
 
       <div class="card step-card reveal" style="transition-delay:.24s">
         <span class="step-num">03</span>
-        <span class="step-icon-naked" style="color:#1DB954;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="3"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <path d="M21 15l-5-5L5 21"/>
-          </svg>
-        </span>
-        <div class="step-title">Screenshot &amp; upload here</div>
-        <p class="step-body">Take screenshots of whatever you see — top artists, top songs, genres. Upload them here and Dr. Lyra does the rest.</p>
+        <div class="step-title">Tap the share icon</div>
+        <p class="step-body">Top-right of each category — about 10 in total.</p>
+        <div class="step-shot">
+          <img src="/images/step2_tap_share_icon.png" alt="Tap the share icon on the Listening Stats page" width="296" height="586" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="card step-card reveal" style="transition-delay:.32s">
+        <span class="step-num">04</span>
+        <div class="step-title">Swipe &amp; download</div>
+        <p class="step-body">The first card's a summary — download it, or swipe for more.</p>
         <p class="step-tip">Up to 10 screenshots. More data = deeper, more personal profile.</p>
+        <div class="step-shot">
+          <img src="/images/step3_tap_download.png" alt="Tap Download on a Spotify Listening Stats card" width="296" height="586" loading="lazy" />
+        </div>
       </div>
 
     </div>
@@ -501,7 +524,7 @@
       <div class="lead-text">
         <span class="section-eyebrow gt">Not ready yet?</span>
         <h3 class="lead-h">See a free sample report</h3>
-        <p class="lead-sub">Drop your email and we'll show you a real example right here, so you know exactly what you're getting.</p>
+        <p class="lead-sub">Drop your email and see a real example, right here.</p>
       </div>
       <form class="lead-form" id="lead-form">
         <input class="lead-input" type="email" id="lead-email" placeholder="your@email.com" required />
