@@ -64,10 +64,10 @@
     <h2>Share your reading.</h2>
     <p>Download your PDF to keep it or generate a story image to share.</p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <button onclick="document.getElementById('btn-download').click()" class="btn-cta" style="font-size:15px;padding:14px 28px;">
+      <button onclick="document.getElementById('btn-download').click()" class="btn-cta-primary">
         Download PDF
       </button>
-      <button onclick="document.getElementById('btn-share').click()" class="btn-cta" style="font-size:15px;padding:14px 28px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);">
+      <button onclick="document.getElementById('btn-share').click()" class="btn-cta-secondary">
         Share Story
       </button>
     </div>
@@ -152,7 +152,6 @@
     // S1: psychological DNA helix — "your personality decoded"
     `<div class="viz"><svg class="viz-archetype" viewBox="0 0 660 100" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs><linearGradient id="ag1" x1="0" y1="0" x2="660" y2="0"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
-      <text x="330" y="12" text-anchor="middle" font-family="DM Sans" font-size="9" font-weight="700" letter-spacing="3" fill="rgba(255,255,255,0.13)">YOUR PSYCHOLOGICAL DNA</text>
       <path class="dna-top" d="M 20 52 C 62 18,104 18,146 52 C 188 86,230 86,272 52 C 314 18,356 18,398 52 C 440 86,482 86,524 52 C 566 18,608 18,648 52" stroke="url(#ag1)" stroke-width="2.5" stroke-linecap="round"/>
       <path class="dna-bot" d="M 20 52 C 62 86,104 86,146 52 C 188 18,230 18,272 52 C 314 86,356 86,398 52 C 440 18,482 18,524 52 C 566 86,608 86,648 52" stroke="url(#ag1)" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
       <line class="dna-rung" x1="83" y1="24" x2="83" y2="80" stroke="rgba(255,255,255,0.11)" stroke-width="1" stroke-dasharray="4 3" style="animation-delay:0.7s"/>
@@ -164,20 +163,29 @@
       <circle class="dna-node" cx="272" cy="52" r="4.5" fill="#8B5CF6" style="animation-delay:1.0s"/>
       <circle class="dna-node" cx="398" cy="52" r="4.5" fill="#1DB954" style="animation-delay:1.2s"/>
       <circle class="dna-node" cx="524" cy="52" r="4.5" fill="#8B5CF6" style="animation-delay:1.4s"/>
-    </svg></div>`,
+    </svg><div class="viz-caption">Your Psychological DNA</div></div>`,
     // S2: emotional heartbeat / EKG wave
     `<div class="viz"><svg class="viz-heartbeat" viewBox="0 0 700 72" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs><linearGradient id="hg" x1="0" y1="0" x2="700" y2="0"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
-      <text x="350" y="68" text-anchor="middle" font-family="DM Sans" font-size="9" font-weight="700" letter-spacing="3" fill="rgba(255,255,255,0.13)">EMOTIONAL FREQUENCY PATTERN</text>
       <path class="heartbeat-path" d="M 0 36 L 50 36 L 60 26 L 65 14 L 74 56 L 82 14 L 87 36 L 140 36 L 148 24 L 153 12 L 162 58 L 170 12 L 175 36 L 230 36 L 238 20 L 243 8 L 253 60 L 261 8 L 266 36 L 325 36 L 333 26 L 338 14 L 347 56 L 355 14 L 360 36 L 415 36 L 423 22 L 428 10 L 437 60 L 445 10 L 450 36 L 510 36 L 518 24 L 523 12 L 532 58 L 540 12 L 545 36 L 700 36" stroke="url(#hg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg></div>`,
-    // S3: orbiting circles
-    `<div class="viz"><svg class="viz-orbit" viewBox="0 0 700 104" fill="none">
-      <circle class="orbit-circle-a" cx="320" cy="52" r="44" fill="rgba(29,185,84,0.08)" stroke="rgba(29,185,84,0.3)" stroke-width="1.5"/>
-      <text class="orbit-circle-a" x="320" y="57" font-family="DM Sans" font-size="15" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Curated</text>
-      <circle class="orbit-circle-b" cx="380" cy="52" r="44" fill="rgba(139,92,246,0.08)" stroke="rgba(139,92,246,0.3)" stroke-width="1.5"/>
-      <text class="orbit-circle-b" x="380" y="57" font-family="DM Sans" font-size="15" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Shadow</text>
-    </svg></div>`,
+    </svg><div class="viz-caption">Emotional Frequency Pattern</div></div>`,
+    // S3: orbiting circles — separate, larger mobile version (own viewBox
+    // and animation) so labels stay readable instead of shrinking with
+    // the viewport; desktop version untouched.
+    `<div class="viz">
+      <svg class="viz-orbit viz-orbit-desktop" viewBox="0 0 700 104" fill="none">
+        <circle class="orbit-circle-a" cx="320" cy="52" r="44" fill="rgba(29,185,84,0.08)" stroke="rgba(29,185,84,0.3)" stroke-width="1.5"/>
+        <text class="orbit-circle-a" x="320" y="57" font-family="DM Sans" font-size="15" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Curated</text>
+        <circle class="orbit-circle-b" cx="380" cy="52" r="44" fill="rgba(139,92,246,0.08)" stroke="rgba(139,92,246,0.3)" stroke-width="1.5"/>
+        <text class="orbit-circle-b" x="380" y="57" font-family="DM Sans" font-size="15" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Shadow</text>
+      </svg>
+      <svg class="viz-orbit viz-orbit-mobile" viewBox="0 0 380 260" fill="none">
+        <circle class="orbit-circle-a-m" cx="175" cy="130" r="85" fill="rgba(29,185,84,0.08)" stroke="rgba(29,185,84,0.3)" stroke-width="1.5"/>
+        <text class="orbit-circle-a-m" x="175" y="138" font-family="DM Sans" font-size="24" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Curated</text>
+        <circle class="orbit-circle-b-m" cx="205" cy="130" r="85" fill="rgba(139,92,246,0.08)" stroke="rgba(139,92,246,0.3)" stroke-width="1.5"/>
+        <text class="orbit-circle-b-m" x="205" y="138" font-family="DM Sans" font-size="24" font-weight="600" fill="rgba(255,255,255,0.7)" text-anchor="middle">The Shadow</text>
+      </svg>
+    </div>`,
     // S4: simple EQ bars (different heights)
     `<div class="viz"><div style="font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Listening Pattern</div>
     <div class="eq-bars">
@@ -204,6 +212,9 @@
       <line x1="120" y1="100" x2="280" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
       <line x1="143" y1="43" x2="257" y2="157" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
       <line x1="257" y1="43" x2="143" y2="157" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+      <g class="radar-sweep">
+        <path d="M 200 100 L 200 20 A 80 80 0 0 1 251.4 38.7 Z" fill="url(#sweepGrad)"/>
+      </g>
       <polygon class="radar-polygon" points="200,32 268,72 260,152 200,168 140,152 132,72"
         fill="url(#rg)" fill-opacity="0.12" stroke="url(#rg2)" stroke-width="1.5"/>
       <text x="200" y="14" text-anchor="middle" font-family="DM Sans" font-size="9" fill="rgba(255,255,255,0.4)">Introspection</text>
@@ -215,17 +226,40 @@
       <defs>
         <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient>
         <linearGradient id="rg2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient>
+        <linearGradient id="sweepGrad" x1="200" y1="20" x2="251.4" y2="38.7" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#1DB954" stop-opacity="0.4"/>
+          <stop offset="1" stop-color="#1DB954" stop-opacity="0"/>
+        </linearGradient>
       </defs>
     </svg></div>`,
-    // S8: interlocking rings
-    `<div class="viz"><svg class="viz-rings2" viewBox="0 0 700 90" fill="none">
-      <circle class="ring2-a" cx="320" cy="45" r="38" fill="rgba(29,185,84,0.05)" stroke="rgba(29,185,84,0.3)" stroke-width="1.5"/>
-      <text class="ring2-a" x="305" y="40" font-family="DM Sans" font-size="9.5" fill="rgba(255,255,255,0.35)" text-anchor="middle">Your Soulmate</text>
-      <text class="ring2-a" x="305" y="52" font-family="DM Sans" font-size="8" fill="rgba(255,255,255,0.2)" text-anchor="middle">playlists as love letters</text>
-      <circle class="ring2-b" cx="390" cy="45" r="38" fill="rgba(139,92,246,0.05)" stroke="rgba(139,92,246,0.3)" stroke-width="1.5"/>
-      <text class="ring2-b" x="405" y="40" font-family="DM Sans" font-size="9.5" fill="rgba(255,255,255,0.35)" text-anchor="middle">Your Nemesis</text>
-      <text class="ring2-b" x="405" y="52" font-family="DM Sans" font-size="8" fill="rgba(255,255,255,0.2)" text-anchor="middle">"I just shuffle everything"</text>
-    </svg></div>`,
+    // S8: interlocking rings — mobile swaps the tiny two-circle SVG (text
+    // was down to 8px once scaled) for stacked HTML cards at full readable size.
+    `<div class="viz">
+      <svg class="viz-rings2 viz-rings2-desktop" viewBox="0 0 700 90" fill="none">
+        <circle class="ring2-a" cx="320" cy="45" r="38" fill="rgba(29,185,84,0.05)" stroke="rgba(29,185,84,0.3)" stroke-width="1.5"/>
+        <text class="ring2-a" x="305" y="40" font-family="DM Sans" font-size="9.5" fill="rgba(255,255,255,0.35)" text-anchor="middle">Your Soulmate</text>
+        <text class="ring2-a" x="305" y="52" font-family="DM Sans" font-size="8" fill="rgba(255,255,255,0.2)" text-anchor="middle">playlists as love letters</text>
+        <circle class="ring2-b" cx="390" cy="45" r="38" fill="rgba(139,92,246,0.05)" stroke="rgba(139,92,246,0.3)" stroke-width="1.5"/>
+        <text class="ring2-b" x="405" y="40" font-family="DM Sans" font-size="9.5" fill="rgba(255,255,255,0.35)" text-anchor="middle">Your Nemesis</text>
+        <text class="ring2-b" x="405" y="52" font-family="DM Sans" font-size="8" fill="rgba(255,255,255,0.2)" text-anchor="middle">"I just shuffle everything"</text>
+      </svg>
+      <div class="rings2-mobile">
+        <div class="rings2-card rings2-card-a">
+          <div class="rings2-dot"></div>
+          <div class="rings2-text">
+            <div class="rings2-title">Your Soulmate</div>
+            <div class="rings2-sub">playlists as love letters</div>
+          </div>
+        </div>
+        <div class="rings2-card rings2-card-b">
+          <div class="rings2-dot"></div>
+          <div class="rings2-text">
+            <div class="rings2-title">Your Nemesis</div>
+            <div class="rings2-sub">"I just shuffle everything"</div>
+          </div>
+        </div>
+      </div>
+    </div>`,
     // S9: no viz (quote section is the viz)
     ``,
   ];
@@ -299,17 +333,47 @@
     return pick ? pick.trim() : '';
   }
 
-  function markdownToHtml(text, { pullQuote = true } = {}) {
+  // rotating micro-labels inserted before a couple of paragraphs per
+  // section, so long sections read as a few labeled beats instead of one
+  // undifferentiated block. Cycled by section index so consecutive
+  // sections don't all show the same pair.
+  const BEAT_LABELS = ['THE PATTERN', 'WHAT THIS REVEALS', 'THE DEEPER LAYER', 'WORTH SITTING WITH', 'THE TELL', 'UNDER THE SURFACE'];
+
+  function markdownToHtml(text, { pullQuote = true, beatOffset = 0 } = {}) {
     if (!text) return '';
 
-    const processed = text
-      .replace(/^#{1,6}\s*.*/gm, '')
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
+    const stripped = text.replace(/^#{1,6}\s*.*/gm, '');
 
-    const paras = processed.split(/\n{2,}/)
+    let rawParas = stripped.split(/\n{2,}/)
       .map(p => p.trim())
       .filter(p => p && p.length > 2 && !/^[-*_]{3,}$/.test(p));
+
+    // break overly long paragraphs into shorter ones at a sentence
+    // boundary near the midpoint — same words, just more breathing room.
+    // Done on the plain text, before bold/italic markup is added, so a
+    // split never lands inside a tag.
+    const MAX_PARA_LEN = 420;
+    rawParas = rawParas.flatMap(p => {
+      if (p.length <= MAX_PARA_LEN) return [p];
+      const sentences = p.match(/[^.!?]+[.!?]+(?:\s+|$)/g);
+      if (!sentences || sentences.length < 2) return [p];
+      const chunks = [];
+      let acc = '';
+      const halfway = p.length / 2;
+      for (const s of sentences) {
+        if (acc.length >= halfway && chunks.length === 0) {
+          chunks.push(acc.trim());
+          acc = '';
+        }
+        acc += s;
+      }
+      if (acc.trim()) chunks.push(acc.trim());
+      return chunks.length > 1 ? chunks : [p];
+    });
+
+    const paras = rawParas.map(p => p
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*([^*\n]+?)\*/g, '<em>$1</em>'));
 
     if (!paras.length) return '';
 
@@ -327,11 +391,29 @@
       }
     }
 
+    // pick 1-2 beat-label insertion points, spaced out and clear of
+    // the lede / pull-quote indices.
+    const beatIndices = [];
+    if (pullQuote && paras.length >= 4) {
+      const candidates = [Math.round(paras.length * 0.3), Math.round(paras.length * 0.78)];
+      candidates.forEach(c => {
+        if (c > 0 && c !== featIdx && c < paras.length - 1 && !beatIndices.includes(c)) {
+          beatIndices.push(c);
+        }
+      });
+    }
+
     const out = [];
     paras.forEach((p, i) => {
       const html     = p.replace(/\n/g, '<br>');
       const plainLen = p.replace(/<[^>]+>/g, '').length;
       const isShortBold = plainLen < 58 && p.startsWith('<strong>') && !p.includes('<br>');
+
+      const beatPos = beatIndices.indexOf(i);
+      if (beatPos !== -1) {
+        const label = BEAT_LABELS[(beatOffset + beatPos) % BEAT_LABELS.length];
+        out.push(`<div class="beat-label">${label}</div>`);
+      }
 
       if (i === 0) {
         out.push(`<p class="lede">${html}</p>`);
@@ -347,11 +429,38 @@
 
       // Rhythm divider every 3 paragraphs
       if (i > 0 && i % 3 === 0 && i < paras.length - 1 && i !== featIdx) {
-        out.push(`<div class="para-rule"></div>`);
+        out.push(`<div class="para-rule"><span class="para-rule-diamond"></span></div>`);
       }
     });
 
+    // every section gets a key insight, always at the very end —
+    // searches backward from the last paragraph for a well-sized sentence
+    // (skipping the one already used as the feat-quote), and falls back to
+    // the section's closing sentence if nothing matches the ideal length.
+    if (pullQuote && paras.length >= 2) {
+      const insight = pickKeyInsight(paras, featIdx);
+      if (insight) out.push(`<div class="key-insight">${insight}</div>`);
+    }
+
     return out.join('\n');
+  }
+
+  function pickKeyInsight(paras, excludeIdx) {
+    for (let i = paras.length - 1; i >= 0; i--) {
+      if (i === excludeIdx) continue;
+      const plain = paras[i].replace(/<[^>]+>/g, '');
+      const sents = plain.match(/[^.!?]+[.!?]+/g) || [];
+      const reversed = sents.slice().reverse();
+      const pick = reversed.find(s => /^\s*You\s/.test(s) && s.trim().length >= 40 && s.trim().length <= 190)
+                || reversed.find(s => s.trim().length >= 45 && s.trim().length <= 190);
+      if (pick) return pick.trim();
+    }
+    // Fallback: last sentence of the last paragraph, whatever its length —
+    // guarantees every section produces something rather than nothing.
+    const lastPlain = paras[paras.length - 1].replace(/<[^>]+>/g, '');
+    const lastSents = lastPlain.match(/[^.!?]+[.!?]+/g);
+    if (lastSents && lastSents.length) return lastSents[lastSents.length - 1].trim();
+    return lastPlain.trim();
   }
 
   function stripLeadingTitle(text) {
@@ -378,15 +487,22 @@
     }
     if (movements.length === 0) return markdownToHtml(text);
 
+    // Accordion: title lives once as the clickable header (no separate dots
+    // preview repeating it above), first movement open by default.
     return `<div class="wave-movements">${
       movements.map((m, i) => `
-        <div class="wave-movement" id="mv_r${i}">
-          <div class="wave-movement-left">
-            <div class="wave-dot">${m.roman}</div>
-          </div>
-          <div class="wave-movement-body">
+        <div class="wave-movement${i === 0 ? ' open' : ''}" id="mv_r${i}">
+          <button class="wave-movement-header" data-idx="${i}" aria-expanded="${i === 0}">
+            <div class="wave-movement-left">
+              <div class="wave-dot">${m.roman}</div>
+            </div>
             <div class="wave-movement-title">${m.title}</div>
-            <div class="wave-movement-text">${markdownToHtml(m.body, { pullQuote: false })}</div>
+            <svg class="wave-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="wave-movement-body">
+            <div class="wave-movement-body-inner">
+              <div class="wave-movement-text">${markdownToHtml(m.body, { pullQuote: false })}</div>
+            </div>
           </div>
         </div>`).join('')
     }</div>`;
@@ -404,33 +520,6 @@
     return para.length > maxLen ? para.slice(0, maxLen - 1) + '…' : para;
   }
 
-  function buildMovementsViz(text) {
-    const romans = ['I','II','III','IV','V'];
-    // Try to find movement-like headings in the text
-    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-    const movements = [];
-    lines.forEach(line => {
-      const m = line.match(/(?:Movement\s+)?([IVX]+|[1-5])[\.:\s—–-]+(.{5,80})/);
-      if (m && movements.length < 5) {
-        movements.push({ num: romans[movements.length] || m[1], title: m[2].replace(/\*\*/g,'').trim() });
-      }
-    });
-    if (movements.length < 3) {
-      // Fallback generic
-      ['The Opening', 'The Turning', 'The Depth', 'The Shift', 'The Return'].slice(0, 5).forEach((t, i) => {
-        if (!movements[i]) movements.push({ num: romans[i], title: t });
-      });
-    }
-    const dots = movements.slice(0, 5).map((m, i) => `
-      <div class="movement" id="mv_r${i}">
-        <div class="movement-dot">${m.num}</div>
-        <div class="movement-content">
-          <div class="movement-label gt">${m.title}</div>
-        </div>
-      </div>`).join('');
-    return `<div class="viz"><div class="movements">${dots}</div></div>`;
-  }
-
   // ─────────────────────────────────────────
   //  MAIN RENDER (async to support URL-based reports)
   // ─────────────────────────────────────────
@@ -438,19 +527,20 @@
   let archetypeName = 'Your Profile';
 
   async function loadReport() {
-    // Check for /report/:id in URL
+    // Read the id from the /report/:id route itself, checked before any
+    // cached copy — so an explicit report link always wins over whatever
+    // report this browser happened to view last.
     const idMatch = window.location.pathname.match(/\/report\/([a-f0-9]{20,})/);
     const reportId = idMatch ? idMatch[1] : null;
 
-    rawText = sessionStorage.getItem('drlyra_report');
-
-    if (!rawText && reportId) {
+    if (reportId) {
       try {
         const res = await fetch(`/api/report/${reportId}`);
-        if (res.ok) { rawText = (await res.json()).text; sessionStorage.setItem('drlyra_report', rawText); }
+        if (res.ok) rawText = (await res.json()).text;
       } catch {}
     }
 
+    if (!rawText) rawText = sessionStorage.getItem('drlyra_report');
     if (!rawText) rawText = localStorage.getItem('drlyra_report');
 
     if (rawText && reportId) {
@@ -508,7 +598,7 @@
 
       // Build viz for this section
       let viz = VIZZES[idx];
-      if (idx === 5) viz = buildMovementsViz(text); // waves — parse movements
+      if (idx === 5) viz = ''; // waves — accordion body IS the viz, no separate preview
 
       if (isQuote) {
         const cleanQuote = text.replace(/\*\*/g,'').replace(/\*/g,'').replace(/^["""]/,'').replace(/["""]$/,'').trim();
@@ -526,7 +616,7 @@
         // Strip the leading bold/title line from body so it doesn't repeat below the header
         const bodyText = idx === 0 ? stripLeadingTitle(text) : text;
         // Section 6 gets movement timeline; others get normal body
-        const bodyHtml = idx === 5 ? buildMovementsHtml(text) : markdownToHtml(bodyText);
+        const bodyHtml = idx === 5 ? buildMovementsHtml(text) : markdownToHtml(bodyText, { beatOffset: idx * 2 });
         div.innerHTML = `
           <div class="sec-header">
             <div class="sec-icon">${ICONS[idx]}</div>
@@ -545,6 +635,11 @@
 
     // Populate print cover
     document.getElementById('print-cover-title').textContent = archetypeName;
+
+    // Traveling signal pulse on S1/S2 line paths — continues after the
+    // initial draw-in so those visuals read as clearly, ongoingly alive.
+    document.querySelectorAll('.dna-top').forEach(p => addTravelingPulse(p, { duration: 3.4, delay: 2.3, dashRatio: 0.1 }));
+    document.querySelectorAll('.heartbeat-path').forEach(p => addTravelingPulse(p, { duration: 2.8, delay: 2.5, dashRatio: 0.05 }));
 
     // Observers + nav
     initObservers();
@@ -565,13 +660,38 @@
     return sec.marker.split(' ').map(w => w[0] + w.slice(1).toLowerCase()).join(' ');
   }
 
+  // Clones a line path and animates a short bright dash traveling along its
+  // exact length (via getTotalLength, so it can't clip or misalign) —
+  // gives S1/S2 a genuine ongoing "signal" motion instead of a static line.
+  // Starts paused; secObs below plays it once its section is visible.
+  function addTravelingPulse(path, { duration = 3, delay = 0, dashRatio = 0.09 } = {}) {
+    if (!path) return;
+    const len = path.getTotalLength();
+    const pulse = path.cloneNode();
+    pulse.removeAttribute('style');
+    pulse.classList.add('pulse-travel');
+    pulse.setAttribute('stroke-dasharray', `${len * dashRatio} ${len}`);
+    path.insertAdjacentElement('afterend', pulse);
+    const anim = pulse.animate(
+      [{ strokeDashoffset: 0 }, { strokeDashoffset: -len }],
+      { duration: duration * 1000, delay: delay * 1000, iterations: Infinity, easing: 'linear' }
+    );
+    anim.pause();
+    pulse._travelAnim = anim;
+  }
+
   // ─────────────────────────────────────────
   //  OBSERVERS + NAV
   // ─────────────────────────────────────────
   function initObservers() {
     // Scroll reveal
     const secObs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          e.target.querySelectorAll('.pulse-travel').forEach(el => el._travelAnim && el._travelAnim.play());
+        }
+      });
     }, { threshold: 0.07 });
     document.querySelectorAll('.sec').forEach(s => secObs.observe(s));
 
@@ -586,6 +706,22 @@
       });
     }, { threshold: 0.2 });
     document.querySelectorAll('[id^="mv_r"]').forEach(m => movObs.observe(m));
+
+    // Movement accordion — click a header to open it, closing the others
+    document.querySelectorAll('.wave-movement-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const item = header.closest('.wave-movement');
+        const wasOpen = item.classList.contains('open');
+        item.parentElement.querySelectorAll('.wave-movement').forEach(m => {
+          m.classList.remove('open');
+          m.querySelector('.wave-movement-header').setAttribute('aria-expanded', 'false');
+        });
+        if (!wasOpen) {
+          item.classList.add('open');
+          header.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
 
     // Active pill
     const pills = document.querySelectorAll('.sec-pill');

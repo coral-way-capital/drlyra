@@ -238,11 +238,68 @@ body {
   padding-bottom: 20px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
-.sec-body { font-size: 15.5px; line-height: 1.9; color: var(--text); }
+/* capped to ~65-70 characters/line — was spanning the full 700px+
+   card width, which is well past the comfortable reading range. */
+.sec-body { font-size: 16.5px; line-height: 1.9; color: var(--text); max-width: 620px; }
 .sec-body p { margin-bottom: 22px; }
 .sec-body p + p { margin-top: 0; }
 .sec-body strong { color: #1DB954; font-weight: 700; background: none; -webkit-text-fill-color: #1DB954; }
-.sec-body em { color: rgba(29,185,84,0.9); font-style: italic; }
+/* highlighter-marker treatment instead of plain colored italic —
+   reads as something physically marked, not just emphasized text. */
+.sec-body em {
+  font-style: normal;
+  color: rgba(255,255,255,0.92);
+  background: linear-gradient(120deg, rgba(29,185,84,0.32) 0%, rgba(29,185,84,0.18) 100%);
+  padding: 0.05em 0.3em;
+  border-radius: 4px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* mini in-section label — breaks a long section into a few named
+   beats instead of one continuous block. */
+.beat-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: #1DB954;
+  margin: 40px 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.beat-label::before {
+  content: '';
+  width: 16px; height: 1.5px;
+  background: rgba(29,185,84,0.6);
+  flex-shrink: 0;
+}
+
+/* second highlight — a distinct "key insight" callout further into
+   the section, separate from the existing Playfair feat-quote so the two
+   don't read as the same device repeated twice */
+.key-insight {
+  margin: 32px 0;
+  padding: 18px 22px;
+  border-left: 3px solid #1DB954;
+  background: rgba(29,185,84,0.06);
+  border-radius: 0 12px 12px 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.88);
+}
+.key-insight::before {
+  content: 'KEY INSIGHT';
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(29,185,84,0.7);
+  margin-bottom: 8px;
+}
 
 /* ── Featured sentence — Playfair Display with animated glow ── */
 .feat-quote {
@@ -304,17 +361,28 @@ body {
   -webkit-text-fill-color: rgba(255,255,255,0.95);
 }
 
-/* ── Rhythm divider — three dots ── */
+/* rhythm divider — fading rule with a small centered diamond,
+   instead of plain "···" text */
 .para-rule {
-  margin: 36px 0;
-  text-align: center;
+  margin: 40px 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
   height: auto; width: auto; background: none; border-radius: 0; opacity: 1;
 }
+.para-rule::before,
 .para-rule::after {
-  content: '· · ·';
-  font-size: 14px;
-  letter-spacing: 10px;
-  color: rgba(139,92,246,0.38);
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(29,185,84,0.25));
+}
+.para-rule::after { background: linear-gradient(90deg, rgba(29,185,84,0.25), transparent); }
+.para-rule-diamond {
+  width: 6px; height: 6px;
+  background: rgba(29,185,84,0.6);
+  transform: rotate(45deg);
+  flex-shrink: 0;
 }
 
 /* ── Short bold insight line ── */
@@ -332,7 +400,7 @@ body {
 
 /* Lede — editorial first paragraph */
 .lede {
-  font-size: 17.5px !important;
+  font-size: 18.5px !important;
   color: rgba(255,255,255,0.85) !important;
   line-height: 1.88 !important;
   font-weight: 400 !important;
@@ -405,6 +473,18 @@ body {
 
 /* decorative graphic area */
 .viz { margin: 28px 0; }
+/* was a 9px/13%-opacity label crammed inside the SVG itself —
+   pulled out as a real HTML caption with normal readable sizing/spacing. */
+.viz-caption {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-top: 12px;
+  text-align: center;
+}
 
 /* ── PILL TAG ── */
 .pill {
@@ -545,6 +625,29 @@ body {
   0%,100%{ box-shadow:0 0 20px rgba(29,185,84,0.22),0 0 40px rgba(139,92,246,0.1); }
   50%{ box-shadow:0 0 32px rgba(29,185,84,0.4),0 0 60px rgba(139,92,246,0.18); }
 }
+/* Primary/secondary pairing to match the app's standard purple CTA (site.css .btn-generate) */
+.btn-cta-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 16px 36px;
+  background: #7C3AED;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600;
+  border-radius: 100px; border: none; cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.btn-cta-primary:hover { transform: scale(1.04) translateY(-1px); opacity: 0.92; box-shadow: 0 8px 32px rgba(124,58,237,0.35); }
+.btn-cta-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14.5px 34px;
+  background: transparent;
+  color: rgba(255,255,255,0.75);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600;
+  border-radius: 100px; border: 1.5px solid rgba(124,58,237,0.45); cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s, color 0.2s;
+}
+.btn-cta-secondary:hover { border-color: #7C3AED; background: rgba(124,58,237,0.1); color: #fff; transform: translateY(-1px); }
 .btn-fine { margin-top: 14px; font-size: 12.5px; color: var(--muted); }
 
 /* ── FOOTER ── */
@@ -637,6 +740,7 @@ footer {
 /* --- Orbiting circles (Section 03) --- */
 .viz-orbit { width: 100%; height: 128px; position: relative; }
 .orbit-svg { width: 100%; height: 100%; }
+.viz-orbit-mobile { display: none; }
 .orbit-circle-a {
   animation: orbit-a 9s ease-in-out infinite;
   transform-origin: 400px 50px;
@@ -656,6 +760,32 @@ footer {
   0%, 12%  { transform: translateX(0); }
   50%, 72% { transform: translateX(58px); }
   100%     { transform: translateX(0); }
+}
+/* Mobile: dedicated larger SVG (own viewBox) so the circles/labels scale up
+   instead of shrinking with the viewport. Reduced translateX keeps the
+   pulled-apart circles inside the taller viewBox with no clipping. */
+.orbit-circle-a-m {
+  animation: orbit-a-m 9s ease-in-out infinite;
+  transform-origin: 190px 130px;
+}
+.orbit-circle-b-m {
+  animation: orbit-b-m 9s ease-in-out infinite;
+  transform-origin: 190px 130px;
+}
+@keyframes orbit-a-m {
+  0%, 12%  { transform: translateX(0); }
+  50%, 72% { transform: translateX(-50px); }
+  100%     { transform: translateX(0); }
+}
+@keyframes orbit-b-m {
+  0%, 12%  { transform: translateX(0); }
+  50%, 72% { transform: translateX(50px); }
+  100%     { transform: translateX(0); }
+}
+@media (max-width: 600px) {
+  .viz-orbit { height: 232px; }
+  .viz-orbit-desktop { display: none; }
+  .viz-orbit-mobile { display: block; }
 }
 
 /* --- Arc flow diagram (Section 04) --- */
@@ -755,11 +885,22 @@ footer {
 .radar-polygon {
   stroke-dasharray: 600;
   stroke-dashoffset: 600;
-  animation: draw-radar 1.8s ease forwards;
-  animation-play-state: paused;
+  animation: draw-radar 1.8s ease forwards, viz-pulse-glow 4.5s ease-in-out infinite 1.8s;
+  animation-play-state: paused, paused;
 }
-.sec.visible .radar-polygon { animation-play-state: running; }
+.sec.visible .radar-polygon { animation-play-state: running, running; }
 @keyframes draw-radar { to { stroke-dashoffset: 0; } }
+/* Rotating radar scan — the clearer, more legible motion cue than the
+   subtle opacity pulse alone (kept above for the polygon outline itself). */
+.radar-sweep {
+  transform-origin: 200px 100px;
+  opacity: 0;
+  animation: radar-sweep-fade 0.5s ease 1.8s forwards, radar-sweep-spin 6s linear infinite 1.8s;
+  animation-play-state: paused, paused;
+}
+.sec.visible .radar-sweep { animation-play-state: running, running; }
+@keyframes radar-sweep-fade { to { opacity: 1; } }
+@keyframes radar-sweep-spin { to { transform: rotate(360deg); } }
 
 /* --- Interlocking rings (Section 08) --- */
 .viz-rings2 { width: 100%; height: 90px; }
@@ -768,6 +909,28 @@ footer {
 }
 .ring2-b {
   animation: slide-right 3s ease-in-out infinite alternate;
+}
+.rings2-mobile { display: none; }
+.rings2-card {
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.rings2-card + .rings2-card { margin-top: 10px; }
+.rings2-dot {
+  width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+  animation: rings2-dot-pulse 2.6s ease-in-out infinite;
+}
+.rings2-card-a .rings2-dot { background: #1DB954; box-shadow: 0 0 0 4px rgba(29,185,84,0.15); }
+.rings2-card-b .rings2-dot { background: #8B5CF6; box-shadow: 0 0 0 4px rgba(139,92,246,0.15); animation-delay: 1.3s; }
+.rings2-title { font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.85); }
+.rings2-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+@keyframes rings2-dot-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.7; } }
+@media (max-width: 600px) {
+  .viz-rings2-desktop { display: none; }
+  .rings2-mobile { display: block; }
 }
 @keyframes slide-left  { from{ transform:translateX(20px); } to{ transform:translateX(-8px); } }
 @keyframes slide-right { from{ transform:translateX(-20px); } to{ transform:translateX(8px); } }
@@ -835,7 +998,7 @@ footer {
   color: #fff;
 }
 
-.sec-body p:first-child { font-size:17.5px; color:rgba(255,255,255,0.82); line-height:1.88; }
+.sec-body p:first-child { font-size:18.5px; color:rgba(255,255,255,0.82); line-height:1.88; }
 
 /* ── BACK LINK (report page) ── */
 
@@ -956,19 +1119,22 @@ footer {
    SECTION 01: DNA ARCHETYPE ANIMATION
 ══════════════════════════════════════ */
 .viz-archetype { width: 100%; height: 100px; }
+/* after the draw-in finishes, settle into a slow, subtle glow pulse
+   instead of going static — same idea reused across every draw-in viz. */
 .dna-top {
   stroke-dasharray: 1200; stroke-dashoffset: 1200;
-  animation: draw-dna 2.2s ease forwards;
-  animation-play-state: paused;
+  animation: draw-dna 2.2s ease forwards, viz-pulse-glow 5s ease-in-out infinite 2.2s;
+  animation-play-state: paused, paused;
 }
 .dna-bot {
   stroke-dasharray: 1200; stroke-dashoffset: 1200;
-  animation: draw-dna 2.2s ease 0.35s forwards;
-  animation-play-state: paused;
+  animation: draw-dna 2.2s ease 0.35s forwards, viz-pulse-glow 5s ease-in-out infinite 2.55s;
+  animation-play-state: paused, paused;
 }
 .sec.visible .dna-top,
-.sec.visible .dna-bot { animation-play-state: running; }
+.sec.visible .dna-bot { animation-play-state: running, running; }
 @keyframes draw-dna { to { stroke-dashoffset: 0; } }
+@keyframes viz-pulse-glow { 0%, 100% { opacity: 1; } 50% { opacity: 0.65; } }
 .dna-rung {
   opacity: 0;
   animation: dna-fade 0.4s ease forwards;
@@ -990,25 +1156,46 @@ footer {
 .viz-heartbeat { width: 100%; height: 72px; }
 .heartbeat-path {
   stroke-dasharray: 2400; stroke-dashoffset: 2400;
-  animation: draw-heartbeat 2.4s ease forwards;
-  animation-play-state: paused;
+  animation: draw-heartbeat 2.4s ease forwards, viz-pulse-glow 4.5s ease-in-out infinite 2.4s;
+  animation-play-state: paused, paused;
 }
-.sec.visible .heartbeat-path { animation-play-state: running; }
+.sec.visible .heartbeat-path { animation-play-state: running, running; }
 @keyframes draw-heartbeat { to { stroke-dashoffset: 0; } }
+
+/* Traveling signal pulse, cloned onto .dna-top / .heartbeat-path by JS
+   (addTravelingPulse) — a short bright dash runs the exact path length on
+   loop, on top of the base stroke. Starts paused; played once visible. */
+.pulse-travel {
+  fill: none;
+  stroke: #fff;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.7));
+  pointer-events: none;
+}
 
 /* ══════════════════════════════════════
    SECTION 06: WAVE MOVEMENTS TIMELINE
 ══════════════════════════════════════ */
-.wave-movements { display: flex; flex-direction: column; gap: 0; margin-top: 40px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.07); }
+.wave-movements { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
 .wave-movement {
-  display: flex; gap: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.02);
   opacity: 0; transform: translateY(16px);
-  transition: opacity 0.45s ease, transform 0.45s ease;
+  transition: opacity 0.45s ease, transform 0.45s ease, border-color 0.25s ease, background 0.25s ease;
 }
 .wave-movement.visible { opacity: 1; transform: translateY(0); }
+.wave-movement.open { border-color: rgba(139,92,246,0.28); background: rgba(255,255,255,0.035); }
+.wave-movement-header {
+  width: 100%;
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 18px;
+  background: none; border: none; cursor: pointer;
+  text-align: left; font: inherit;
+}
 .wave-movement-left {
   display: flex; flex-direction: column; align-items: center;
-  flex-shrink: 0; width: 38px; padding-top: 2px;
+  flex-shrink: 0;
 }
 .wave-dot {
   width: 36px; height: 36px; border-radius: 50%;
@@ -1018,16 +1205,29 @@ footer {
   font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700;
   color: rgba(255,255,255,0.7); flex-shrink: 0; z-index: 1;
 }
-.wave-movement-body { padding: 2px 0 28px; }
 .wave-movement-title {
+  flex: 1;
   font-family: 'DM Sans', sans-serif;
   font-size: 12px; font-weight: 700;
   letter-spacing: 1.5px; text-transform: uppercase;
   background: linear-gradient(135deg, #1DB954, #8B5CF6);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text; margin-bottom: 10px;
+  background-clip: text;
 }
-.wave-movement-text { font-size: 15px; color: var(--text); line-height: 1.75; }
+.wave-chevron {
+  width: 16px; height: 16px; flex-shrink: 0;
+  color: rgba(255,255,255,0.4);
+  transition: transform 0.3s ease, color 0.2s ease;
+}
+.wave-movement.open .wave-chevron { transform: rotate(180deg); color: rgba(139,92,246,0.8); }
+.wave-movement-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+.wave-movement-body-inner { overflow: hidden; min-height: 0; }
+.wave-movement.open .wave-movement-body { grid-template-rows: 1fr; }
+.wave-movement-text { font-size: 15px; color: var(--text); line-height: 1.75; padding: 0 18px 20px 70px; }
 .wave-movement-text p { margin-bottom: 12px; }
 .wave-movement-text p:last-child { margin-bottom: 0; }
 .wave-movement-text strong { color: rgba(255,255,255,0.9); }
@@ -1111,7 +1311,9 @@ footer {
     -webkit-text-fill-color: transparent !important;
   }
   .wave-movement-text { color: #444 !important; }
-  .wave-movement { opacity: 1 !important; transform: none !important; }
+  .wave-movement { opacity: 1 !important; transform: none !important; border-color: rgba(139,92,246,0.25) !important; }
+  .wave-movement-body { grid-template-rows: 1fr !important; }
+  .wave-chevron { display: none !important; }
   .movement { opacity: 1 !important; transform: none !important; }
   .movement-label {
     background: linear-gradient(135deg, #1DB954, #8B5CF6) !important;
