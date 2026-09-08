@@ -235,6 +235,12 @@ app.post('/submit-feedback', (req, res) => {
 });
 
 app.get('/test-email', async (req, res) => {
+  const pass = process.env.ADMIN_PASSWORD || 'drlyra2026';
+  const expected = 'Basic ' + Buffer.from('admin:' + pass).toString('base64');
+  if (req.headers.authorization !== expected) {
+    res.setHeader('WWW-Authenticate', 'Basic realm="Dr. Lyra Admin"');
+    return res.status(401).send('Unauthorized');
+  }
   const to = req.query.to;
   if (!to) return res.status(400).send('Missing ?to=email');
   if (!resend) return res.status(503).send('RESEND_API_KEY not configured');
