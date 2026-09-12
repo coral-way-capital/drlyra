@@ -5,25 +5,16 @@
         <g transform="matrix(0.246089,0,0,0.246089,-22.731501,-5.967019)">
             <circle cx="580" cy="507" r="473" style="fill:rgb(21,117,72);"/>
         </g>
-        <g transform="matrix(0.211416,0,0,0.211416,-2.221564,11.63763)">
-            <circle cx="580" cy="507" r="473" style="fill:rgb(21,117,72);stroke:black;stroke-width:16.56px;"/>
+        <g transform="matrix(0.200846,0,0,0.200846,3.949514,16.797038)">
+            <circle cx="580" cy="507" r="473" style="fill:rgb(21,117,72);stroke:black;stroke-width:22.41px;"/>
         </g>
-        <g transform="matrix(0.179704,0,0,0.179704,16.29167,27.595854)">
-            <circle cx="580" cy="507" r="473" style="fill:rgb(21,117,72);stroke:black;stroke-width:19.48px;"/>
+        <g transform="matrix(0.158562,0,0,0.158562,28.393827,38.15467)">
+            <circle cx="580" cy="507" r="473" style="fill:rgb(21,117,72);stroke:black;stroke-width:28.38px;"/>
         </g>
-        <g transform="matrix(0.147992,0,0,0.147992,34.804905,43.554078)">
-            <circle cx="580" cy="507" r="473" style="fill:rgb(21,117,72);stroke:black;stroke-width:23.65px;"/>
+        <g transform="matrix(0.110994,0,0,0.110994,55.803679,62.572006)">
+            <circle cx="580" cy="507" r="473" style="fill:rgb(21,117,72);stroke:black;stroke-width:40.54px;"/>
         </g>
-        <g transform="matrix(0.116279,0,0,0.116279,53.07814,59.752302)">
-            <circle cx="580" cy="507" r="473" style="fill:rgb(21,117,72);stroke:black;stroke-width:30.1px;"/>
-        </g>
-        <g transform="matrix(0.084567,0,0,0.084567,71.591374,75.710526)">
-            <circle cx="580" cy="507" r="473" style="fill:rgb(21,117,72);stroke:black;stroke-width:41.39px;"/>
-        </g>
-        <g transform="matrix(0.052854,0,0,0.052854,90.104609,91.90875)">
-            <circle cx="580" cy="507" r="473" style="fill:rgb(21,117,72);stroke:black;stroke-width:66.22px;"/>
-        </g>
-        <g transform="matrix(0.021142,0,0,0.021142,108.377844,107.866974)">
+        <g transform="matrix(0.047569,0,0,0.047569,92.830148,94.728454)">
             <circle cx="580" cy="507" r="473"/>
         </g>
     </g>
