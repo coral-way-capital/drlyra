@@ -10,9 +10,13 @@ const { Resend } = require('resend');
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
-async function sendReportEmail(toEmail, reportId, baseUrl) {
+async function sendReportEmail(toEmail, reportId) {
   if (!resend) return;
-  const origin = baseUrl || process.env.APP_URL || 'http://localhost:3000';
+  // Security: this URL is emailed to a real inbox, so it must come only
+  // from a trusted, server-configured value — never from request input
+  // (query/body/headers), which an unauthenticated caller fully controls
+  // and could point at a phishing domain while riding our sender identity.
+  const origin = process.env.APP_URL || 'http://localhost:3000';
   const reportUrl = `${origin}/report/${reportId}`;
   const { error } = await resend.emails.send({
     from: process.env.FROM_EMAIL || 'Dr. Lyra <onboarding@resend.dev>',
@@ -75,8 +79,7 @@ app.post('/save-report', async (req, res) => {
   reports[id] = { text, email: email || null, createdAt: new Date().toISOString() };
   writeJSON(REPORTS_FILE, reports);
   res.json({ id });
-  const baseUrl = req.body.origin || `${req.protocol}://${req.get('host')}`;
-  if (email) sendReportEmail(email, id, baseUrl).catch(err => console.error('Email error:', err));
+  if (email) sendReportEmail(email, id).catch(err => console.error('Email error:', err));
 });
 
 app.get('/api/report/:id', (req, res) => {
@@ -247,8 +250,7 @@ app.get('/test-email', async (req, res) => {
   if (!to) return res.status(400).send('Missing ?to=email');
   if (!resend) return res.status(503).send('RESEND_API_KEY not configured');
   try {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
-    await sendReportEmail(to, 'test-preview-id', baseUrl);
+    await sendReportEmail(to, 'test-preview-id');
     res.send(`✓ Email sent to ${to}`);
   } catch (err) {
     res.status(500).send('Failed: ' + err.message);
