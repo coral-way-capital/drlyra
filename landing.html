@@ -148,7 +148,7 @@
       </h1>
 
       <p class="hero-sub">
-        Upload your <span class="hero-sub-hl">Spotify stats</span> and Dr. Lyra decodes what they really reveal about you. Some of it will surprise you.
+        Upload your <span class="hero-sub-hl">Spotify stats</span> — Dr.&nbsp;Lyra decodes the psychology hiding in your&nbsp;playlists.
       </p>
 
       <div class="hero-actions">
@@ -266,6 +266,7 @@
       <h2 class="section-h">Four taps in Spotify</h2>
     </div>
 
+    <div class="steps-viewport">
     <div class="steps-grid">
 
       <div class="card step-card reveal" style="transition-delay:.08s">
@@ -299,12 +300,13 @@
         <span class="step-num">04</span>
         <div class="step-title">Swipe &amp; download</div>
         <p class="step-body">The first card's a summary — download it, or swipe for more.</p>
-        <p class="step-tip">Up to 10 screenshots. More data = deeper, more personal profile.</p>
+        <p class="step-tip">10 screenshots = a deeper, more personal profile.</p>
         <div class="step-shot">
           <img src="/images/step3_tap_download.png" alt="Tap Download on a Spotify Listening Stats card" width="296" height="586" loading="lazy" />
         </div>
       </div>
 
+    </div>
     </div>
   </div>
 </section>
@@ -446,7 +448,8 @@
       <h2 class="section-h">What people are saying</h2>
     </div>
 
-    <div class="testi-grid" style="display:flex;flex-direction:row;flex-wrap:nowrap;gap:24px;padding:4px 2px 8px;">
+    <div class="testi-viewport">
+    <div class="testi-grid">
 
       <div class="card testi-card reveal" style="transition-delay:.08s">
         <div class="testi-stars">
@@ -509,6 +512,7 @@
       </div>
 
     </div>
+    </div>
   </div>
 </section>
 
@@ -567,15 +571,15 @@
       <div class="final-compat">
         <span class="compat-pill">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          Spotify Listening Stats
+        </span>
+        <span class="compat-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           Spotify Wrapped
         </span>
         <span class="compat-pill">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
           Any screenshot
-        </span>
-        <span class="compat-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          No account needed
         </span>
       </div>
 
@@ -598,6 +602,14 @@
 
 <script>
   gsap.registerPlugin(ScrollTrigger);
+  // Mobile browsers fire a resize event when the address bar collapses/
+  // expands during scroll. With invalidateOnRefresh:true (used by the
+  // pinned carousels below), that spurious resize can trigger a refresh
+  // mid-scroll and re-anchor a pinned element's fixed `top` to whatever
+  // the current scroll position happens to be — e.g. snapping our
+  // "top 64px" pin to "top 0", hiding it under the fixed nav. This is
+  // GSAP's documented fix: ignore resizes caused only by mobile chrome.
+  ScrollTrigger.config({ ignoreMobileResize: true });
 
   // ── Hero entrance timeline ──────────────────────────────────────
   // Text block arrives as one group (small stagger just to feel less
@@ -683,6 +695,50 @@
       opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
       scrollTrigger: { trigger: el, start: 'top 88%' },
     });
+  });
+
+  // ── Horizontal scroll-jack carousels (mobile only) ──────────────
+  // Pins the whole section flush to the top of the screen — heading
+  // included, so the frame reads as "heading + one full card" — then
+  // turns vertical scroll into horizontal motion across the cards. Once the
+  // last card clears, the pin releases and normal vertical scroll
+  // continues down the page. The only interaction from the user is
+  // scrolling. Used for both "Four taps in Spotify" and testimonials.
+  //
+  // The pin's scroll distance gets a 20% dead zone at the very start
+  // (a held beat where nothing moves horizontally yet) so the first
+  // card is fully settled and visible before the slide begins, instead
+  // of the transform reacting the instant the pin engages.
+  function setupScrollJackCarousel(sectionSel, trackSel, viewportSel) {
+    const track    = document.querySelector(trackSel);
+    const viewport = document.querySelector(viewportSel);
+    if (!track || !viewport) return;
+    const getDistance   = () => track.scrollWidth - viewport.clientWidth;
+    const getTotalScroll = () => getDistance() * 1.2; // +20% held before sliding starts
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionSel,
+        start: 'top top',
+        end: () => '+=' + getTotalScroll(),
+        pin: true,
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    });
+    tl.to({}, { duration: 0.2 }) // dead zone — card sits still, fully visible
+      .to(track, { x: () => -getDistance(), ease: 'none', duration: 0.8 });
+  }
+
+  // Both carousels share one matchMedia call — GSAP recommends registering
+  // all responsive setups under a single ScrollTrigger.matchMedia() call
+  // rather than one per breakpoint-handler, to avoid the handlers stepping
+  // on each other's context.
+  ScrollTrigger.matchMedia({
+    '(max-width: 560px)': function () {
+      setupScrollJackCarousel('#how', '.steps-grid', '.steps-viewport');
+      setupScrollJackCarousel('#testimonials', '.testi-grid', '.testi-viewport');
+    },
   });
 
   // ── Nav glass intensifies on scroll ─────────────────────────────

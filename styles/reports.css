@@ -243,17 +243,19 @@ body {
 .sec-body { font-size: 16.5px; line-height: 1.9; color: var(--text); max-width: 620px; }
 .sec-body p { margin-bottom: 22px; }
 .sec-body p + p { margin-top: 0; }
-.sec-body strong { color: #1DB954; font-weight: 700; background: none; -webkit-text-fill-color: #1DB954; }
-/* highlighter-marker treatment instead of plain colored italic —
-   reads as something physically marked, not just emphasized text. */
+/* Emphasis is typographic, not colored — bold stays the heading white so
+   it's legible and quiet, no green-on-dark accent competing for attention. */
+.sec-body strong { color: var(--heading); font-weight: 700; background: none; -webkit-text-fill-color: var(--heading); }
+/* Highlighted phrases read as a designed typographic shift — a slightly
+   larger serif — rather than a colored marker. No background, no color. */
 .sec-body em {
   font-style: normal;
-  color: rgba(255,255,255,0.92);
-  background: linear-gradient(120deg, rgba(29,185,84,0.32) 0%, rgba(29,185,84,0.18) 100%);
-  padding: 0.05em 0.3em;
-  border-radius: 4px;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.14em;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--heading);
+  background: none;
 }
 
 /* mini in-section label — breaks a long section into a few named
@@ -281,15 +283,15 @@ body {
    don't read as the same device repeated twice */
 .key-insight {
   margin: 32px 0;
-  padding: 18px 22px;
+  padding: 20px 24px;
   border-left: 3px solid #1DB954;
-  background: rgba(29,185,84,0.06);
+  background: rgba(29,185,84,0.10);
   border-radius: 0 12px 12px 0;
   font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1.6;
-  color: rgba(255,255,255,0.88);
+  color: #ffffff;
 }
 .key-insight::before {
   content: 'KEY INSIGHT';
@@ -297,7 +299,7 @@ body {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: rgba(29,185,84,0.7);
+  color: #2ee06a;
   margin-bottom: 8px;
 }
 
@@ -972,6 +974,11 @@ footer {
   .sec-quote { padding: 40px 24px; }
   .nav { padding: 12px 16px; }
   .section-nav { padding: 10px 16px; }
+  /* Already sticky + overflow-x:auto above, but section-nav-inner still
+     wraps to multiple rows at this width, stacking pills into a block
+     instead of a scrollable strip. Force one line so it scrolls sideways
+     like it's meant to. */
+  .section-nav-inner { flex-wrap: nowrap; justify-content: flex-start; }
   .weeks-inner { min-width: 420px; }
   .stat-num { font-size: 2rem; }
   .callout { font-size: 0.97rem; padding: 14px 16px; }
@@ -1097,21 +1104,119 @@ footer {
   text-transform: uppercase; color: rgba(139,92,246,0.55);
 }
 
-/* ── Per-section share button ── */
+/* ── Archetype ("your type") story card ──────────────────────────
+   Solid text colors on purpose — html2canvas does not reliably render
+   background-clip:text gradients, so gradient lives in blocks/SVG only. */
+#story-archetype-host {
+  position: fixed;
+  left: -9999px; top: 0;
+  width: 540px; height: 960px;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.sca-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(155deg, #070710 0%, #120b24 48%, #06120c 100%);
+}
+.sca-glow-top {
+  position: absolute; top: -120px; left: -60px;
+  width: 460px; height: 460px;
+  background: radial-gradient(circle, rgba(29,185,84,0.28) 0%, transparent 62%);
+}
+.sca-glow-bot {
+  position: absolute; bottom: -140px; right: -80px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 62%);
+}
+.sca-frame {
+  position: absolute; inset: 24px;
+  border-radius: 28px;
+  padding: 2px;
+  background: linear-gradient(150deg, rgba(29,185,84,0.55), rgba(139,92,246,0.55) 60%, rgba(29,185,84,0.15));
+}
+.sca-inner {
+  position: relative; height: 100%;
+  border-radius: 26px;
+  background: linear-gradient(160deg, rgba(10,10,20,0.86), rgba(12,8,24,0.9));
+  display: flex; flex-direction: column;
+  padding: 44px 40px 40px;
+}
+.sca-brand-row { display: flex; align-items: center; gap: 10px; }
+.sca-logo { width: 30px; height: 30px; }
+.sca-brand-name {
+  font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
+  color: rgba(255,255,255,0.5);
+}
+.sca-center {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+}
+.sca-dna { width: 180px; height: auto; margin-bottom: 28px; opacity: 0.95; }
+.sca-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(29,185,84,0.85);
+  margin-bottom: 10px;
+}
+.sca-name {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 28px; font-weight: 800; line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: #f4f1ff;
+  text-shadow: 0 2px 30px rgba(139,92,246,0.3);
+}
+.sca-rule {
+  width: 54px; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, #1DB954, #8B5CF6);
+  margin: 26px 0;
+}
+.sca-insight-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(139,92,246,0.75);
+  margin-bottom: 18px;
+}
+.sca-insight {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 30px; font-weight: 400; line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: #f4f1ff;
+  max-width: 400px;
+}
+.sca-footer-row {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.sca-footer-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.4px;
+  color: rgba(255,255,255,0.35); margin-bottom: 3px;
+  font-style: italic;
+}
+.sca-url { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.4); }
+.sca-tag-pill {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: rgba(139,92,246,0.7);
+}
+
+/* ── Per-section share button — compact icon only, so long titles keep
+   the full width and don't wrap to two lines. ── */
 .sec-share-btn {
   margin-left: auto; flex-shrink: 0;
+  width: 34px; height: 34px;
+  display: inline-flex; align-items: center; justify-content: center;
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.07);
-  color: rgba(255,255,255,0.3);
-  border-radius: 8px; padding: 5px 10px;
-  font-size: 13px; cursor: pointer;
+  color: rgba(255,255,255,0.35);
+  border-radius: 50%; padding: 0;
+  font-size: 15px; line-height: 1; cursor: pointer;
   transition: all 0.2s; font-family: 'DM Sans', sans-serif;
-  white-space: nowrap;
 }
 .sec-share-btn:hover {
-  background: rgba(29,185,84,0.08);
-  border-color: rgba(29,185,84,0.2);
-  color: rgba(29,185,84,0.75);
+  background: rgba(29,185,84,0.1);
+  border-color: rgba(29,185,84,0.25);
+  color: rgba(29,185,84,0.85);
 }
 .sec-share-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -1239,6 +1344,18 @@ footer {
    PRINT / PDF
 ══════════════════════════════════════ */
 @media print {
+  /* More breathing room at the top/bottom of every printed page. */
+  @page { margin: 16mm 12mm; }
+  /* Never strand a single line/word at a page break. */
+  body, .sec-body, .sec-body p, .feat-quote, .key-insight, .wave-movement-text, .quote-text {
+    orphans: 4; widows: 4;
+  }
+  /* A heading must never split across pages, nor be separated from the
+     text that follows it — it moves to the next page with its content. */
+  .sec-header, .sec-title, .sec-label, .beat-label, .wave-movement-title {
+    break-inside: avoid; break-after: avoid; page-break-after: avoid;
+  }
+  .sec-body p, .key-insight, .wave-movement-title { break-inside: avoid; }
   .print-cover {
     display: block !important;
     text-align: center; padding: 100px 48px; break-after: page;
@@ -1293,9 +1410,23 @@ footer {
   .sec-body strong { color: #000 !important; background: none !important; -webkit-text-fill-color: #000 !important; }
   .para-rule { display: none !important; }
   .feat-quote { color: #444 !important; }
-  .sec-body strong { color: #1a7a3c !important; -webkit-text-fill-color: #1a7a3c !important; }
-  .sec-body em { color: #1DB954 !important; }
-  .sec-quote { background: #f8f6ff !important; border-color: #ddd8f8 !important; }
+  .sec-body em {
+    color: #111 !important;
+    background: none !important;
+    font-family: 'Playfair Display', Georgia, serif !important;
+    font-size: 1.14em !important; font-weight: 500 !important;
+  }
+  /* Lose the boxes/borders around text in print — cleaner reading, and the
+     key-insight keeps only a thin left accent instead of a filled card. */
+  .key-insight {
+    background: none !important;
+    border-radius: 0 !important;
+    border-left: 3px solid #1DB954 !important;
+    padding: 4px 0 4px 16px !important;
+    margin: 20px 0 !important;
+    color: #222 !important;
+  }
+  .sec-quote { background: #fff !important; border: none !important; }
   .quote-mark {
     background: none !important;
     -webkit-text-fill-color: #1DB954 !important;
@@ -1311,7 +1442,7 @@ footer {
     -webkit-text-fill-color: transparent !important;
   }
   .wave-movement-text { color: #444 !important; }
-  .wave-movement { opacity: 1 !important; transform: none !important; border-color: rgba(139,92,246,0.25) !important; }
+  .wave-movement { opacity: 1 !important; transform: none !important; border: none !important; background: none !important; }
   .wave-movement-body { grid-template-rows: 1fr !important; }
   .wave-chevron { display: none !important; }
   .movement { opacity: 1 !important; transform: none !important; }

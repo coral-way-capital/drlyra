@@ -10,9 +10,10 @@ const { Resend } = require('resend');
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
-async function sendReportEmail(toEmail, reportId) {
+async function sendReportEmail(toEmail, reportId, baseUrl) {
   if (!resend) return;
-  const reportUrl = `${process.env.APP_URL || 'http://localhost:3000'}/report/${reportId}`;
+  const origin = baseUrl || process.env.APP_URL || 'http://localhost:3000';
+  const reportUrl = `${origin}/report/${reportId}`;
   const { error } = await resend.emails.send({
     from: process.env.FROM_EMAIL || 'Dr. Lyra <onboarding@resend.dev>',
     to: toEmail,
@@ -74,7 +75,8 @@ app.post('/save-report', async (req, res) => {
   reports[id] = { text, email: email || null, createdAt: new Date().toISOString() };
   writeJSON(REPORTS_FILE, reports);
   res.json({ id });
-  if (email) sendReportEmail(email, id).catch(err => console.error('Email error:', err));
+  const baseUrl = req.body.origin || `${req.protocol}://${req.get('host')}`;
+  if (email) sendReportEmail(email, id, baseUrl).catch(err => console.error('Email error:', err));
 });
 
 app.get('/api/report/:id', (req, res) => {
@@ -245,7 +247,8 @@ app.get('/test-email', async (req, res) => {
   if (!to) return res.status(400).send('Missing ?to=email');
   if (!resend) return res.status(503).send('RESEND_API_KEY not configured');
   try {
-    await sendReportEmail(to, 'test-preview-id');
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    await sendReportEmail(to, 'test-preview-id', baseUrl);
     res.send(`✓ Email sent to ${to}`);
   } catch (err) {
     res.status(500).send('Failed: ' + err.message);

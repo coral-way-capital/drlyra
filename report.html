@@ -97,8 +97,47 @@
     </div>
     <div class="sc-attribution" id="sc-attribution"></div>
     <div class="sc-footer-row">
-      <span class="sc-url">drlyra.app</span>
+      <span class="sc-url">drlyra.coralwaycapital.com</span>
       <span class="sc-tag-pill">Spotify × Psychology</span>
+    </div>
+  </div>
+</div>
+
+<!-- ARCHETYPE STORY CANVAS — "your type" share card (off-screen) -->
+<div id="story-archetype-host" aria-hidden="true">
+  <div class="sca-bg"></div>
+  <div class="sca-glow-top"></div>
+  <div class="sca-glow-bot"></div>
+  <div class="sca-frame">
+    <div class="sca-inner">
+      <div class="sca-brand-row">
+        <img src="/images/drlyra-icon.svg" class="sca-logo" alt="Dr. Lyra" />
+        <span class="sca-brand-name">Dr. Lyra</span>
+      </div>
+
+      <div class="sca-center">
+        <svg class="sca-dna" viewBox="0 0 260 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="scaGrad" x1="0" y1="0" x2="260" y2="0"><stop stop-color="#1DB954"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs>
+          <path d="M 8 30 C 34 6,60 6,86 30 C 112 54,138 54,164 30 C 190 6,216 6,242 30" stroke="url(#scaGrad)" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M 8 30 C 34 54,60 54,86 30 C 112 6,138 6,164 30 C 190 54,216 54,242 30" stroke="url(#scaGrad)" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
+          <circle cx="86" cy="30" r="4" fill="#1DB954"/>
+          <circle cx="164" cy="30" r="4" fill="#8B5CF6"/>
+        </svg>
+
+        <div class="sca-eyebrow">My Archetype</div>
+        <div class="sca-name" id="sca-name"></div>
+        <div class="sca-rule"></div>
+        <div class="sca-insight-label">The Key Insight</div>
+        <div class="sca-insight" id="sca-insight"></div>
+      </div>
+
+      <div class="sca-footer-row">
+        <div class="sca-footer-left">
+          <div class="sca-footer-label">Decoded by Dr. Lyra</div>
+          <div class="sca-url">drlyra.coralwaycapital.com</div>
+        </div>
+        <span class="sca-tag-pill">Spotify × Psychology</span>
+      </div>
     </div>
   </div>
 </div>
@@ -624,7 +663,7 @@
               <div class="sec-label gt">${sec.label}</div>
               <div class="sec-title">${titleLine}</div>
             </div>
-            <button class="sec-share-btn" data-idx="${idx}">↗ Share</button>
+            <button class="sec-share-btn" data-idx="${idx}" title="Share this section" aria-label="Share this section">↗</button>
           </div>
           ${viz}
           <div class="sec-body">${bodyHtml}</div>`;
@@ -760,6 +799,36 @@
   // ─────────────────────────────────────────
   //  SHARE STORY (nav button = archetype)
   // ─────────────────────────────────────────
+
+  // Save/share the rendered card. On mobile the <a download> trick can't
+  // reach the Photos gallery (iOS Safari ignores it and files land in Files),
+  // so we hand the PNG to the native share sheet via the Web Share API —
+  // that's where "Save Image", Messages, Instagram, etc. live. Desktop (no
+  // file-sharing support) falls back to a normal download.
+  async function saveOrShareCanvas(canvas, filename, shareTitle) {
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    if (!blob) throw new Error('Could not render image');
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: shareTitle || 'Dr. Lyra' });
+        return;
+      } catch (err) {
+        // User cancelled the share sheet — nothing more to do.
+        if (err && err.name === 'AbortError') return;
+        // Any other failure: fall through to the download path below.
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = url;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+  }
+
   async function renderStory(sectionTag, quoteText, attribution, filename) {
     document.getElementById('sc-section-tag').textContent = sectionTag;
     document.getElementById('sc-quote-text').textContent  = quoteText;
@@ -771,10 +840,40 @@
       backgroundColor: '#070710',
       useCORS: true, logging: false,
     });
-    const link = document.createElement('a');
-    link.download = filename;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    await saveOrShareCanvas(canvas, filename, 'My Dr. Lyra profile');
+  }
+
+  // The report's key insight for a section, using the same selection logic
+  // as the on-page key-insight boxes so the share card stays true to it.
+  function sectionKeyInsight(sectionText) {
+    if (!sectionText) return '';
+    const stripped = sectionText.replace(/^#{1,6}\s*.*/gm, '');
+    const paras = stripped.split(/\n{2,}/)
+      .map(p => p.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*(.+?)\*/g, '$1').trim())
+      .filter(Boolean);
+    if (!paras.length) return '';
+    return pickKeyInsight(paras, -1);
+  }
+
+  async function renderArchetypeStory(name, insight, filename) {
+    const nameEl = document.getElementById('sca-name');
+    nameEl.textContent = name;
+    // Scale the name down for longer titles so it always fits on one card.
+    const nlen = name.length;
+    nameEl.style.fontSize = nlen > 34 ? '22px' : nlen > 24 ? '25px' : '28px';
+    // Scale the key insight (the hero line) to its length.
+    const insEl = document.getElementById('sca-insight');
+    insEl.textContent = insight;
+    const ilen = insight.length;
+    insEl.style.fontSize = ilen > 170 ? '22px' : ilen > 120 ? '26px' : '30px';
+    await document.fonts.ready;
+    await new Promise(r => setTimeout(r, 120));
+    const canvas = await html2canvas(document.getElementById('story-archetype-host'), {
+      width: 540, height: 960, scale: 2,
+      backgroundColor: '#070710',
+      useCORS: true, logging: false,
+    });
+    await saveOrShareCanvas(canvas, filename, 'My Dr. Lyra archetype');
   }
 
   document.getElementById('btn-share').addEventListener('click', async () => {
@@ -782,11 +881,14 @@
     btn.textContent = 'Rendering…'; btn.disabled = true;
     try {
       const s1text = rawText ? extractSection(rawText, 0) : '';
-      const quote  = extractFeatSentence(s1text) || archetypeName;
-      await renderStory(
-        'Your Core Personality Archetype',
-        quote,
-        `— Dr. Lyra`,
+      // The card leads with the report's key insight (true to the on-page
+      // key-insight box); the archetype name sits above it as the label.
+      const insight = sectionKeyInsight(s1text) || extractFeatSentence(s1text) || extractStoryQuote(s1text, 180);
+      const safeName = (archetypeName && archetypeName !== 'Your Profile')
+        ? archetypeName : 'My Musical Psyche';
+      await renderArchetypeStory(
+        safeName,
+        insight || 'A psychological portrait, decoded from my music.',
         'Dr-Lyra-Archetype-Story.png'
       );
     } catch(e) { alert('Could not render story: ' + e.message); }
@@ -811,7 +913,7 @@
       const attr  = `— Dr. Lyra`;
       await renderStory(label, quote, attr, `Dr-Lyra-${sec.id}-Story.png`);
     } catch(err) { alert('Could not generate story: ' + err.message); }
-    btn.textContent = '↗ Share'; btn.disabled = false;
+    btn.textContent = '↗'; btn.disabled = false;
   });
 
   // ─────────────────────────────────────────

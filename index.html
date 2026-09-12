@@ -439,6 +439,7 @@
     uploadSection.style.display = 'none';
     btnGenerate.style.display = 'none';
     loading.style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // lock scroll behind the full-screen loader
     stopTypewriter = startTypewriter();
     report.style.display = 'none';
     sectionsContainer.innerHTML = '';
@@ -529,6 +530,7 @@
 
     } catch (err) {
       loading.style.display = 'none';
+      document.body.style.overflow = '';
       if (stopTypewriter) { stopTypewriter(); stopTypewriter = null; }
       uploadSection.style.display = 'block';
       btnGenerate.style.display = 'block';

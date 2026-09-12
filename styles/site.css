@@ -361,10 +361,8 @@ body.landing { overflow-x: hidden; }
 .hero-sub {
   font-size: clamp(17px, 2.4vw, 20px);
   color: rgba(255,255,255,0.55);
-  max-width: 500px;
   margin: 0 0 48px;
   line-height: 1.65;
-  text-wrap: balance;
 }
 
 .hero-actions {
@@ -380,7 +378,6 @@ body.landing { overflow-x: hidden; }
 /* ══════════════════════════════
    HOW IT WORKS
 ══════════════════════════════ */
-#how { padding-top: 108px; }
 
 .steps-grid {
   display: grid;
@@ -524,7 +521,6 @@ body.landing { overflow-x: hidden; }
   letter-spacing: -0.01em;
   margin-bottom: 8px;
 }
-.insight-
 /* ══════════════════════════════
    TESTIMONIALS
 ══════════════════════════════ */
@@ -533,8 +529,9 @@ body.landing { overflow-x: hidden; }
   flex-direction: row !important;
   flex-wrap: nowrap !important;
   align-items: stretch;
-  gap: 20px;
+  gap: 24px;
   margin-top: 56px;
+  padding: 4px 2px 8px;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -655,10 +652,18 @@ body.landing { overflow-x: hidden; }
   min-height: 18px;
 }
 @media (max-width: 680px) {
-  .lead-box { flex-direction: column; padding: 28px 24px; }
+  /* Reduced from the desktop 40px — .lead-box's flex `gap` applies evenly
+     between .lead-text / .lead-form / .lead-fine, and .lead-fine is empty
+     in the resting state (it only fills with text after submit), so the
+     full 40px gap plus its own reserved min-height reads as dead space
+     below the button. */
+  .lead-box { flex-direction: column; padding: 28px 24px; gap: 20px; }
   .lead-form { width: 100%; flex-direction: column; }
   .lead-input { flex: 1; width: 100%; }
   .lead-btn { width: 100%; }
+  /* Collapses that reserved space entirely while there's no message to
+     show; comes back automatically once #lead-msg actually has text. */
+  .lead-fine:empty { min-height: 0; margin-top: 0; }
 }
 
 /* ══════════════════════════════
@@ -816,8 +821,16 @@ footer {
   font-family: 'DM Sans', sans-serif;
   font-size: 11px; font-weight: 700;
   color: rgba(255,255,255,0.35);
-  padding: 14px 16px 10px;
+  padding: 14px 16px;
   flex-shrink: 0;
+  /* .phone-report's sliding sections use `transform`, which gives them
+     their own stacking context — without an explicit position/z-index
+     here, that sliding content can paint over this static header where
+     they overlap, and since this had no backdrop of its own, the
+     transitioning background showed straight through the header text. */
+  position: relative;
+  z-index: 11;
+  background: #08080f;
 }
 .phone-section-view {
   height: var(--phone-fold);
@@ -861,10 +874,10 @@ footer {
 }
 .phone-fade-top {
   /* Starts below the persistent .phone-brand header, not the top of the
-     screen — softens the handoff into the scrolling section beneath it. */
+     screen — covers the handoff into the scrolling section beneath it. */
   position: absolute;
-  top: 38px; left: 0; right: 0; height: 30px;
-  background: linear-gradient(to bottom, #08080f 10%, transparent);
+  top: 42px; left: 0; right: 0; height: 10px;
+  background: #08080f;
   pointer-events: none;
   z-index: 10;
 }
@@ -891,7 +904,7 @@ footer {
   /* Reset the desktop 520px flex-basis — in column mode that basis applies
      to height, not width, and fights the content's natural size. */
   .hero-text { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; }
-  .hero-sub { margin: 0 auto 48px; }
+  .hero-sub { margin: 0 auto 48px; font-size: 19px; }
   .hero-actions { align-items: center; }
   .phone-frame { transform: none; }
   .hero-device::before { display: none; }
@@ -907,8 +920,51 @@ footer {
   .testi-grid .testi-card { min-width: 0 !important; width: 100%; }
 }
 @media (max-width: 560px) {
-  .steps-grid, .insights-grid { grid-template-columns: 1fr; }
+  .insights-grid { grid-template-columns: 1fr; }
   section { padding: 56px 0; }
+  /* Lead capture form: #lead's own padding rule is more specific than the
+     generic `section` rule above, so without this it stays at the desktop
+     80px on mobile too. Bottom trimmed further than top — the stacked
+     .lead-box content (text, then input+button) already adds its own
+     visual weight below, so a full 56px on top of that reads as too much. */
+  #lead { padding: 40px 0 24px; }
+
+  /* Four taps in Spotify / testimonials — horizontal scroll-jacked
+     carousels. JS pins the whole section (heading included) 64px down
+     from the top of the screen — clearing the fixed nav — then drives
+     the track's translateX from vertical scroll, so one full-width card
+     is visible at a time below the heading; overflow:hidden clips the
+     rest. The screenshot preview is capped smaller here so the whole
+     card — num, title, body, image — comfortably fits one screen.
+  */
+  .steps-viewport, .testi-viewport { overflow: hidden; margin-top: 32px; }
+  .steps-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    grid-template-columns: none;
+    gap: 16px;
+    margin-top: 0;
+  }
+  .step-card { flex: 0 0 100%; max-width: 100%; }
+  .step-shot img { max-width: 204px; } /* +20% from 170px */
+  /* Slightly larger than their desktop sizes so these short lines don't
+     wrap and leave a lone word stranded on its own last line. */
+  .step-body { font-size: 17px; }
+  .step-tip { font-size: 13.5px; }
+  .testi-grid {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    /* visible, not hidden: overflow-x on the grid itself clips its own
+       children to the grid's own box width BEFORE the translateX
+       transform is applied, since the grid never grows past its parent's
+       width in block layout — cards 2 and 3 were getting self-clipped
+       away entirely. .testi-viewport (the actual parent) already clips
+       for real, exactly like .steps-viewport does for .steps-grid. */
+    overflow-x: visible !important;
+    gap: 20px !important;
+    margin-top: 0 !important;
+  }
+  .testi-grid .testi-card { flex: 0 0 100% !important; min-width: 0 !important; width: 100%; }
   .wrap { padding: 0 20px; }
   footer { flex-direction: column; align-items: flex-start; }
   .footer-legal { text-align: left; }
@@ -1141,10 +1197,16 @@ h1 {
 /* ── Loading ── */
 #loading {
   display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
   flex-direction: column;
   align-items: center;
-  padding: 64px 0 48px;
+  justify-content: center;
+  padding: 48px 24px;
   gap: 28px;
+  background: var(--bg);
+  overflow-y: auto;
 }
 
 .orb-wrapper {
