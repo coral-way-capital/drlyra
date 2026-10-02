@@ -63,6 +63,7 @@ app.use(express.static(path.join(__dirname), { index: false, setHeaders: (res) =
 const NO_CACHE = { headers: { 'Cache-Control': 'no-store' } };
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'landing.html'), NO_CACHE));
+app.get('/wrapped', (req, res) => res.sendFile(path.join(__dirname, 'landing-wrapped.html'), NO_CACHE));
 app.get('/app', (req, res) => res.sendFile(path.join(__dirname, 'index.html'), NO_CACHE));
 app.get('/report', (req, res) => res.sendFile(path.join(__dirname, 'report.html'), NO_CACHE));
 app.get('/report/:id', (req, res) => res.sendFile(path.join(__dirname, 'report.html'), NO_CACHE));

@@ -179,73 +179,24 @@
             <img src="/images/drlyra-icon.svg" width="14" height="14" alt="" />
             <span>Dr. Lyra</span>
           </div>
-          <div class="phone-fade-top"></div>
-          <div class="phone-report">
-            <div class="phone-section-view">
-              <div class="phone-sec-label">01 · Your Core Personality Archetype</div>
-              <div class="phone-sec-icon">🎭</div>
-              <div class="phone-sec-heading">The Romantic<br/>Escapist</div>
-              <p class="phone-sec-body">Your late-night rotation of one song on repeat, your pull toward music that aches — this is someone who processes the world through feeling first, logic a distant second.</p>
-              <div class="phone-pull-quote">"You don't just listen to music — you disappear into it."</div>
-            </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">02 · Your Emotional Landscape</div>
-              <div class="phone-sec-icon">🧠</div>
-              <div class="phone-sec-heading">How You Process Feeling</div>
-              <p class="phone-sec-body">The swing between euphoric pop and melancholic ballads within the same week reveals an emotional range most people learn to suppress by adulthood.</p>
-              <div class="phone-pull-quote">"You feel in stereo — nothing gets the mono treatment."</div>
-            </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">03 · Your Shadow Self</div>
-              <div class="phone-sec-icon">🌙</div>
-              <div class="phone-sec-heading">What You Don't Show</div>
-              <p class="phone-sec-body">The outlier artist buried in your top fifty, the genre you'd never admit to loving out loud — these contradictions aren't flaws. They're the parts of you still figuring themselves out.</p>
-              <div class="phone-pull-quote">"Your shadow self has better taste than you give it credit for."</div>
-            </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">04 · Your Cognitive Style</div>
-              <div class="phone-sec-icon">💡</div>
-              <div class="phone-sec-heading">How Your Mind Works</div>
-              <p class="phone-sec-body">Your loyalty to a narrow rotation of albums, played start to finish, says more about how you think than any personality quiz — focused, deliberate, allergic to shuffle.</p>
-              <div class="phone-pull-quote">"You don't sample. You commit."</div>
-            </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">05 · Your Desire Profile</div>
-              <div class="phone-sec-icon">🔥</div>
-              <div class="phone-sec-heading">What You're Chasing</div>
-              <p class="phone-sec-body">The tempo you keep returning to, the lyrics you know by heart — underneath it all is a craving for something specific: freedom, closeness, intensity, or all three at once.</p>
-              <div class="phone-pull-quote">"Your playlists are a wish list you haven't said out loud."</div>
-            </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">06 · Your Year in Emotional Waves</div>
-              <div class="phone-sec-icon">🌊</div>
-              <div class="phone-sec-heading">Your Year, Told in Sound</div>
-              <p class="phone-sec-body">Five movements, one story — the tracks that got you through January aren't the ones that carried you in December, and that arc is the plot of your year.</p>
-              <div class="phone-pull-quote">"Your listening history is a memoir you didn't know you were writing."</div>
-            </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">07 · Blind Spots & Growth Edge</div>
-              <div class="phone-sec-icon">🎯</div>
-              <div class="phone-sec-heading">What You're Avoiding</div>
-              <p class="phone-sec-body">The genres you skip, the moods you never queue up — patterns like these point at exactly what you're not ready to sit with yet, plus three artists to start with.</p>
-              <div class="phone-pull-quote">"The song you always skip is trying to tell you something."</div>
-            </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">08 · Your Musical Soulmate Profile</div>
-              <div class="phone-sec-icon">✨</div>
-              <div class="phone-sec-heading">Your Perfect Match — and Nemesis</div>
-              <p class="phone-sec-body">Somewhere out there is a person whose stats would make you fall in love on sight — and someone else whose taste would end the conversation in ten seconds.</p>
-              <div class="phone-pull-quote">"Compatibility, one genre at a time."</div>
-            </div>
-            <div class="phone-section-view">
-              <div class="phone-sec-label">09 · Your Signature Quote</div>
-              <div class="phone-sec-icon">🏷️</div>
-              <div class="phone-sec-heading">One Line, All of You</div>
-              <p class="phone-sec-body">The final section distills everything — archetype, shadow, desire — into a single original sentence built entirely from your data. Something worth putting on your wall.</p>
-              <div class="phone-pull-quote">"Some people keep a diary. You made a playlist."</div>
-            </div>
-          </div>
-          <div class="phone-fade"></div>
+          <video
+            class="hero-video"
+            src="/videos/hero-welcome.mp4"
+            poster="/images/hero-welcome-poster.jpg"
+            autoplay muted loop playsinline preload="auto"
+          ></video>
+          <button type="button" class="hero-video-sound" id="heroSoundBtn" aria-label="Turn on sound" aria-pressed="false">
+            <svg class="icon-muted" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+            <svg class="icon-unmuted" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              <path d="M18.07 5.93a9 9 0 0 1 0 12.73"></path>
+            </svg>
+          </button>
         </div>
         <div class="phone-home-bar"></div>
       </div>
@@ -624,6 +575,21 @@
     })
     .from('.hero-device', { opacity: 0, y: 30, scale: 0.94, duration: 0.9, ease: 'power2.out' }, '-=0.5');
 
+  // ── Hero video sound toggle — starts muted (autoplay requires it);
+  // a tap unmutes so Dr. Lyra is only heard when someone opts in ──
+  const heroVideo = document.querySelector('.hero-video');
+  const soundBtn  = document.getElementById('heroSoundBtn');
+  if (heroVideo && soundBtn) {
+    soundBtn.addEventListener('click', () => {
+      heroVideo.muted = !heroVideo.muted;
+      const unmuted = !heroVideo.muted;
+      soundBtn.classList.toggle('is-unmuted', unmuted);
+      soundBtn.setAttribute('aria-pressed', String(unmuted));
+      soundBtn.setAttribute('aria-label', unmuted ? 'Mute' : 'Turn on sound');
+      if (unmuted) heroVideo.play().catch(() => {});
+    });
+  }
+
   // ── Cursor-tilt parallax on the phone mockup ────────────────────
   const heroSection = document.getElementById('hero');
   const phoneFrame  = document.querySelector('.phone-frame');
@@ -639,25 +605,6 @@
       setRotX(-py * 10 + 3);
     });
     heroSection.addEventListener('mouseleave', () => { setRotY(-8); setRotX(3); });
-  }
-
-  // ── Phone mockup: loop through all 9 report sections ────────────
-  const phoneReport   = document.querySelector('.phone-report');
-  const phoneSections = document.querySelectorAll('.phone-section-view');
-  if (phoneReport && phoneSections.length) {
-    const foldH = parseFloat(getComputedStyle(phoneReport).getPropertyValue('--phone-fold')) || phoneSections[0].offsetHeight;
-    const HOLD = 3.2;   // seconds spent reading each section
-    const MOVE = 1;     // seconds to scroll to the next section
-    const phoneTl = gsap.timeline({ repeat: -1, delay: 2.5 });
-    phoneTl.to({}, { duration: HOLD }); // hold on section 1 (already at y:0)
-    for (let i = 1; i < phoneSections.length; i++) {
-      phoneTl
-        .to(phoneReport, { y: -foldH * i, duration: MOVE, ease: 'power2.inOut' })
-        .to({}, { duration: HOLD });
-    }
-    phoneTl
-      .to(phoneReport, { y: 0, duration: 1.4, ease: 'power2.inOut' }) // smooth return to top
-      .to({}, { duration: 0.6 }); // brief pause before the loop restarts
   }
 
   // ── Scroll parallax — layers move at different speeds for depth ──
