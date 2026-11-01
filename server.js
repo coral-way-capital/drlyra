@@ -70,6 +70,14 @@ app.get('/report/:id', (req, res) => res.sendFile(path.join(__dirname, 'report.h
 app.get('/example', (req, res) => res.sendFile(path.join(__dirname, 'example-report.html'), NO_CACHE));
 app.get('/example2', (req, res) => res.sendFile(path.join(__dirname, 'example-report-2.html'), NO_CACHE));
 app.get('/design-library', (req, res) => res.sendFile(path.join(__dirname, 'design-library.html'), NO_CACHE));
+// SEO song myth-busting pages
+app.get('/songs/hotel-california-meaning', (req, res) => res.sendFile(path.join(__dirname, 'songs', 'hotel-california-meaning.html'), NO_CACHE));
+app.get('/songs/billie-jean-meaning', (req, res) => res.sendFile(path.join(__dirname, 'songs', 'billie-jean-meaning.html'), NO_CACHE));
+app.get('/songs/matadora-karol-g-meaning', (req, res) => res.sendFile(path.join(__dirname, 'songs', 'matadora-karol-g-meaning.html'), NO_CACHE));
+// Short aliases
+app.get('/hotel-california', (req, res) => res.redirect(301, '/songs/hotel-california-meaning'));
+app.get('/billie-jean', (req, res) => res.redirect(301, '/songs/billie-jean-meaning'));
+app.get('/matadora', (req, res) => res.redirect(301, '/songs/matadora-karol-g-meaning'));
 
 // ── Report storage ────────────────────────────────────────────────────────────
 app.post('/save-report', async (req, res) => {
