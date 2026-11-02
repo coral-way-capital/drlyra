@@ -438,4 +438,4 @@ Tone: Warm, intelligent, slightly theatrical. Like a trusted friend with a PhD i
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Dr. Lyra is ready at http://localhost:${PORT}`));
+app.listen(PORT, '127.0.0.1', () => console.log(`Dr. Lyra is ready at http://127.0.0.1:${PORT}`));
