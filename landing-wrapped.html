@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. Lyra — What Your Wrapped Didn't Tell You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles/site.css" />
+  <!-- Google Analytics (GA4) -->
+  <script src="/scripts/ga.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <style>
+    /* Neutralize every var(--purple)/var(--violet) gradient stop to green —
+       turns two-tone gradients into flat solid fills without hunting down
+       every var()-based rule individually. */
+    :root {
+      --purple:        #1DB954;
+      --violet:        #1DB954;
+      --brand-purple:  #1DB954;
+      --accent-purple: #1DB954;
+      --grad-ui:       linear-gradient(135deg, #1DB954, #1DB954);
+    }
+
+    /* ── Remove remaining hardcoded (non-var) gradients ── */
+    h1 { background: none !important; -webkit-text-fill-color: unset !important; color: var(--heading) !important; }
+    .hero-sub-hl { background: none !important; -webkit-text-fill-color: #1DB954 !important; color: #1DB954 !important; }
+    .testi-avatar { background: rgba(29,185,84,0.16) !important; backdrop-filter: blur(6px); }
+    .hero-amb { background: radial-gradient(circle, rgba(255,255,255,0.05), transparent 70%) !important; }
+    .hero-device::before {
+      background:
+        radial-gradient(ellipse 70% 55% at 50% 15%, rgba(29,185,84,0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 50% 90%, rgba(255,255,255,0.08) 0%, transparent 55%) !important;
+    }
+    .phone-screen {
+      background:
+        radial-gradient(ellipse 90% 45% at 50% -5%, rgba(29,185,84,0.13) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 40% at 90% 105%, rgba(255,255,255,0.06) 0%, transparent 55%) !important;
+    }
+
+    /* ── Solid purple CTA button with an animated gradient border ring
+       (no fill gradient — the motion lives in the border, via a rotating
+       conic-gradient + mask-composite ring) ── */
+    @property --btn-border-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+    .btn {
+      position: relative;
+      z-index: 0; /* establishes a stacking context so the ring's z-index:-1
+                     stays scoped to this button instead of escaping behind
+                     other page elements */
+      background: #7C3AED !important;
+      color: #fff !important;
+      border: 2px solid transparent !important;
+      box-shadow: 0 8px 26px rgba(107,45,209,0.4) !important;
+      animation: none !important;
+    }
+    .btn:hover { background: #8B4EF0 !important; }
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      z-index: -1;
+      border-radius: inherit;
+      padding: 2px;
+      background: conic-gradient(from var(--btn-border-angle), #C084FC, #7C3AED, #5F27B8, #C084FC);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: btn-border-spin 3s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes btn-border-spin {
+      to { --btn-border-angle: 360deg; }
+    }
+    .btn-ghost {
+      backdrop-filter: blur(14px) saturate(160%);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+    }
+
+    /* ── True glass cards ── */
+    .card {
+      background: rgba(255,255,255,0.05) !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.2);
+    }
+    .card:hover {
+      border-color: rgba(255,255,255,0.2) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 16px 44px rgba(0,0,0,0.34) !important;
+    }
+    .hero-badge, .lead-box {
+      backdrop-filter: blur(14px) saturate(160%);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+    }
+
+    /* ── Glass nav, intensifies on scroll (see JS) ── */
+    nav {
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+    }
+    nav.nav-scrolled {
+      background: rgba(10,10,15,0.92) !important;
+      border-bottom-color: rgba(255,255,255,0.09) !important;
+      backdrop-filter: blur(22px) saturate(180%);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+    }
+
+    /* GSAP owns .reveal animation now — stop the CSS transition from double-firing */
+    .reveal { transition: none !important; }
+  </style>
+</head>
+<body class="landing">
+
+<!-- ══════════════════════════════════════════
+     NAV
+══════════════════════════════════════════ -->
+<nav>
+  <a href="/" class="nav-logo" aria-label="Dr. Lyra home">
+    <img src="/images/drlyra-icon.svg" class="nav-logo-icon" alt="Dr. Lyra" aria-hidden="true" />
+    <span class="nav-wordmark">Dr. Lyra<span> · AI psychologist</span></span>
+  </a>
+</nav>
+
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-spot"></div>
+  <div class="hero-amb"></div>
+  <div class="hero-inner">
+
+    <div class="hero-text">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        9 sections &nbsp;·&nbsp; Works with your Wrapped &nbsp;·&nbsp; Instant access
+      </div>
+
+      <h1 class="hero-h1">
+        Wrapped told you what.
+        <span class="hero-h1-accent gt">Dr. Lyra shows you the why.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Upload your <span class="hero-sub-hl">Spotify Wrapped</span> — Dr.&nbsp;Lyra decodes the psychology behind your top artists, replays, and minutes&nbsp;listened.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn btn-checkout" id="hero-checkout-btn">
+          Decode My Wrapped — $7.99
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <a href="/example" class="btn-ghost">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+          Read what a real report feels like
+        </a>
+        <p class="hero-fine">One-time payment · No account needed · Powered by Stripe</p>
+      </div>
+    </div>
+
+    <!-- CSS phone mockup -->
+    <div class="hero-device">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-brand">
+            <img src="/images/drlyra-icon.svg" width="14" height="14" alt="" />
+            <span>Dr. Lyra</span>
+          </div>
+          <video
+            class="hero-video"
+            src="/videos/wrapped-hero.mp4"
+            poster="/images/wrapped-hero-poster.jpg"
+            autoplay muted loop playsinline preload="auto"
+          ></video>
+          <button type="button" class="hero-video-sound" id="heroSoundBtn" aria-label="Turn on sound" aria-pressed="false">
+            <svg class="icon-muted" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+            <svg class="icon-unmuted" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              <path d="M18.07 5.93a9 9 0 0 1 0 12.73"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="phone-home-bar"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="rule" />
+
+
+<!-- ══════════════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════════════ -->
+<section id="how">
+  <div class="wrap">
+
+    <div class="reveal" style="text-align:center; max-width:520px; margin:0 auto;">
+      <span class="section-eyebrow gt">Wrapped is just the highlight reel</span>
+      <h2 class="section-h">Grab your full Listening Stats too</h2>
+      <p class="section-body" style="font-size:15px; color:rgba(255,255,255,0.45); margin-top:12px; text-wrap:balance;">Four taps in the Spotify app — about 30 seconds — and Dr. Lyra has everything it needs for the complete 9-section profile.</p>
+    </div>
+
+    <div class="steps-viewport">
+    <div class="steps-grid">
+
+      <div class="card step-card reveal" style="transition-delay:.08s">
+        <span class="step-num">01</span>
+        <div class="step-title">Open your profile</div>
+        <p class="step-body">From the Home tab, tap your profile picture.</p>
+        <div class="step-shot">
+          <img src="/images/step0_tap_profile_picture.png" alt="Tap your profile picture in the Spotify app" width="296" height="586" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="card step-card reveal" style="transition-delay:.16s">
+        <span class="step-num">02</span>
+        <div class="step-title">Tap Listening Stats</div>
+        <p class="step-body">It's listed right in your profile menu.</p>
+        <div class="step-shot">
+          <img src="/images/step1_open_listening_stats.png" alt="Tap Listening Stats in the Spotify profile menu" width="296" height="586" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="card step-card reveal" style="transition-delay:.24s">
+        <span class="step-num">03</span>
+        <div class="step-title">Tap the share icon</div>
+        <p class="step-body">Top-right of each category — about 10 in total.</p>
+        <div class="step-shot">
+          <img src="/images/step2_tap_share_icon.png" alt="Tap the share icon on the Listening Stats page" width="296" height="586" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="card step-card reveal" style="transition-delay:.32s">
+        <span class="step-num">04</span>
+        <div class="step-title">Swipe &amp; download</div>
+        <p class="step-body">The first card's a summary — download it, or swipe for more.</p>
+        <p class="step-tip">10 screenshots = a deeper, more personal profile.</p>
+        <div class="step-shot">
+          <img src="/images/step3_tap_download.png" alt="Tap Download on a Spotify Listening Stats card" width="296" height="586" loading="lazy" />
+        </div>
+      </div>
+
+    </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+
+<!-- ══════════════════════════════════════════
+     WHAT YOU GET
+══════════════════════════════════════════ -->
+<section id="insights">
+  <div class="wrap">
+
+    <div class="reveal" style="text-align:center; max-width:580px; margin:0 auto 48px;">
+      <span class="section-eyebrow gt">The report</span>
+      <h2 class="section-h">9 deeply personal insights</h2>
+      <p class="section-body" style="font-size:15px; color:rgba(255,255,255,0.45); margin-top:12px; text-wrap:balance;">Every section is written specifically about you, referencing your actual artists and&nbsp;songs.</p>
+    </div>
+
+    <div class="insights-grid">
+
+      <div class="card insight-card reveal" style="transition-delay:.04s">
+        <div class="insight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <div class="insight-title">Core Personality Archetype</div>
+        <p class="insight-body">Your named psychological type — built from your most-played music.</p>
+      </div>
+
+      <div class="card insight-card reveal" style="transition-delay:.08s">
+        <div class="insight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <div class="insight-title">Emotional Landscape</div>
+        <p class="insight-body">How you process feelings through music — and what it reveals about your emotional life.</p>
+      </div>
+
+      <div class="card insight-card reveal" style="transition-delay:.12s">
+        <div class="insight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </div>
+        <div class="insight-title">Shadow Self</div>
+        <p class="insight-body">What your contradictions and outlier artists secretly reveal.</p>
+      </div>
+
+      <div class="card insight-card reveal" style="transition-delay:.16s">
+        <div class="insight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="9" y1="21" x2="15" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+            <path d="M12 2a7 7 0 0 1 5 11.9V17H7v-3.1A7 7 0 0 1 12 2z"/>
+          </svg>
+        </div>
+        <div class="insight-title">Cognitive Style</div>
+        <p class="insight-body">How your mind actually works — intuitive or analytical, scattered or focused.</p>
+      </div>
+
+      <div class="card insight-card reveal" style="transition-delay:.20s">
+        <div class="insight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+          </svg>
+        </div>
+        <div class="insight-title">Desire Profile</div>
+        <p class="insight-body">What you're truly chasing right now — freedom, connection, intensity, or belonging.</p>
+      </div>
+
+      <div class="card insight-card reveal" style="transition-delay:.24s">
+        <div class="insight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M2 11c1.5-3 3-3 4.5 0s3 3 4.5 0 3-3 4.5 0 3 3 4.5 0"/>
+            <path d="M2 16c1.5-3 3-3 4.5 0s3 3 4.5 0 3-3 4.5 0 3 3 4.5 0"/>
+          </svg>
+        </div>
+        <div class="insight-title">Year in Emotional Waves</div>
+        <p class="insight-body">The story of your year told through sound — written like a memoir opening.</p>
+      </div>
+
+      <div class="card insight-card reveal" style="transition-delay:.28s">
+        <div class="insight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="6"/>
+            <circle cx="12" cy="12" r="2"/>
+          </svg>
+        </div>
+        <div class="insight-title">Blind Spots & Growth Edge</div>
+        <p class="insight-body">What you might be avoiding, plus 3 artist recommendations with the psychology behind each.</p>
+      </div>
+
+      <div class="card insight-card reveal" style="transition-delay:.32s">
+        <div class="insight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="insight-title">Musical Soulmate Profile</div>
+        <p class="insight-body">Your perfect musical match and your musical nemesis — playful but grounded.</p>
+      </div>
+
+      <div class="card insight-card reveal" style="transition-delay:.36s">
+        <div class="insight-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2H4c-1.25 0-2 .75-2 2v11c0 1 1 2 2 2s1 .008 1 1.031V20c0 1 0 1 1 1z"/>
+            <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2h-4c-1.25 0-2 .75-2 2v11c0 1 1 2 2 2s1 .008 1 1.031V20c0 1 0 1 1 1z"/>
+          </svg>
+        </div>
+        <div class="insight-title">Signature Quote</div>
+          <p class="insight-body">One original sentence that captures your essence. Something you could put on your wall.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+
+<!-- ══════════════════════════════════════════
+     TESTIMONIALS
+══════════════════════════════════════════ -->
+<section id="testimonials">
+  <div class="wrap">
+
+    <div class="reveal" style="text-align:center; max-width:480px; margin:0 auto;">
+      <span class="section-eyebrow gt">Real readers</span>
+      <h2 class="section-h">What people are saying</h2>
+    </div>
+
+    <div class="testi-viewport">
+    <div class="testi-grid">
+
+      <div class="card testi-card reveal" style="transition-delay:.08s">
+        <div class="testi-stars">
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+        </div>
+        <p class="testi-text">I got my archetype as 'The Luminous Wanderer' and literally cried. It described me better than any therapy session ever has.</p>
+        <div class="testi-person">
+          <div class="testi-avatar">
+            <img src="https://i.pravatar.cc/88?img=47" alt="Sofia M." />
+          </div>
+          <div>
+            <div class="testi-name">Sofia M.</div>
+            <div class="testi-role">Spotify Wrapped listener</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card testi-card reveal" style="transition-delay:.16s">
+        <div class="testi-stars">
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+        </div>
+        <p class="testi-text">The Shadow Self section was uncomfortably accurate. I didn't expect an AI to call me out like that. Showed it to three friends immediately.</p>
+        <div class="testi-person">
+          <div class="testi-avatar">
+            <img src="https://i.pravatar.cc/88?img=11" alt="Daniel R." />
+          </div>
+          <div>
+            <div class="testi-name">Daniel R.</div>
+            <div class="testi-role">Indie &amp; jazz listener</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card testi-card reveal" style="transition-delay:.24s">
+        <div class="testi-stars">
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+          <svg viewBox="0 0 16 16"><path d="M8 1l1.9 3.8 4.2.6-3 3 .7 4.2L8 10.6l-3.8 2 .7-4.2-3-3 4.2-.6z"/></svg>
+        </div>
+        <p class="testi-text">I screenshotted my Signature Quote and made it my phone wallpaper within 60 seconds of reading it. Obsessed.</p>
+        <div class="testi-person">
+          <div class="testi-avatar">
+            <img src="https://i.pravatar.cc/88?img=32" alt="Camila V." />
+          </div>
+          <div>
+            <div class="testi-name">Camila V.</div>
+            <div class="testi-role">Late-night playlist curator</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+
+<!-- ══════════════════════════════════════════
+     LEAD CAPTURE
+══════════════════════════════════════════ -->
+<section id="lead">
+  <div class="wrap">
+    <div class="lead-box reveal">
+      <div class="lead-text">
+        <span class="section-eyebrow gt">Not ready yet?</span>
+        <h3 class="lead-h">See a free sample report</h3>
+        <p class="lead-sub">Drop your email and see a real example, right here.</p>
+      </div>
+      <form class="lead-form" id="lead-form">
+        <input class="lead-input" type="email" id="lead-email" placeholder="your@email.com" required />
+        <button class="lead-btn" type="submit" id="lead-btn">Show me</button>
+      </form>
+      <p class="lead-fine" id="lead-msg"></p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule" />
+
+<!-- ══════════════════════════════════════════
+     FINAL CTA
+══════════════════════════════════════════ -->
+<section id="final">
+  <div class="final-glow"></div>
+  <div class="wrap">
+    <div class="final-inner reveal">
+
+      <span class="section-eyebrow gt" style="display:block; text-align:center;">Your turn</span>
+      <h2 class="section-h" style="text-align:center; font-size:clamp(2rem,4.5vw,3.2rem);">
+        Your Wrapped is out.<br/>Here's what it left out.
+      </h2>
+      <p class="section-body" style="text-align:center; margin:16px auto 44px; font-size:17px;">
+        Upload your Wrapped or Listening Stats screenshots. Dr. Lyra does the rest.<br/>
+        <span style="color:var(--muted);font-size:15px;">Takes 30 seconds. The insight stays with you.</span>
+      </p>
+
+      <div style="text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px;">
+        <button class="btn btn-checkout" id="final-checkout-btn">
+          Decode My Wrapped — $7.99
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <p style="font-size:13px;color:var(--muted);margin:0;">One-time payment · No account needed · Powered by Stripe</p>
+      </div>
+
+      <div class="final-compat">
+        <span class="compat-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Spotify Wrapped
+        </span>
+        <span class="compat-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          Spotify Listening Stats
+        </span>
+        <span class="compat-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          Any screenshot
+        </span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer>
+  <a href="/" class="footer-logo" aria-label="Dr. Lyra home">
+    <img src="/images/drlyra-icon.svg" class="footer-logo-icon" alt="Dr. Lyra" aria-hidden="true" />
+    <span class="footer-wordmark">Dr. Lyra</span>
+  </a>
+  <p class="footer-legal">Dr. Lyra © 2026 · Powered by Claude AI · Not affiliated with Spotify · For entertainment purposes only, not professional psychological advice</p>
+</footer>
+
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+  // Mobile browsers fire a resize event when the address bar collapses/
+  // expands during scroll. With invalidateOnRefresh:true (used by the
+  // pinned carousels below), that spurious resize can trigger a refresh
+  // mid-scroll and re-anchor a pinned element's fixed `top` to whatever
+  // the current scroll position happens to be — e.g. snapping our
+  // "top 64px" pin to "top 0", hiding it under the fixed nav. This is
+  // GSAP's documented fix: ignore resizes caused only by mobile chrome.
+  ScrollTrigger.config({ ignoreMobileResize: true });
+
+  // ── Hero entrance timeline ──────────────────────────────────────
+  // Text block arrives as one group (small stagger just to feel less
+  // mechanical) instead of each line entering on its own beat, so the
+  // hero reads as two pieces — text, then phone — not four.
+  const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+  heroTl
+    .from(['.hero-badge', '.hero-h1', '.hero-sub', '.hero-actions'], {
+      opacity: 0, y: 18, duration: 0.7, stagger: 0.06,
+    })
+    .from('.hero-device', { opacity: 0, y: 30, scale: 0.94, duration: 0.9, ease: 'power2.out' }, '-=0.5');
+
+  // ── Hero video sound toggle — starts muted (autoplay requires it);
+  // a tap unmutes so Dr. Lyra is only heard when someone opts in ──
+  const heroVideo = document.querySelector('.hero-video');
+  const soundBtn  = document.getElementById('heroSoundBtn');
+  if (heroVideo && soundBtn) {
+    soundBtn.addEventListener('click', () => {
+      heroVideo.muted = !heroVideo.muted;
+      const unmuted = !heroVideo.muted;
+      soundBtn.classList.toggle('is-unmuted', unmuted);
+      soundBtn.setAttribute('aria-pressed', String(unmuted));
+      soundBtn.setAttribute('aria-label', unmuted ? 'Mute' : 'Turn on sound');
+      if (unmuted) heroVideo.play().catch(() => {});
+    });
+  }
+
+  // ── Cursor-tilt parallax on the phone mockup ────────────────────
+  const heroSection = document.getElementById('hero');
+  const phoneFrame  = document.querySelector('.phone-frame');
+  if (heroSection && phoneFrame && window.matchMedia('(pointer: fine)').matches) {
+    gsap.set(phoneFrame, { transformPerspective: 1000, rotationY: -8, rotationX: 3 });
+    const setRotY = gsap.quickTo(phoneFrame, 'rotationY', { duration: 0.7, ease: 'power3' });
+    const setRotX = gsap.quickTo(phoneFrame, 'rotationX', { duration: 0.7, ease: 'power3' });
+    heroSection.addEventListener('mousemove', (e) => {
+      const rect = heroSection.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      setRotY(px * 16 - 8);
+      setRotX(-py * 10 + 3);
+    });
+    heroSection.addEventListener('mouseleave', () => { setRotY(-8); setRotX(3); });
+  }
+
+  // ── Scroll parallax — layers move at different speeds for depth ──
+  gsap.to('.hero-spot', { y: 120, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 } });
+  gsap.to('.hero-amb',  { y: -80, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 } });
+  gsap.to('.final-glow', { y: -60, ease: 'none', scrollTrigger: { trigger: '#final', start: 'top bottom', end: 'bottom top', scrub: 1 } });
+  // Foreground content drifts slower than the background glow behind it —
+  // same parallax technique as above, just applied to one more layer.
+  // (Targets .phone-frame rather than .hero-device, which already has its
+  // own infinite idle-float tween on `y` — a second tween on the same
+  // property of the same element would fight it; a child element composes
+  // cleanly instead, and reads as an extra layer of depth.)
+  gsap.to('.hero-text',   { y: -36, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 } });
+  gsap.to('.phone-frame', { y: -14, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 } });
+
+  // ── Staggered scroll reveals (replaces the plain fade-in) ───────
+  // Slight scale-in alongside the fade/slide gives entrances a bit of depth
+  // (settling into place from just behind the screen) without adding a
+  // separate animation of its own.
+  const revealGroups = [
+    '.steps-grid .reveal',
+    '.insights-grid .reveal',
+    '#testimonials .testi-grid .reveal',
+  ];
+  revealGroups.forEach(sel => {
+    const els = gsap.utils.toArray(sel);
+    if (!els.length) return;
+    gsap.fromTo(els, { opacity: 0, y: 28, scale: 0.97 }, {
+      opacity: 1, y: 0, scale: 1, duration: 0.7, ease: 'power3.out', stagger: 0.1,
+      scrollTrigger: { trigger: els[0].closest('section'), start: 'top 82%' },
+    });
+  });
+  // Standalone reveal elements (section headers, lead box, final CTA) — one at a time
+  document.querySelectorAll('.reveal').forEach(el => {
+    if (el.closest('.steps-grid, .insights-grid, .testi-grid')) return; // handled by the grouped stagger above
+    gsap.fromTo(el, { opacity: 0, y: 28 }, {
+      opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 88%' },
+    });
+  });
+
+  // ── Horizontal scroll-jack carousels (mobile only) ──────────────
+  // Pins the whole section flush to the top of the screen — heading
+  // included, so the frame reads as "heading + one full card" — then
+  // turns vertical scroll into horizontal motion across the cards. Once the
+  // last card clears, the pin releases and normal vertical scroll
+  // continues down the page. The only interaction from the user is
+  // scrolling. Used for both "Four taps in Spotify" and testimonials.
+  //
+  // The pin's scroll distance gets a 20% dead zone at the very start
+  // (a held beat where nothing moves horizontally yet) so the first
+  // card is fully settled and visible before the slide begins, instead
+  // of the transform reacting the instant the pin engages.
+  function setupScrollJackCarousel(sectionSel, trackSel, viewportSel) {
+    const track    = document.querySelector(trackSel);
+    const viewport = document.querySelector(viewportSel);
+    if (!track || !viewport) return;
+    const getDistance   = () => track.scrollWidth - viewport.clientWidth;
+    const getTotalScroll = () => getDistance() * 1.2; // +20% held before sliding starts
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionSel,
+        start: 'top top',
+        end: () => '+=' + getTotalScroll(),
+        pin: true,
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    });
+    tl.to({}, { duration: 0.2 }) // dead zone — card sits still, fully visible
+      .to(track, { x: () => -getDistance(), ease: 'none', duration: 0.8 });
+  }
+
+  // Both carousels share one matchMedia call — GSAP recommends registering
+  // all responsive setups under a single ScrollTrigger.matchMedia() call
+  // rather than one per breakpoint-handler, to avoid the handlers stepping
+  // on each other's context.
+  ScrollTrigger.matchMedia({
+    '(max-width: 560px)': function () {
+      setupScrollJackCarousel('#how', '.steps-grid', '.steps-viewport');
+      setupScrollJackCarousel('#testimonials', '.testi-grid', '.testi-viewport');
+    },
+  });
+
+  // ── Nav glass intensifies on scroll ─────────────────────────────
+  ScrollTrigger.create({
+    start: 'top -60',
+    onUpdate: (self) => {
+      document.querySelector('nav').classList.toggle('nav-scrolled', self.scroll() > 60);
+    },
+  });
+
+  async function startCheckout(btn) {
+    if (typeof gtag === 'function') gtag('event', 'checkout_click', { button_id: btn.id });
+    btn.disabled = true;
+    btn.textContent = 'Redirecting…';
+    try {
+      const r = await fetch('/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin: window.location.origin }),
+      });
+      const data = await r.json();
+      if (data.url) window.location.href = data.url;
+      else throw new Error(data.error || 'Checkout error');
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Get Full Report — $7.99';
+      alert('Could not start checkout: ' + err.message);
+    }
+  }
+
+  document.getElementById('hero-checkout-btn').addEventListener('click', function() { startCheckout(this); });
+  document.getElementById('final-checkout-btn').addEventListener('click', function() { startCheckout(this); });
+
+  document.getElementById('lead-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('lead-btn');
+    const msg = document.getElementById('lead-msg');
+    const email = document.getElementById('lead-email').value;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const r = await fetch('/submit-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await r.json();
+      if (data.ok) {
+        msg.textContent = '✓ Got it — opening your sample now…';
+        msg.style.color = '#1DB954';
+        document.getElementById('lead-form').style.display = 'none';
+        setTimeout(() => { window.location.href = '/example'; }, 700);
+      } else {
+        throw new Error('Failed');
+      }
+    } catch {
+      msg.textContent = 'Something went wrong. Try again.';
+      msg.style.color = '#f87171';
+      btn.disabled = false;
+      btn.textContent = 'Send it';
+    }
+  });
+</script>
+</body>
+</html>

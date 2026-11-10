@@ -306,13 +306,17 @@ body.landing { overflow-x: hidden; }
 }
 .hero-inner {
   position: relative; z-index: 1;
-  max-width: 1080px; margin: 0 auto;
+  max-width: 1160px; margin: 0 auto;
   display: flex; align-items: center; justify-content: center; gap: 52px;
   width: 100%;
 }
 /* Capped rather than flex:1 — without a max-width the text column stretches
-   to fill all remaining space, stranding the phone out at the far edge. */
-.hero-text { flex: 0 1 520px; min-width: 0; }
+   to fill all remaining space, stranding the phone out at the far edge.
+   620px (not 520px) — the h1's font-size grows with viewport width (see
+   clamp(...3.6vw...) below), and at the wider breakpoints a narrower basis
+   left too little room for "The music you return to" on one line, orphaning
+   "to" onto its own line. */
+.hero-text { flex: 0 1 620px; min-width: 0; }
 
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px;
@@ -808,6 +812,35 @@ footer {
     radial-gradient(ellipse 90% 45% at 50% -5%, rgba(29,185,84,0.13) 0%, transparent 60%),
     radial-gradient(ellipse 70% 40% at 90% 105%, rgba(139,92,246,0.10) 0%, transparent 55%);
 }
+/* Sits under .phone-brand (z-index: 11, z-index: auto here loses to that
+   explicit stacking order regardless of DOM position) so the "Dr. Lyra"
+   header bar stays legible over the footage. */
+.hero-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Muted by default (autoplay requires it) — this is the opt-in to hear her.
+   z-index above .phone-brand (11) so it's reachable even where they're close. */
+.hero-video-sound {
+  position: absolute; z-index: 12;
+  right: 12px; bottom: 12px;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10,10,20,0.55);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 50%;
+  color: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.hero-video-sound:hover { background: rgba(10,10,20,0.75); border-color: rgba(255,255,255,0.3); }
+.hero-video-sound .icon-unmuted { display: none; }
+.hero-video-sound.is-unmuted .icon-muted { display: none; }
+.hero-video-sound.is-unmuted .icon-unmuted { display: block; }
 .phone-report {
   --phone-fold: 500px;
   position: relative;
