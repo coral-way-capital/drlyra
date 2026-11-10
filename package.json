@@ -4,7 +4,8 @@
   "description": "Spotify Psychological Profile Generator",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node --test test/*.test.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",
@@ -14,5 +15,8 @@
     "nodemailer": "^9.0.0",
     "resend": "^6.12.4",
     "stripe": "^22.2.0"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.12.0"
   }
 }
