@@ -13,7 +13,18 @@
 // list. /report, /report/:id, and /app are intentionally absent — and so
 // is anything not explicitly listed here.
 (function () {
-  const PUBLIC_PATHS = ['/', '/wrapped', '/example', '/example2'];
+  const PUBLIC_PATHS = [
+    '/',
+    '/wrapped',
+    '/example',
+    '/example2',
+    // Song myth pages are public marketing pages. The URL has no report
+    // token or checkout session id, so GA4 may load here. The inline lead
+    // form records which song was submitted via song_page_lead_submit.
+    '/songs/hotel-california-meaning',
+    '/songs/billie-jean-meaning',
+    '/songs/matadora-karol-g-meaning',
+  ];
   if (!PUBLIC_PATHS.includes(window.location.pathname)) return;
 
   window.dataLayer = window.dataLayer || [];

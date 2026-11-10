@@ -59,9 +59,21 @@
       <div class="faq-item"><h3>Did the Eagles intend a hidden meaning?</h3><p>Glenn Frey said they set out to make &ldquo;something strange.&rdquo; The meaning is in the mood, not a secret code.</p></div>
     </div>
 
-    <section class="song-cta card">
-      <p class="song-cta-text">Your top songs aren't random. Dr. Lyra reads your listening and tells you what it says about you.</p>
-      <a class="btn song-cta-btn" href="https://drlyra.coralwaycapital.com/?utm_source=drlyra-site&amp;utm_medium=seo&amp;utm_campaign=song-myths-2026&amp;utm_content=hotel-california#lead" data-song="hotel-california">Get your free sample reading <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <section id="lead">
+      <div class="wrap">
+        <div class="lead-box reveal">
+          <div class="lead-text">
+            <span class="section-eyebrow gt">Not ready yet?</span>
+            <h3 class="lead-h">See a free sample report</h3>
+            <p class="lead-sub">Drop your email and see a real example, right here.</p>
+          </div>
+          <form class="lead-form" id="lead-form" data-song="hotel-california">
+            <input class="lead-input" type="email" id="lead-email" placeholder="your@email.com" required />
+            <button class="lead-btn" type="submit" id="lead-btn">Show me</button>
+          </form>
+          <p class="lead-fine" id="lead-msg"></p>
+        </div>
+      </div>
     </section>
 
     <div class="song-sources">
@@ -84,23 +96,6 @@
   <p class="footer-legal">Dr. Lyra © 2026 · Powered by Claude AI · Not affiliated with Spotify · For entertainment purposes only, not professional psychological advice</p>
 </footer>
 
-<script>
-  document.querySelectorAll('.song-cta-btn').forEach(function (a) {
-    a.addEventListener('click', function (ev) {
-      var href = a.href, done = false;
-      function go() { if (!done) { done = true; window.location.href = href; } }
-      if (typeof gtag === 'function') {
-        ev.preventDefault();
-        gtag('event', 'song_page_cta_click', {
-          song: a.dataset.song,
-          page_path: location.pathname,
-          link_url: href,
-          event_callback: go
-        });
-        setTimeout(go, 800);
-      }
-    });
-  });
-</script>
+<script src="/scripts/lead-form.js"></script>
 </body>
 </html>
