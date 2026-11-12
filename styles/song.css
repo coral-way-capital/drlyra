@@ -1,0 +1,35 @@
+/* Song myth-busting pages (/songs/*) — builds on site.css */
+body.song-page .btn { background: #7C3AED; color: #fff; box-shadow: 0 8px 26px rgba(107,45,209,0.4); text-decoration: none; }
+body.song-page .btn:hover { background: #8B4EF0; }
+body.song-page nav { background: rgba(10,10,15,0.85); backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%); }
+.song-wrap { max-width: 760px; margin: 0 auto; padding: 128px 28px 72px; }
+.song-wrap .section-eyebrow { color: var(--green); }
+.song-h1 { font-family: 'DM Sans', sans-serif; font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 800; color: var(--heading); line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 28px; }
+.song-intro { font-size: 18px; color: var(--body-color); margin-bottom: 18px; }
+.song-wrap h2 { font-family: 'DM Sans', sans-serif; font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 800; color: var(--heading); letter-spacing: -0.02em; line-height: 1.2; margin: 52px 0 16px; }
+.song-wrap p { color: var(--body-color); margin-bottom: 16px; }
+.song-wrap strong { color: var(--heading); font-weight: 600; }
+.song-wrap ol { margin: 8px 0 20px 22px; color: var(--body-color); }
+.song-wrap ol li { margin-bottom: 14px; padding-left: 6px; }
+.song-wrap ol li::marker { color: var(--green); font-weight: 700; }
+.faq-item { border-top: 1px solid var(--border); padding: 18px 0 4px; }
+.faq-item h3 { font-family: 'DM Sans', sans-serif; font-size: 17px; font-weight: 700; color: var(--heading); margin-bottom: 8px; }
+/* Inline copy of the homepage #lead form. Song pages do not load GSAP, so
+   the homepage .reveal start state would hide the form. */
+.song-page #lead { padding: 48px 0 8px; }
+.song-page #lead .wrap { max-width: none; padding: 0; }
+.song-page .lead-box.reveal { opacity: 1; transform: none; }
+.song-page .lead-box { flex-direction: column; align-items: stretch; gap: 20px; padding: 32px 28px; }
+.song-page .lead-text { min-width: 0; }
+.song-page .lead-sub { max-width: none; color: rgba(255,255,255,0.45); margin-bottom: 0; }
+.song-page .lead-form { width: 100%; flex-direction: column; }
+.song-page .lead-input,
+.song-page .lead-btn { width: 100%; }
+.song-page .lead-fine { margin-bottom: 0; }
+.song-page .lead-fine:empty { min-height: 0; margin-top: 0; }
+.song-sources h2 { font-size: 15px !important; text-transform: uppercase; letter-spacing: 2px; color: var(--muted) !important; margin-top: 24px !important; }
+.song-sources ul { list-style: none; font-size: 14px; }
+.song-sources li { margin-bottom: 6px; }
+.song-sources a { color: var(--muted); }
+.song-sources a:hover { color: var(--green); }
+@media (max-width: 600px) { .song-wrap { padding: 104px 20px 56px; } .song-intro { font-size: 17px; } }

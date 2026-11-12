@@ -128,7 +128,15 @@ test('report access token never appears in any outgoing GA-bound request on /rep
   assert.deepEqual(leakedToGa, []);
 });
 
-const PUBLIC_ROUTES = ['/', '/wrapped', '/example', '/example2'];
+const PUBLIC_ROUTES = [
+  '/',
+  '/wrapped',
+  '/example',
+  '/example2',
+  '/songs/hotel-california-meaning',
+  '/songs/billie-jean-meaning',
+  '/songs/matadora-karol-g-meaning',
+];
 
 for (const route of PUBLIC_ROUTES) {
   test(`GA still initializes on public page ${route}`, async () => {
