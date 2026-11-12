@@ -13,7 +13,10 @@ test('UTM values render as text and runtime records are not public assets', asyn
     fs.copyFileSync(path.join(root, 'server.js'), path.join(dir, 'server.js'));
     fs.symlinkSync(path.join(root, 'node_modules'), path.join(dir, 'node_modules'), 'dir');
     fs.mkdirSync(path.join(dir, 'data'));
-    fs.writeFileSync(path.join(dir, 'data', 'sales.json'), '{}');
+    const hostileEmail = '<img src=x onerror="alert(2)">@example.invalid';
+    fs.writeFileSync(path.join(dir, 'data', 'sales.json'), JSON.stringify({ synthetic: { email: hostileEmail, createdAt: new Date().toISOString(), amount: 799 } }));
+    fs.mkdirSync(path.join(dir, 'scripts'));
+    fs.writeFileSync(path.join(dir, 'scripts', 'public-probe.js'), '/* public fixture */');
     const port = process.env.SECURITY_TEST_PORT || '3159';
     proc = spawn(process.execPath, ['server.js'], {
       cwd: dir,
@@ -41,9 +44,17 @@ test('UTM values render as text and runtime records are not public assets', asyn
     const html = await admin.text();
     assert.ok(!html.includes(payload));
     assert.equal(html.split('&lt;img src=x onerror=&quot;alert(1)&quot;&gt;&amp;&#39;test').length - 1, 4);
+    assert.ok(!html.includes(hostileEmail));
+    assert.ok(html.includes('&lt;img src=x onerror=&quot;alert(2)&quot;&gt;@example.invalid'));
     for (const file of ['leads.json', 'sales.json', 'reports.json', 'feedback.json']) {
-      assert.equal((await fetch(base + '/data/' + file)).status, 404, file);
+      for (const prefix of ['/data/', '//data/', '/%64ata/', '/data%2F', '/scripts/%2e%2e/data/']) {
+        assert.equal((await fetch(base + prefix + file)).status, 404, prefix + file);
+      }
     }
+    for (const file of ['/server.js', '/package.json', '/test/utm-security.test.js']) {
+      assert.equal((await fetch(base + file)).status, 404, file);
+    }
+    assert.equal(await (await fetch(base + '/scripts/public-probe.js')).text(), '/* public fixture */');
   } finally {
     if (proc && proc.exitCode === null) {
       await new Promise(resolve => { proc.once('exit', resolve); proc.kill(); });

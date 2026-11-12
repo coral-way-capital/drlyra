@@ -59,9 +59,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Runtime records must never be served as public static assets.
-app.use('/data', (req, res) => res.sendStatus(404));
-app.use(express.static(path.join(__dirname), { index: false, setHeaders: (res) => res.setHeader('Cache-Control', 'no-store') }));
+// Serve only public assets, never the repository or runtime data root.
+const staticOptions = { index: false, setHeaders: (res) => res.setHeader('Cache-Control', 'no-store') };
+for (const directory of ['images', 'styles', 'scripts', 'videos', 'songs']) {
+  app.use(`/${directory}`, express.static(path.join(__dirname, directory), staticOptions));
+}
+for (const file of ['design-library.html', 'example-report-2.html', 'example-report.html', 'index.html', 'landing-amber.html', 'landing-wrapped.html', 'landing.html', 'report-preview.html', 'report.html']) {
+  app.get(`/${file}`, (req, res) => res.sendFile(path.join(__dirname, file), { headers: { 'Cache-Control': 'no-store' } }));
+}
 
 const NO_CACHE = { headers: { 'Cache-Control': 'no-store' } };
 
@@ -73,8 +78,10 @@ function pickUtm(src) {
   }
   return out;
 }
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+}
 function utmCells(obj) {
-  const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
   const s = (k) => (obj && obj[k]) ? escapeHtml(obj[k]) : '—';
   return `<td>${s('utm_source')}</td><td>${s('utm_medium')}</td><td>${s('utm_campaign')}</td><td>${s('utm_content')}</td>`;
 }
@@ -149,7 +156,7 @@ app.get('/admin', (req, res) => {
   Object.values(feedback).forEach(f => { if (f.reportId) feedbackByReport[f.reportId] = true; });
   const rRows = rList.map(([id,r]) => `<tr><td>${r.email||'<span style="color:#ccc">—</span>'}</td><td><code>${id.slice(0,12)}…</code></td><td>${r.createdAt.slice(0,16).replace('T',' ')}</td>${utmCells(r)}<td><a href="/report/${id}" target="_blank">View</a>${feedbackByReport[id] ? ` · <a href="/admin/survey/${id}">Survey</a>` : ''}</td></tr>`).join('');
   const lRows = lList.map(l => `<tr><td>${l.email}</td><td>${l.createdAt.slice(0,16).replace('T',' ')}</td>${utmCells(l)}</tr>`).join('');
-  const sRows = sList.map(s => `<tr><td>${s.email||'—'}</td><td>${s.amount!=null?('$'+((s.amount||0)/100).toFixed(2)):'—'}</td><td>${s.createdAt.slice(0,16).replace('T',' ')}</td>${utmCells(s)}</tr>`).join('');
+  const sRows = sList.map(s => `<tr><td>${escapeHtml(s.email||'—')}</td><td>${s.amount!=null?('$'+((s.amount||0)/100).toFixed(2)):'—'}</td><td>${s.createdAt.slice(0,16).replace('T',' ')}</td>${utmCells(s)}</tr>`).join('');
   const stars = n => '★'.repeat(n||0) + '☆'.repeat(5-(n||0));
   const fRows = fList.map(f => `<tr><td style="color:#f59e0b">${stars(f.accuracy)}</td><td>${f.section||'—'}</td><td>${f.nps??'—'}/10</td><td style="color:#888;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.surprise||'—'}</td><td>${f.createdAt.slice(0,16).replace('T',' ')}</td></tr>`).join('');
   const avgNps = fList.filter(f=>f.nps!=null).length ? (fList.filter(f=>f.nps!=null).reduce((s,f)=>s+f.nps,0)/fList.filter(f=>f.nps!=null).length).toFixed(1) : '—';
