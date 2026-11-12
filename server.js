@@ -39,6 +39,7 @@ async function sendReportEmail(toEmail, reportId) {
 const DATA_DIR       = path.join(__dirname, 'data');
 const REPORTS_FILE   = path.join(DATA_DIR, 'reports.json');
 const LEADS_FILE     = path.join(DATA_DIR, 'leads.json');
+const SALES_FILE     = path.join(DATA_DIR, 'sales.json');
 const FEEDBACK_FILE  = path.join(DATA_DIR, 'feedback.json');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 function readJSON(fp)    { try { return JSON.parse(fs.readFileSync(fp, 'utf8')); } catch { return {}; } }
@@ -58,9 +59,33 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.static(path.join(__dirname), { index: false, setHeaders: (res) => res.setHeader('Cache-Control', 'no-store') }));
+// Serve only public assets, never the repository or runtime data root.
+const staticOptions = { index: false, setHeaders: (res) => res.setHeader('Cache-Control', 'no-store') };
+for (const directory of ['images', 'styles', 'scripts', 'videos', 'songs']) {
+  app.use(`/${directory}`, express.static(path.join(__dirname, directory), staticOptions));
+}
+for (const file of ['design-library.html', 'example-report-2.html', 'example-report.html', 'index.html', 'landing-amber.html', 'landing-wrapped.html', 'landing.html', 'report-preview.html', 'report.html']) {
+  app.get(`/${file}`, (req, res) => res.sendFile(path.join(__dirname, file), { headers: { 'Cache-Control': 'no-store' } }));
+}
 
 const NO_CACHE = { headers: { 'Cache-Control': 'no-store' } };
+
+function pickUtm(src) {
+  const raw = (src && typeof src === 'object' && src.utm && typeof src.utm === 'object') ? src.utm : (src || {});
+  const out = {};
+  for (const k of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']) {
+    if (typeof raw[k] === 'string' && raw[k].trim()) out[k] = raw[k].trim().slice(0, 200);
+  }
+  return out;
+}
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+}
+function utmCells(obj) {
+  const s = (k) => (obj && obj[k]) ? escapeHtml(obj[k]) : '—';
+  return `<td>${s('utm_source')}</td><td>${s('utm_medium')}</td><td>${s('utm_campaign')}</td><td>${s('utm_content')}</td>`;
+}
+
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'landing.html'), NO_CACHE));
 app.get('/wrapped', (req, res) => res.sendFile(path.join(__dirname, 'landing-wrapped.html'), NO_CACHE));
@@ -102,10 +127,19 @@ app.get('/api/report/:id', (req, res) => {
 app.post('/submit-lead', (req, res) => {
   const { email } = req.body;
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'Invalid email' });
+  const utm = pickUtm(req.body);
   const leads = readJSON(LEADS_FILE);
-  const existing = Object.values(leads).find(l => l.email === email.toLowerCase());
-  if (existing) return res.json({ ok: true, existing: true });
-  leads[Date.now()] = { email: email.toLowerCase().trim(), createdAt: new Date().toISOString() };
+  const existingKey = Object.keys(leads).find(k => leads[k].email === email.toLowerCase());
+  if (existingKey) {
+    // Keep first-touch UTMs if already set; otherwise fill from this visit.
+    const cur = leads[existingKey];
+    if (!cur.utm_source && utm.utm_source) {
+      leads[existingKey] = { ...cur, ...utm };
+      writeJSON(LEADS_FILE, leads);
+    }
+    return res.json({ ok: true, existing: true });
+  }
+  leads[Date.now()] = { email: email.toLowerCase().trim(), createdAt: new Date().toISOString(), ...utm };
   writeJSON(LEADS_FILE, leads);
   res.json({ ok: true });
 });
@@ -120,14 +154,17 @@ app.get('/admin', (req, res) => {
   }
   const reports  = readJSON(REPORTS_FILE);
   const leads    = readJSON(LEADS_FILE);
+  const sales    = readJSON(SALES_FILE);
   const feedback = readJSON(FEEDBACK_FILE);
   const rList = Object.entries(reports).sort((a,b)=>b[1].createdAt.localeCompare(a[1].createdAt)).slice(0,50);
   const lList = Object.values(leads).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  const sList = Object.values(sales).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
   const fList = Object.values(feedback).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
   const feedbackByReport = {};
   Object.values(feedback).forEach(f => { if (f.reportId) feedbackByReport[f.reportId] = true; });
-  const rRows = rList.map(([id,r]) => `<tr><td>${r.email||'<span style="color:#ccc">—</span>'}</td><td><code>${id.slice(0,12)}…</code></td><td>${r.createdAt.slice(0,16).replace('T',' ')}</td><td><a href="/report/${id}" target="_blank">View</a>${feedbackByReport[id] ? ` · <a href="/admin/survey/${id}">Survey</a>` : ''}</td></tr>`).join('');
-  const lRows = lList.map(l => `<tr><td>${l.email}</td><td>${l.createdAt.slice(0,16).replace('T',' ')}</td></tr>`).join('');
+  const rRows = rList.map(([id,r]) => `<tr><td>${r.email||'<span style="color:#ccc">—</span>'}</td><td><code>${id.slice(0,12)}…</code></td><td>${r.createdAt.slice(0,16).replace('T',' ')}</td>${utmCells(r)}<td><a href="/report/${id}" target="_blank">View</a>${feedbackByReport[id] ? ` · <a href="/admin/survey/${id}">Survey</a>` : ''}</td></tr>`).join('');
+  const lRows = lList.map(l => `<tr><td>${l.email}</td><td>${l.createdAt.slice(0,16).replace('T',' ')}</td>${utmCells(l)}</tr>`).join('');
+  const sRows = sList.map(s => `<tr><td>${escapeHtml(s.email||'—')}</td><td>${s.amount!=null?('$'+((s.amount||0)/100).toFixed(2)):'—'}</td><td>${s.createdAt.slice(0,16).replace('T',' ')}</td>${utmCells(s)}</tr>`).join('');
   const stars = n => '★'.repeat(n||0) + '☆'.repeat(5-(n||0));
   const fRows = fList.map(f => `<tr><td style="color:#f59e0b">${stars(f.accuracy)}</td><td>${f.section||'—'}</td><td>${f.nps??'—'}/10</td><td style="color:#888;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.surprise||'—'}</td><td>${f.createdAt.slice(0,16).replace('T',' ')}</td></tr>`).join('');
   const avgNps = fList.filter(f=>f.nps!=null).length ? (fList.filter(f=>f.nps!=null).reduce((s,f)=>s+f.nps,0)/fList.filter(f=>f.nps!=null).length).toFixed(1) : '—';
@@ -145,11 +182,13 @@ app.get('/admin', (req, res) => {
   <div class="stats">
     <div class="stat"><div class="stat-n">${Object.keys(reports).length}</div><div class="stat-l">Reports Generated</div></div>
     <div class="stat"><div class="stat-n">${lList.length}</div><div class="stat-l">Email Leads</div></div>
+    <div class="stat"><div class="stat-n">${sList.length}</div><div class="stat-l">Sales</div></div>
     <div class="stat"><div class="stat-n">${fList.length}</div><div class="stat-l">Feedback Responses</div></div>
     <div class="stat"><div class="stat-n">${avgNps}</div><div class="stat-l">Avg NPS Score</div></div>
   </div>
-  ${lList.length ? `<div class="card"><h2>Email Leads</h2><table><tr><th>Email</th><th>Date</th></tr>${lRows}</table></div>` : ''}
-  ${rList.length ? `<div class="card"><h2>Buyers / Reports</h2><table><tr><th>Email</th><th>ID</th><th>Date</th><th></th></tr>${rRows}</table></div>` : ''}
+  ${lList.length ? `<div class="card"><h2>Email Leads</h2><table><tr><th>Email</th><th>Date</th><th>Source</th><th>Medium</th><th>Campaign</th><th>Content</th></tr>${lRows}</table></div>` : ''}
+  ${sList.length ? `<div class="card"><h2>Sales</h2><table><tr><th>Email</th><th>Amount</th><th>Date</th><th>Source</th><th>Medium</th><th>Campaign</th><th>Content</th></tr>${sRows}</table></div>` : ''}
+  ${rList.length ? `<div class="card"><h2>Buyers / Reports</h2><table><tr><th>Email</th><th>ID</th><th>Date</th><th>Source</th><th>Medium</th><th>Campaign</th><th>Content</th><th></th></tr>${rRows}</table></div>` : ''}
   ${fList.length ? `<div class="card"><h2>Feedback</h2><table><tr><th>Accuracy</th><th>Top Section</th><th>NPS</th><th>Surprise</th><th>Date</th></tr>${fRows}</table></div>` : ''}
   </body></html>`);
 });
@@ -300,6 +339,7 @@ app.get('/verify-payment', async (req, res) => {
 app.post('/create-checkout-session', async (req, res) => {
   if (!stripe) return res.status(503).json({ error: 'Stripe not configured. Add STRIPE_SECRET_KEY to .env' });
   const baseUrl = req.body.origin || `${req.protocol}://${req.get('host')}`;
+  const utm = pickUtm(req.body);
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -319,6 +359,7 @@ app.post('/create-checkout-session', async (req, res) => {
       mode: 'payment',
       success_url: `${baseUrl}/app?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/`,
+      metadata: utm,
     });
     res.json({ url: session.url });
   } catch (err) {
@@ -332,10 +373,23 @@ app.get('/verify-session', async (req, res) => {
   if (!session_id) return res.status(400).json({ paid: false });
   try {
     const session = await stripe.checkout.sessions.retrieve(session_id);
-    res.json({
-      paid: session.payment_status === 'paid',
-      email: session.customer_details?.email || null,
-    });
+    const paid = session.payment_status === 'paid';
+    const email = session.customer_details?.email || null;
+    if (paid) {
+      const sales = readJSON(SALES_FILE);
+      if (!sales[session_id]) {
+        const utm = pickUtm({ utm: session.metadata || {} });
+        sales[session_id] = {
+          email,
+          amount: session.amount_total,
+          currency: session.currency || 'usd',
+          createdAt: new Date().toISOString(),
+          ...utm,
+        };
+        writeJSON(SALES_FILE, sales);
+      }
+    }
+    res.json({ paid, email });
   } catch (err) {
     res.status(400).json({ paid: false });
   }

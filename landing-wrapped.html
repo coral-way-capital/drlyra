@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="/styles/site.css" />
   <!-- Google Analytics (GA4) -->
   <script src="/scripts/ga.js"></script>
+  <script src="/scripts/utm.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <style>
@@ -707,7 +708,7 @@
       const r = await fetch('/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ origin: window.location.origin }),
+        body: JSON.stringify({ origin: window.location.origin, utm: (typeof getDrLyraUtm === 'function' ? getDrLyraUtm() : {}) }),
       });
       const data = await r.json();
       if (data.url) window.location.href = data.url;
@@ -733,7 +734,7 @@
       const r = await fetch('/submit-lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, utm: (typeof getDrLyraUtm === 'function' ? getDrLyraUtm() : {}) }),
       });
       const data = await r.json();
       if (data.ok) {
