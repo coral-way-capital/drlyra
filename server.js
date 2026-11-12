@@ -59,6 +59,8 @@ app.use((req, res, next) => {
   next();
 });
 
+// Runtime records must never be served as public static assets.
+app.use('/data', (req, res) => res.sendStatus(404));
 app.use(express.static(path.join(__dirname), { index: false, setHeaders: (res) => res.setHeader('Cache-Control', 'no-store') }));
 
 const NO_CACHE = { headers: { 'Cache-Control': 'no-store' } };
@@ -72,7 +74,8 @@ function pickUtm(src) {
   return out;
 }
 function utmCells(obj) {
-  const s = (k) => (obj && obj[k]) ? String(obj[k]) : '—';
+  const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+  const s = (k) => (obj && obj[k]) ? escapeHtml(obj[k]) : '—';
   return `<td>${s('utm_source')}</td><td>${s('utm_medium')}</td><td>${s('utm_campaign')}</td><td>${s('utm_content')}</td>`;
 }
 
