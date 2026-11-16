@@ -8,9 +8,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
-  <!-- No GA4 here: this page's URL carries a Stripe checkout session_id
-       (?session_id=...) after payment, and GA's automatic page_view would
-       send the full URL — including that id — to Google. See scripts/ga.js. -->
+  <!-- Sanitize first. Stripe returns to /app?session_id=...; the session id
+       is stashed for verify-session, then the URL becomes /app with no query.
+       ga.js and tiktok.js are included only after that, and both refuse to
+       load if a session_id is still in the URL. See scripts/ga.js. -->
+  <script src="/scripts/sanitize-url.js"></script>
+  <script src="/scripts/ga.js"></script>
+  <script src="/scripts/tiktok.js"></script>
   <script src="/scripts/utm.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -290,22 +294,35 @@
   let files = [];
   let hasPaid = false;
 
-  // If user already has a paid report, send them straight to their unique URL
-  if (localStorage.getItem('drlyra_has_report') && !window.location.search) {
+  function readStash(key) {
+    try { return sessionStorage.getItem(key); } catch (e) { return null; }
+  }
+  function clearStash(key) {
+    try { sessionStorage.removeItem(key); } catch (e) {}
+  }
+
+  // If user already has a paid report, send them straight to their unique URL.
+  // A checkout return stashes its id before the URL is cleaned, so this must
+  // not redirect away before verify-session (and the purchase event) run.
+  const pendingReturn = readStash('drlyra_checkout_session_id') || readStash('drlyra_payment_intent_id') || readStash('drlyra_access_code');
+  if (localStorage.getItem('drlyra_has_report') && !window.location.search && !pendingReturn) {
     const reportId = localStorage.getItem('drlyra_report_id');
     if (reportId) { window.location.replace(`/report/${reportId}`); }
   }
 
-  // Check URL params on load — handles friend bypass, Stripe redirect (session or 3DS payment intent)
+  // Check URL params on load — handles friend bypass, Stripe redirect (session or 3DS payment intent).
+  // sanitize-url.js has already moved those params into sessionStorage and
+  // stripped the query, so fall back to the stash when the address bar is clean.
   (async () => {
     const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    const sessionId = params.get('session_id');
-    const paymentIntentId = params.get('payment_intent');
-    const redirectStatus = params.get('redirect_status');
+    const code = params.get('code') || readStash('drlyra_access_code');
+    const sessionId = params.get('session_id') || readStash('drlyra_checkout_session_id');
+    const paymentIntentId = params.get('payment_intent') || readStash('drlyra_payment_intent_id');
+    const redirectStatus = params.get('redirect_status') || readStash('drlyra_redirect_status');
 
     if (code === 'FRIENDS') {
       hasPaid = true;
+      clearStash('drlyra_access_code');
       history.replaceState({}, '', '/app');
       return;
     }
@@ -317,6 +334,8 @@
         if (data.paid) {
           if (data.email) sessionStorage.setItem('drlyra_buyer_email', data.email);
           hasPaid = true;
+          if (typeof window.drLyraTrackPurchase === 'function') window.drLyraTrackPurchase(sessionId);
+          clearStash('drlyra_checkout_session_id');
           history.replaceState({}, '', '/app');
         }
       } catch {}
@@ -329,6 +348,8 @@
         const data = await r.json();
         if (data.paid) {
           hasPaid = true;
+          clearStash('drlyra_payment_intent_id');
+          clearStash('drlyra_redirect_status');
           history.replaceState({}, '', '/app');
         }
       } catch {}

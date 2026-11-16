@@ -9,6 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/styles/site.css" />
+  <script src="/scripts/ga.js"></script>
+  <script src="/scripts/tiktok.js"></script>
   <!--
     PROPOSAL PREVIEW ONLY — not linked from the app, does not affect production.
     Overrides every purple/violet accent with the "Amber Clay" direction from
@@ -549,6 +551,8 @@
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
   async function startCheckout(btn) {
+    if (typeof gtag === 'function') gtag('event', 'checkout_click', { button_id: btn.id });
+    if (typeof window.drLyraTrackInitiateCheckout === 'function') window.drLyraTrackInitiateCheckout();
     btn.disabled = true;
     btn.textContent = 'Redirecting…';
     try {
