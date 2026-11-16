@@ -8,9 +8,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
   <link rel="icon" href="/images/drlyra-icon.svg" type="image/svg+xml" />
-  <!-- No GA4 here: /report/:id carries a report access token in the URL,
-       and GA's automatic page_view would send the full URL — including
-       that token — to Google. See scripts/ga.js. -->
+  <!-- Sanitize first. /report/:id carries a private access token; it is
+       stashed for the report loader, then the URL becomes /report.
+       ga.js and tiktok.js are included only after that, and both refuse
+       to load if the token is still in the path. See scripts/ga.js. -->
+  <script src="/scripts/sanitize-url.js"></script>
+  <script src="/scripts/ga.js"></script>
+  <script src="/scripts/tiktok.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link rel="stylesheet" href="/styles/reports.css" />
 </head>
@@ -568,12 +572,24 @@
   let rawText = null;
   let archetypeName = 'Your Profile';
 
-  async function loadReport() {
-    // Read the id from the /report/:id route itself, checked before any
-    // cached copy — so an explicit report link always wins over whatever
-    // report this browser happened to view last.
+  // The id is in the path on first paint. sanitize-url.js then replaceState's
+  // the address bar to /report and keeps the id in sessionStorage so a reload
+  // of the cleaned URL still loads this report, not whichever one was cached.
+  function reportIdFromRoute() {
     const idMatch = window.location.pathname.match(/\/report\/([a-f0-9]{20,})/);
-    const reportId = idMatch ? idMatch[1] : null;
+    if (idMatch) return idMatch[1];
+    try {
+      const stashed = sessionStorage.getItem('drlyra_report_route_id') || '';
+      if (/^[a-f0-9]{20,}$/.test(stashed)) return stashed;
+    } catch (e) {}
+    return null;
+  }
+
+  async function loadReport() {
+    // An explicit report link always wins over whatever report this browser
+    // happened to view last. The path is checked first; after the URL is
+    // sanitized, the same id is read back from sessionStorage.
+    const reportId = reportIdFromRoute();
 
     if (reportId) {
       try {
@@ -1058,7 +1074,7 @@
         <button class="fb-submit" id="fb-submit-btn">Submit feedback</button>`;
       document.getElementById('fb-submit-btn').addEventListener('click', async () => {
         fbState.improve = document.getElementById('fb-improve').value.trim();
-        const reportId = window.location.pathname.split('/').pop();
+        const reportId = reportIdFromRoute() || localStorage.getItem('drlyra_report_id') || '';
         try {
           await fetch('/submit-feedback', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
